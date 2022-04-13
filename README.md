@@ -136,6 +136,7 @@ Lorsque vous créez un compte vous créez également une Organization, il s'agit
   graph TD
     USER(Utilisateur) -->|n...m|ORG(Organisations)
     ORG -->|0..n|DB(Dabatases)
+    DB  -->|1..n|DB(Keyspaces)
     ORG -->|0..n|STR(Streaming Tenants)
 ```
 
@@ -148,9 +149,7 @@ Lorsque vous créez un jeton, il faut lui associer un role qui regroupe plusieur
 ```mermaid
   graph TD
     USER(Utilisateur) -->|n...m|ORG(Organisations)
-    ORG -->|0..n|DB(Dabatases)
     ORG -->|0..n|TOKEN(Tokens)
-    ORG -->|0..n|STR(Streaming Tenants)
     TOKEN-->|1:1|ROLE(role)
     ROLE-->|1..n|PERMISSIONS(permissions)
 ```
