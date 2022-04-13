@@ -1,0 +1,11 @@
+#!/bin/bash
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+clear
+echo -e "${BLUE}------------------------------------------------------------${NC}"
+echo -e "${BLUE}--  Starting Cassandra 4 (1 node)                        ---${NC}"
+echo -e "${BLUE}------------------------------------------------------------${NC}"
+echo -e "${GREEN}[OK]${NC} - Launching Local Cassandra CQLSH"
+docker-compose -f /workspace/conference-2022-devoxx/hands-on/LAB_01/docker-compose-1noeud.yml up -d

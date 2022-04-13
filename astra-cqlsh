@@ -15,6 +15,5 @@ echo -e "${GREEN}[OK]${NC} - Database ID is ${BLUE}${ASTRA_DB_ID}${NC}"
 echo -e "${GREEN}[OK]${NC} - Database REGION is ${BLUE}${ASTRA_DB_REGION}${NC}"
 echo -e "${GREEN}[OK]${NC} - Database TOKEN is ${BLUE}${ASTRA_DB_ADMIN_TOKEN}${NC}"
 echo -e "${GREEN}[OK]${NC} - Secure Connect Bundle downloaded"
-echo -e "${GREEN}[OK]${NC} - Launching CQLSH...."
-
+echo -e "${GREEN}[OK]${NC} - Launching Astra CQLSH...."
 /workspace/conference-2022-devoxx/tools/cqlsh-astra/bin/cqlsh -u token -p ${ASTRA_DB_ADMIN_TOKEN} -b /home/gitpod/.cassandra/bootstrap.zip

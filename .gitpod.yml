@@ -8,19 +8,18 @@ tasks:
     before: |
       chmod 700 /workspace/conference-2022-devoxx/astra-cqlsh
       chmod 700 /workspace/conference-2022-devoxx/astra-cqlsh-install
+      chmod 700 /workspace/conference-2022-devoxx/cassandra-start
+      chmod 700 /workspace/conference-2022-devoxx/cassandra-cqlsh
     command: |
       ./astra-cqlsh-install
   - name: local-cqlsh
     before: |
       docker pull cassandra:4.0.3
     command: |
-      clear
-      echo "Starting Cassandra 4....."
-      docker-compose -f /workspace/conference-2022-devoxx/hands-on/LAB_01/docker-compose-1noeud.yml
-      echo "Ready"
+      ./cassandra-start
 ports:
   - port: 9042
-    onOpen: open-browser
+    onOpen: ignore
     visibility: public
 
 github:
