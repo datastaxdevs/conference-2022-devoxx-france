@@ -22,17 +22,17 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
 - [Foire aux questions](#foire-aux-questions)
 - [Supports de Formation](#supports-de-formation)
 - [#**LAB1** - Création de la base de donnée](#lab1---création-de-la-base-de-donnée)
-- [#**LAB2** - Tables et types de données](#5-create-a-table)
-- [#**LAB3** - Modèle de données `PetClinic`](#)
-- [#**LAB4** - Modèle de données `TimeSeries`](#7-sensor-data-modeling)
-- [#**LAB5** - Introduction aux drivers](#)
-- [#**LAB6** - Mapping Objet avec les drivers](#)
-- [#**LAB7** - Programmation reactive](#)
-- [#**LAB8** - Spring Data Cassandra](#12-spring-data-cassandra)
-- [#**LAB9** - Cassandra Quarkus extension](#13-cassandra-quarkus-extension)
-- [#**LAB10** - Micronaut Cassandra](#)
-- [#**LAB11** - Stargate Apis](#)
-- [#**LAB12** - Stargate SDK](#)
+- [#**LAB2** - Tables et types de données](#lab2---tables-et-types-de-données)
+- [#**LAB3** - Modèle de données `PetClinic`](#lab3--modèle-de-données-petclinic)
+- [#**LAB4** - Modèle de données `TimeSeries`](#lab4--modèle-de-données-timeseries)
+- [#**LAB5** - Introduction aux drivers](#lab5---introduction-aux-drivers)
+- [#**LAB6** - Mapping Objet avec les drivers](#lab6---mapping-objet-avec-les-drivers)
+- [#**LAB7** - Programmation reactive](#lab7---programmation-reactive)
+- [#**LAB8** - Spring Data Cassandra](#lab8---spring-data-cassandra)
+- [#**LAB9** - Cassandra Quarkus extension](#lab9---cassandra-quarkus-extension)
+- [#**LAB10** - Micronaut Cassandra](#lab10---micronaut-cassandra)
+- [#**LAB11** - Stargate Apis](#lab11---stargate-apis)
+- [#**LAB12** - Stargate SDK](#lab12---stargate-sdk)
 
 ## Objectifs
 
@@ -102,8 +102,6 @@ Que vous soyez avec nous pour Devoxx ou que que vous regardiez la session mainte
 - [Une invitation sur notre serveur Discord](https://bit.ly/cassandra-workshop) pour poser toutes vos questions.
 - [Notre forum, community.datastax.com](https://community.datastax.com/) pour échanger.
 
-[🏠 Table des matières](#-table-des-matières)
-
 ## LAB1 - Création de la base de donnée
 
 ### 1.1 Environnement DBAAS Astra
@@ -169,6 +167,12 @@ Vos identifiants contiennent 3 champs:
 - `ClientId` qui correspond à un identifiant utilisateur
 - `ClientSecret` qui correspond à un mot de passe utilisateur
 - `Token` qui correspond à une clé pour les Apis mais peut aussi servir de mot de passe avec le compte utilisateur générique `token`.
+
+```
+export ASTRA_DB_NAME=workshops
+export ASTRA_DB_KEYSPACE=devoxx
+npm exec -y astra-setup $ASTRA_DB_NAME $SATRA_DB_KEYSPACE
+```
 
 ### 1.2 - Environnement Docker
 
@@ -239,6 +243,8 @@ or
 ```bash
 docker exec -it `docker ps | grep cassandra:4.0.1 | cut -b 1-12` cqlsh -e "describe keyspaces"
 ```
+
+[🏠 Table des matières](#-table-des-matières)
 
 ## LAB2 - Tables et types de données
 
