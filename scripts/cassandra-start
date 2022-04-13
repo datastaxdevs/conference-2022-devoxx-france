@@ -7,12 +7,14 @@ clear
 echo -e "${BLUE}------------------------------------------------------------${NC}"
 echo -e "${BLUE}--  Starting Cassandra 4 (1 node)                        ---${NC}"
 echo -e "${BLUE}------------------------------------------------------------${NC}"
-echo -e "${GREEN}[OK]${NC} - Launching Local Cassandra....."
+echo -e "${GREEN}[OK]${NC} - Launching Local Cassandra as docker-compose...."
 docker-compose -f /workspace/conference-2022-devoxx/hands-on/LAB_01/docker-compose-1noeud.yml up -d
+echo -e ""
 echo -e "${GREEN}[OK]${NC} - Waiting for Cassandra to start...."
-while [ `docker container logs `docker ps | grep noeud1 | cut -b 1-12` | grep "Starting listening for CQL clients" | wc -l` -lt 1 ]; do
-   sleep 100
+sleep 1
+export NOEUD1_CONTAINER_ID=`docker ps | grep noeud1 | cut -b 1-12`
+echo -e "${GREEN}[OK]${NC} - Waiting for Cassandra to start id=$NOEUD1_CONTAINER_ID"
+while [ `docker container logs $NOEUD1_CONTAINER_ID | grep "Starting listening for CQL clients" | wc -l` -lt 1 ]; do
+   sleep 5
 done
 echo -e "${GREEN}[OK]${NC} - Cassandra is Ready."
-
-

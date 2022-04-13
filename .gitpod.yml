@@ -6,17 +6,17 @@ tasks:
     env:
         CQLENG_ALLOW_SCHEMA_MANAGEMENT: 1
     before: |
-      chmod 700 /workspace/conference-2022-devoxx/astra-cqlsh
-      chmod 700 /workspace/conference-2022-devoxx/astra-cqlsh-install
-      chmod 700 /workspace/conference-2022-devoxx/cassandra-start
-      chmod 700 /workspace/conference-2022-devoxx/cassandra-cqlsh
+      chmod 700 /workspace/conference-2022-devoxx/scripts/astra-cqlsh
+      chmod 700 /workspace/conference-2022-devoxx/scripts/astra-cqlsh-install
+      chmod 700 /workspace/conference-2022-devoxx/scripts/cassandra-start
+      chmod 700 /workspace/conference-2022-devoxx/scripts/cassandra-cqlsh
     command: |
-      ./astra-cqlsh-install
+      ./scripts/astra-cqlsh-install
   - name: local-cqlsh
     before: |
       docker pull cassandra:4.0.3
     command: |
-      ./cassandra-start
+      ./scripts/cassandra-start
 ports:
   - port: 9042
     onOpen: ignore
