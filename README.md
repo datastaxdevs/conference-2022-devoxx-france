@@ -136,7 +136,7 @@ Lorsque vous créez un compte vous créez également une Organization, il s'agit
   graph TD
     USER(Utilisateur) -->|n...m|ORG(Organisations)
     ORG -->|0..n|DB(Dabatases)
-    DB  -->|1..n|DB(Keyspaces)
+    DB  -->|1..n|KS(Keyspaces)
     ORG -->|0..n|STR(Streaming Tenants)
 ```
 
