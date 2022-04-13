@@ -2,9 +2,9 @@
 
 ### Construire des Applications performantes avec Apache Cassandra™
 
-<img src="img/badge-javazone.png?raw=true" width="200" align="right" />
+<img src="img/badge-javazone.png?raw=true" width="200" align="right"/>
 
-Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **développeurs**. L'objectif est de vous rendre *dangeureux* avec la technologie, savoir la mettre en oeuvre rapidement.
+Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **développeurs**. L'objectif est de vous rendre _dangeureux_ avec la technologie, savoir la mettre en oeuvre rapidement.
 
 [![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/datastaxdevs/workshop-streaming-game)
 [![License Apache2](https://img.shields.io/hexpm/l/plug.svg)](http://www.apache.org/licenses/LICENSE-2.0)
@@ -13,7 +13,6 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
 ⏲️ **Durée:** 3 heures (avec Speakers) ou 60 minutes (exercices)
 
 🎓 **Niveau** Débutant à intermédiaire
-
 
 ## 📋 Table des matières.
 
@@ -25,28 +24,27 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
 4. [#**LAB1** - Création de base de donnée](#4-create-astra-db-instance)
 5. [#**LAB2** - Tables et types de données](#5-create-a-table)
 6. [#**LAB3** - Exemple Modèle de données Iot](#7-sensor-data-modeling)
-8. [#**LAB4** - Exemple Modèle de données système de commande](#8--order-management-system-data-modelling)
-9. 
-10. [Native Drivers](#10-native-drivers)
-11. [Drivers Object Mapping](#11-drivers-object-mapping)
-12. [Spring Data Cassandra](#12-spring-data-cassandra)
-13. [Cassandra Quarkus extension](#13-cassandra-quarkus-extension)
-14. [Overview of Stargate APis](#14-overview-of-stargate-apis)
-15. [Astra and Stargate SDK](#15-astra-and-stargate-sdk)
-
+7. [#**LAB4** - Exemple Modèle de données système de commande](#8--order-management-system-data-modelling)
+8.
+9. [Native Drivers](#10-native-drivers)
+10. [Drivers Object Mapping](#11-drivers-object-mapping)
+11. [Spring Data Cassandra](#12-spring-data-cassandra)
+12. [Cassandra Quarkus extension](#13-cassandra-quarkus-extension)
+13. [Overview of Stargate APis](#14-overview-of-stargate-apis)
+14. [Astra and Stargate SDK](#15-astra-and-stargate-sdk)
 
 ## 1. Objectives
 
-* Discover what the NoSQL Database Apache Cassandra is and what are the relevant **use cases**
-* Understand how Apache Cassandra is different from relational database in the phylosophy and **data modelling**.
-* Practive on how **Java Applications** connect to the databases, what are the rules things to know.
-* Get an overview of [Stargate](stargate.io), what it brings to the picture
-* Get you hands dirty to use it all and have samples codes to come back on.
+- Discover what the NoSQL Database Apache Cassandra is and what are the relevant **use cases**
+- Understand how Apache Cassandra is different from relational database in the phylosophy and **data modelling**.
+- Practive on how **Java Applications** connect to the databases, what are the rules things to know.
+- Get an overview of [Stargate](stargate.io), what it brings to the picture
+- Get you hands dirty to use it all and have samples codes to come back on.
 
 [🏠 Back to Table of Contents](#-table-of-content)
 
-
 ## 2. Frequently asked questions
+
 <p/>
 <details>
 <summary><b> 1️⃣ Can I run this workshop on my computer?</b></summary>
@@ -101,7 +99,7 @@ we have you covered. In this repository, you'll find everything you need for thi
 
 **`ASTRA DB`** is the simplest way to run Cassandra with zero operations at all - just push the button and get your cluster. No credit card required, $25.00 USD credit every month, roughly 20M read/write operations, 80GB storage monthly - sufficient to run small production workloads.
 
-#### ✅ 4a. Register 
+#### ✅ 4a. Register
 
 If you do have an account yet register and sign In to Astra DB this is FREE and NO CREDIT CARD asked. [https://astra.datastax.com](https://astra.datastax.com): You can use your `Github`, `Google` accounts or register with an `email`.
 
@@ -129,12 +127,11 @@ The status will change to `Active` when the database is ready, this will only ta
 
 **👁️ Walkthrough**
 
-*The Walkthrough mentions the wrong keyspace, make sure to use `javazone`*
+_The Walkthrough mentions the wrong keyspace, make sure to use `javazone`_
 
 ![image](img/astra-create-db.gif?raw=true)
 
 [🏠 Back to Table of Contents](#-table-of-content)
-
 
 ## 5. Create a table
 
@@ -146,7 +143,6 @@ Let's start with the CQL console for the database as whown below.
 
 ![image](img/db-cqlconsole-1.png?raw=true)
 
-
 #### ✅ Step 5b. Describe keyspaces
 
 Ok, now we're ready to rock. Creating tables is quite easy, but before we create one we need to tell the database which keyspace we are working with.
@@ -154,9 +150,11 @@ Ok, now we're ready to rock. Creating tables is quite easy, but before we create
 First, let's **_DESCRIBE_** all of the keyspaces that are in the database. This will give us a list of the available keyspaces.
 
 📘 **Command to execute**
+
 ```
 desc KEYSPACES;
 ```
+
 _"desc" is short for "describe", either is valid._
 
 > CQL commands usually end with a semicolon `;`. If you hit Enter, nothing happens and you don't even get your prompt back, most likely it's because you have not closed the command with `;`. If in trouble, you can always get back to the prompt with `Ctrl-C` and start typing the command anew.
@@ -164,7 +162,6 @@ _"desc" is short for "describe", either is valid._
 📗 **Expected output**
 
 <img width="1000" alt="Screenshot 2020-09-30 at 13 54 55" src="https://user-images.githubusercontent.com/20337262/94687725-8cbf8600-0324-11eb-83b0-fbd3d7fbdadc.png">
-
 
 #### ✅ Step 5c. Use JavaZone
 
@@ -186,7 +183,7 @@ use javazone;
 
 ![image](img/db-cqlconsole-2.png?raw=true)
 
-Notice how the prompt displays ```<username>@cqlsh:javazone>``` informing us we are **using** the **_javazone_** keyspace. Now we are ready to create our table.
+Notice how the prompt displays `<username>@cqlsh:javazone>` informing us we are **using** the **_javazone_** keyspace. Now we are ready to create our table.
 
 **✅ Step 5d. Create the _users_by_city_ table**
 
@@ -195,12 +192,12 @@ At this point we can execute a command to create the **_users_by_city_** table u
 📘 **Command to execute**
 
 ```sql
-CREATE TABLE IF NOT EXISTS users_by_city ( 
-	city text, 
-	last_name text, 
-	first_name text, 
-	address text, 
-	email text, 
+CREATE TABLE IF NOT EXISTS users_by_city (
+	city text,
+	last_name text,
+	first_name text,
+	address text,
+	email text,
 	PRIMARY KEY ((city), last_name, first_name, email));
 ```
 
@@ -221,6 +218,7 @@ Aaaand **BOOM**, you created a table in your database. That's it. Now, we'll mov
 [🏠 Back to Table of Contents](#table-of-contents)
 
 ## 6. Execute CRUD operations
+
 CRUD operations stand for create, read, update, and delete. Simply put, they are the basic types of commands you need to work with ANY database in order to maintain data for your applications.
 
 #### ✅ Step 6a. Create a couple more tables
@@ -274,9 +272,9 @@ INSERT INTO comments_by_user (
   comment //text: the comment text
 )
 VALUES (
-  11111111-1111-1111-1111-111111111111, 
-  NOW(), 
-  12345678-1234-1111-1111-111111111111, 
+  11111111-1111-1111-1111-111111111111,
+  NOW(),
+  12345678-1234-1111-1111-111111111111,
   'I so grew up in the 80''s'
 );
 
@@ -291,7 +289,7 @@ INSERT INTO comments_by_user (userid, commentid, videoid, comment)
 VALUES (22222222-2222-2222-2222-222222222222, NOW(), 12345678-1234-1111-1111-111111111111, 'I really like this video too!');
 ```
 
-_Note, we are using "fake" generated UUID's in this dataset. If you wanted to generate UUID's on the fly just use ```UUID()``` per the documentation [HERE](https://docs.datastax.com/en/cql-oss/3.3/cql/cql_reference/timeuuid_functions_r.html)_.
+_Note, we are using "fake" generated UUID's in this dataset. If you wanted to generate UUID's on the fly just use `UUID()` per the documentation [HERE](https://docs.datastax.com/en/cql-oss/3.3/cql/cql_reference/timeuuid_functions_r.html)_.
 
 Ok, let's **INSERT** more this time using the **_comments_by_video_** table.
 
@@ -306,9 +304,9 @@ INSERT INTO comments_by_video (
   comment //text: the comment text
 )
 VALUES (
-  12345678-1234-1111-1111-111111111111, 
-  NOW(), 
-  11111111-1111-1111-1111-111111111111, 
+  12345678-1234-1111-1111-111111111111,
+  NOW(),
+  11111111-1111-1111-1111-111111111111,
   'This is such a cool video'
 );
 
@@ -327,7 +325,7 @@ VALUES(08765309-1234-9999-9999-111111111111, NOW(), 55555555-5555-5555-5555-5555
 
 **✅ Step 6c. C(R)UD = read = read data**
 
-Now that we've inserted a set of data, let's take a look at how to read that data back out. This is done with a **SELECT** statement. In its simplest form we could just execute a statement like the following **_**cough_** **_**cough_**:
+Now that we've inserted a set of data, let's take a look at how to read that data back out. This is done with a **SELECT** statement. In its simplest form we could just execute a statement like the following **\_**cough*\*\* \*\****cough\_**:
 
 ```sql
 SELECT * FROM comments_by_user;
@@ -362,11 +360,10 @@ Once you execute the above **SELECT** statements you should see something like t
 _BTW, just a little extra for those who are interested. Since we used a [TIMEUUID](https://docs.datastax.com/en/cql-oss/3.3/cql/cql_reference/timeuuid_functions_r.html) type for our **commentid** field we can use the **dateOf()** function to determine the timestamp from the value. Check it out._
 
 ```
-// Read all data from the comments_by_user table, 
+// Read all data from the comments_by_user table,
 // convert commentid into a timestamp, and label the column "datetime"
 select userid, dateOf(commentid) as datetime, videoid, comment from comments_by_user;
 ```
-
 
 **✅ Step 6d. CR(U)D = update = update data**
 
@@ -376,15 +373,15 @@ Let's take one of the records we created earlier and modify it. If you remember 
 
 ```sql
 INSERT INTO comments_by_video (
-  videoid, 
-  commentid, 
-  userid, 
+  videoid,
+  commentid,
+  userid,
   comment
 )
 VALUES(
-  12345678-1234-1111-1111-111111111111, 
-  494a3f00-e966-11ea-84bf-83e48ffdc8ac, 
-  77777777-7777-7777-7777-777777777777, 
+  12345678-1234-1111-1111-111111111111,
+  494a3f00-e966-11ea-84bf-83e48ffdc8ac,
+  77777777-7777-7777-7777-777777777777,
   'OMG that guy Patrick is such a geek!'
 );
 ```
@@ -400,7 +397,8 @@ CREATE TABLE IF NOT EXISTS comments_by_video (
     PRIMARY KEY ((videoid), commentid)
 ) WITH CLUSTERING ORDER BY (commentid DESC);
 ```
-So looking at ```PRIMARY KEY ((videoid), commentid)``` both **videoid** and **commentid** are used to create a unique row. We'll need both to update our record. 
+
+So looking at `PRIMARY KEY ((videoid), commentid)` both **videoid** and **commentid** are used to create a unique row. We'll need both to update our record.
 
 _You may remember that I also glossed over the fact we used a hardcoded value for **commentid** when we created this record. This was done to simulate someone editing an existing comment for a video in our application. Imagine the UX for such a need. At the point a user clicks the "edit" button information for our **videoid** and **commentid** are provided in order to **UPDATE** the record._
 
@@ -409,8 +407,8 @@ We have the information that we need for the update. With that, the command is e
 📘 **Commands to execute**
 
 ```sql
-UPDATE comments_by_video 
-SET comment = 'OMG that guy Patrick is on fleek' 
+UPDATE comments_by_video
+SET comment = 'OMG that guy Patrick is on fleek'
 WHERE videoid = 12345678-1234-1111-1111-111111111111 AND commentid = 494a3f00-e966-11ea-84bf-83e48ffdc8ac;
 
 SELECT * FROM comments_by_video;
@@ -433,7 +431,7 @@ For our purpose now let's **DELETE** the same row we were working with earlier.
 📘 **Commands to execute**
 
 ```
-DELETE FROM comments_by_video 
+DELETE FROM comments_by_video
 WHERE videoid = 12345678-1234-1111-1111-111111111111 AND commentid = 494a3f00-e966-11ea-84bf-83e48ffdc8ac;
 
 SELECT * FROM comments_by_video;
@@ -449,7 +447,7 @@ Notice the row is now removed from the comments_by_video table, it's as simple a
 
 ## 7. Sensor Data Modeling
 
-> *All Data modelling samples can be found in the [Katacoda LIbrary](https://www.katacoda.com/datastax/courses/cassandra-data-modeling)*
+> _All Data modelling samples can be found in the [Katacoda LIbrary](https://www.katacoda.com/datastax/courses/cassandra-data-modeling)_
 
 - [Data Modelling methodology](https://www.datastax.com/learn/data-modeling-by-example/sensor-data-model)
 
@@ -459,7 +457,7 @@ Notice the row is now removed from the comments_by_video table, it's as simple a
 
 [🏠 Back to Table of Contents](#-table-of-content)
 
-## 8.  Order Management System Data Modelling
+## 8. Order Management System Data Modelling
 
 - [Data Modelling methodology](https://www.datastax.com/learn/data-modeling-by-example/order-management)
 
@@ -513,13 +511,14 @@ We are now set with the database and credentials. Let's start coding with Spring
 
 ## 10. Native Drivers
 
-Let start browsing some JAVA code `\_0_/`. 
+Let start browsing some JAVA code `\_0_/`.
 
 > ⚠️We expect you to be an experienced JAVA DEVELOPER.
 
 ### ✅ 10a. Prerequisite
 
 #### 📦 Docker
+
 - Use the [reference documentation](https://www.docker.com/products/docker-desktop) to install **Docker Desktop**
 - Validate your installation with
 
@@ -529,6 +528,7 @@ docker run hello-world
 ```
 
 #### 📦 Java Development Kit (JDK) 8+
+
 - Use the [reference documentation](https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html) to install a **Java Development Kit**
 - Validate your installation with
 
@@ -537,6 +537,7 @@ java --version
 ```
 
 #### 📦 Apache Maven
+
 - Use the [reference documentation](https://maven.apache.org/install.html) to install **Apache Maven**
 - Validate your installation with
 
@@ -555,101 +556,112 @@ javazone-3-quarkus
 javazone-4-sdk
 ```
 
-> ℹ️    *Full disclosure*: It is NOT a multi module maven (sorry), those are a grouping of multiple projects we have been building. Idea is to give you a lot of code to copy and get inspired. Some samples are standalone classes, others are unit tests.
+> ℹ️ _Full disclosure_: It is NOT a multi module maven (sorry), those are a grouping of multiple projects we have been building. Idea is to give you a lot of code to copy and get inspired. Some samples are standalone classes, others are unit tests.
 
 #### ✅ 10c. Keyspace Manipulations
 
 Astra is a great DBAAS for Cassandra yet, because it creates you everything you need you cannot really show options. As a consequence we will be using a local Cassandra in Docker.
 
 ```yaml
-  cassandra-seed:
-    image: cassandra:4.0.1
-    ports:
-      - 7000:7000
-      - 7001:7001
-      - 7199:7199
-      - 9042:9042
-      - 9160:9160
-    mem_limit: 2G
-    environment:
-      - HEAP_NEWSIZE=128M
-      - MAX_HEAP_SIZE=1024M
-      - CASSANDRA_SEEDS=cassandra-seed
-      - CASSANDRA_CLUSTER_NAME=javazone
-      - CASSANDRA_DC=dc1
-      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+cassandra-seed:
+  image: cassandra:4.0.1
+  ports:
+    - 7000:7000
+    - 7001:7001
+    - 7199:7199
+    - 9042:9042
+    - 9160:9160
+  mem_limit: 2G
+  environment:
+    - HEAP_NEWSIZE=128M
+    - MAX_HEAP_SIZE=1024M
+    - CASSANDRA_SEEDS=cassandra-seed
+    - CASSANDRA_CLUSTER_NAME=javazone
+    - CASSANDRA_DC=dc1
+    - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
 ```
 
-- *Start the Container, and **wait 30s** for the node to bootstrap*
+- _Start the Container, and **wait 30s** for the node to bootstrap_
+
 ```bash
 docker-compose up -d
 ```
 
-- *Open CQLSH in interactive mode*
+- _Open CQLSH in interactive mode_
+
 ```bash
-docker exec -it `docker ps | grep cassandra:4.0.1 | cut -b 1-12` cqlsh 
+docker exec -it `docker ps | grep cassandra:4.0.1 | cut -b 1-12` cqlsh
 ```
 
-- *Show MetaData* : 
+- _Show MetaData_ :
+
 ```bash
 cd 1-cassandra-drivers
 mvn exec:java -Dexec.mainClass=com.datastax.samples.E01_ClusterShowMetaData
 ```
 
-- *Create the Keyspace* : 
+- _Create the Keyspace_ :
+
 ```bash
 mvn exec:java -Dexec.mainClass=com.datastax.samples.E02_CreateKeyspace
 ```
 
-- *You have now a new keyspace 'javazone'*
+- _You have now a new keyspace 'javazone'_
 
 ```sql
 describe keyspaces;
 ```
+
 or
 
 ```bash
 docker exec -it `docker ps | grep cassandra:4.0.1 | cut -b 1-12` cqlsh -e "describe keyspaces"
 ```
 
-- *Create the Schema* : 
+- _Create the Schema_ :
+
 ```bash
 mvn exec:java -Dexec.mainClass=com.datastax.samples.E03_CreateSchema
 ```
 
-- *You have now 4 tables*
+- _You have now 4 tables_
+
 ```sql
 use javazone;
 describe tables;
 ```
 
-- *Connect with configuration File*
+- _Connect with configuration File_
+
 ```bash
 mvn exec:java -Dexec.mainClass=com.datastax.samples.E04_ConfigurationFile
 ```
 
-- *Connect with Explicit Configuration*
+- _Connect with Explicit Configuration_
+
 ```bash
 mvn exec:java -Dexec.mainClass=com.datastax.samples.E05_ProgrammaticConfiguration
 ```
 
-- *Drop Schema*
+- _Drop Schema_
+
 ```bash
 mvn exec:java -Dexec.mainClass=com.datastax.samples.E06_DropSchema
 ```
 
-- *Drop Keyspace*
+- _Drop Keyspace_
+
 ```bash
 mvn exec:java -Dexec.mainClass=com.datastax.samples.E07_DropKeyspace
 ```
 
 #### ✅ 10d. Connect to Astra
 
-- *Download the secure-connect-bundle.zip*
+- _Download the secure-connect-bundle.zip_
 
 ![my-pic](img/scb.png?raw=true)
 
-- *Edit `E08_ConnectToAstraProgrammatic` to override the settings*
+- _Edit `E08_ConnectToAstraProgrammatic` to override the settings_
 
 ```java
 final String ASTRA_ZIP_FILE     = "/tmp/secure-connect-javazone.zip";
@@ -658,13 +670,13 @@ final String ASTRA_CLIENTID     = "<change_me>";
 final String ASTRA_CLIENTSECRET = "<change_me>";
 ```
 
-- *Execute `E08_ConnectToAstraProgrammatic` to override the settings*
+- _Execute `E08_ConnectToAstraProgrammatic` to override the settings_
 
 ```bash
 mvn exec:java -Dexec.mainClass=com.datastax.samples.E08_ConnectToAstraProgrammatic
 ```
 
-- *Report same edits in the Configuration file `custom_astra.conf`*
+- _Report same edits in the Configuration file `custom_astra.conf`_
 
 ```TypeScript
 datastax-java-driver {
@@ -680,7 +692,7 @@ datastax-java-driver {
       secure-connect-bundle = /tmp/secure-connect-javazone.zip
     }
   }
-  
+
   advanced {
     connection {
       init-query-timeout = 10 seconds
@@ -689,14 +701,15 @@ datastax-java-driver {
     control-connection.timeout = 10 seconds
     auth-provider {
       class = PlainTextAuthProvider
-      username = "<change_me>" 
+      username = "<change_me>"
       password = "<change_me>"
     }
   }
 }
 ```
 
-- *Execute `E09_ConnectToAstraConfFile` to validate your settings*
+- _Execute `E09_ConnectToAstraConfFile` to validate your settings_
+
 ```bash
 mvn exec:java -Dexec.mainClass=com.datastax.samples.E09_ConnectToAstraConfFile
 ```
@@ -705,62 +718,74 @@ mvn exec:java -Dexec.mainClass=com.datastax.samples.E09_ConnectToAstraConfFile
 
 For the following samples the connection remains the same using your configuration file.
 
-- *Execute `E10_GettingStarted` to work with table USERS*
+- _Execute `E10_GettingStarted` to work with table USERS_
+
 ```bash
 mvn exec:java -Dexec.mainClass=com.datastax.samples.E10_GettingStarted
 ```
 
-- *In Astra CQL Console you can now*
+- _In Astra CQL Console you can now_
+
 ```sql
 select * from javazone.users;
 ```
 
-- *Execute `E11_SimpleCrud` to work with table USERS*
+- _Execute `E11_SimpleCrud` to work with table USERS_
+
 ```bash
 mvn exec:java -Dexec.mainClass=com.datastax.samples.E11_SimpleCrud
 ```
 
-- *Execute `E12_Paging` to work with table USERS*
+- _Execute `E12_Paging` to work with table USERS_
+
 ```bash
 mvn exec:java -Dexec.mainClass=com.datastax.samples.E12_Paging
 ```
 
-- *Execute `E13_Batches` to work with table USERS*
+- _Execute `E13_Batches` to work with table USERS_
+
 ```bash
 mvn exec:java -Dexec.mainClass=com.datastax.samples.E13_Batches
 ```
 
-- *Execute `E14_ListSetMapAndUdt` to work with nested Structures*
+- _Execute `E14_ListSetMapAndUdt` to work with nested Structures_
+
 ```bash
 mvn exec:java -Dexec.mainClass=com.datastax.samples.E14_ListSetMapAndUdt
 ```
 
-- *Execute `E15_Json` to work with nested Structures*
+- _Execute `E15_Json` to work with nested Structures_
+
 ```bash
 mvn exec:java -Dexec.mainClass=com.datastax.samples.E15_Json
 ```
 
-- *Execute `E16_Async`*
+- _Execute `E16_Async`_
+
 ```bash
 mvn exec:java -Dexec.mainClass=com.datastax.samples.E16_Async
 ```
 
-- *Execute `E17_Reactive`*
+- _Execute `E17_Reactive`_
+
 ```bash
 mvn exec:java -Dexec.mainClass=com.datastax.samples.E17_Reactive
 ```
 
-- *Execute `E18_Counters`*
+- _Execute `E18_Counters`_
+
 ```bash
 mvn exec:java -Dexec.mainClass=com.datastax.samples.E18_Counters
 ```
 
-- *Execute `E19_LightweightTransactions`*
+- _Execute `E19_LightweightTransactions`_
+
 ```bash
 mvn exec:java -Dexec.mainClass=com.datastax.samples.E19_LightweightTransactions
 ```
 
-- *Execute `E20_BlobAndCodec`*
+- _Execute `E20_BlobAndCodec`_
+
 ```bash
 mvn exec:java -Dexec.mainClass=com.datastax.samples.E20_BlobAndCodec
 ```
@@ -771,7 +796,8 @@ mvn exec:java -Dexec.mainClass=com.datastax.samples.E20_BlobAndCodec
 
 The mapping from Object to Tables is avaible in the native drivers Ad Hoc, no need for an external framework. Get more information in the [reference documentation](https://docs.datastax.com/en/developer/java-driver/4.13/manual/mapper/)
 
-- *We imported the following library*
+- _We imported the following library_
+
 ```xml
 <dependency>
   <groupId>com.datastax.oss</groupId>
@@ -780,7 +806,8 @@ The mapping from Object to Tables is avaible in the native drivers Ad Hoc, no ne
 </dependency>
 ```
 
-- *And enable the annotation processor*. Sometimes you need to explicitely invoke a `mvn package` to generate the expected classes.
+- _And enable the annotation processor_. Sometimes you need to explicitely invoke a `mvn package` to generate the expected classes.
+
 ```xml
 <plugins>
  <plugin>
@@ -793,7 +820,7 @@ The mapping from Object to Tables is avaible in the native drivers Ad Hoc, no ne
    <annotationProcessorPaths>
     <path>
      <groupId>com.datastax.oss</groupId>
-     <artifactId>java-driver-mapper-processor</artifactId> 
+     <artifactId>java-driver-mapper-processor</artifactId>
     </path>
    </annotationProcessorPaths>
   </configuration>
@@ -801,7 +828,7 @@ The mapping from Object to Tables is avaible in the native drivers Ad Hoc, no ne
 </plugins>
 ```
 
-- *Create a Bean mapped from the table*
+- _Create a Bean mapped from the table_
 
 ```java
 @Entity
@@ -812,25 +839,25 @@ public class CommentByUser {
 
     @ClusteringColumn
     UUID commentid;
-    
+
     UUID videoid;
 
     String comment;
 }
 ```
 
-- *Look at the DAO*
+- _Look at the DAO_
 
 ```java
 @Dao
 public interface CommentDao extends CassandraSchemaConstants {
-    
+
     @Query("SELECT * FROM ${keyspaceId}.${tableId} "
          + "WHERE " + COMMENT_BY_USER_USERID + " = :userid ")
     PagingIterable<CommentByUser> retrieveUserComments(UUID userid);
-```    
+```
 
-- *Look at the Mapper*
+- _Look at the Mapper_
 
 ```java
 @Mapper
@@ -858,17 +885,17 @@ To isolate the `Spring Data` work from what we did previous let's create a new k
 
 ### ✅ 12a. Create a keyspace
 
-- *Locate the `new keyspace` button on the DB home page*
+- _Locate the `new keyspace` button on the DB home page_
 
 ![image](img/new_keyspace.png?raw=true)
 
-- *Create the `spring_data` keyspace the DB will shoft in maintenance for a few seconds.
+- \*Create the `spring_data` keyspace the DB will shoft in maintenance for a few seconds.
 
 ![image](img/new_keyspace2.png?raw=true)
 
 ### ✅ 12b. Setup the application
 
-- Import the project `2-spring-data` in your IDE. 
+- Import the project `2-spring-data` in your IDE.
 
 - Locate the configuration file `application.properties` in the folder `src/main/resources`.
 
@@ -890,20 +917,22 @@ datastax.astra.secure-connect-bundle=/tmp/secure-connect-javazone.zip
 
 ### ✅ 12c. Validate configuration and create schema
 
-- *Check Connectivity*
+- _Check Connectivity_
+
 ```bash
 cd ../2-spring-data
 mvn test -Dtest=com.datastax.workshop.E22_SpringDataAstraConnectivity
 ```
 
-- *Create Schema if needed*
+- _Create Schema if needed_
+
 ```bash
 mvn test -Dtest=com.datastax.workshop.E23_CreateSchemaInAstraTest
 ```
 
 ### ✅ 12d. Browse the code
 
-- *Project configuration, notice we are using a dedicated Spring Boot Starter*
+- _Project configuration, notice we are using a dedicated Spring Boot Starter_
 
 ```xml
 <dependency>
@@ -912,7 +941,8 @@ mvn test -Dtest=com.datastax.workshop.E23_CreateSchemaInAstraTest
 </dependency>
 ```
 
-- *Create a Projo*
+- _Create a Projo_
+
 ```java
 @Table(value = TodoEntity.TABLENAME)
 public class TodoEntity {
@@ -922,31 +952,31 @@ public class TodoEntity {
  public static final String COLUMN_TITLE     = "title";
  public static final String COLUMN_COMPLETED = "completed";
  public static final String COLUMN_ORDER     = "offset";
-    
+
  @PrimaryKey
  @Column(COLUMN_UID)
  @CassandraType(type = Name.UUID)
  private UUID uid;
-    
+
  @Column(COLUMN_TITLE)
  @CassandraType(type = Name.TEXT)
  private String title;
-    
+
  @Column(COLUMN_COMPLETED)
  @CassandraType(type = Name.BOOLEAN)
  private boolean completed = false;
-    
+
  @Column(COLUMN_ORDER)
  @CassandraType(type = Name.INT)
  private int order = 0;
-    
+
  public TodoEntity(String title, int offset) {
    this(UUID.randomUUID(), title, false, offset);
  }
 }
 ```
 
-- *Create the Repository (An interface !) extending `CassandraRepository`*
+- _Create the Repository (An interface !) extending `CassandraRepository`_
 
 ```java
 @Repository
@@ -954,16 +984,16 @@ public interface TodoRepositoryCassandra extends CassandraRepository<TodoEntity,
 }
 ```
 
-- *Create a Better Repository now extending  `SimpleCassandraRepository` to have access to CqlSession.*
+- _Create a Better Repository now extending `SimpleCassandraRepository` to have access to CqlSession._
 
 ```java
 @Repository
 public class TodoRepositorySimpleCassandra extends SimpleCassandraRepository<TodoEntity, UUID> {
 
  protected final CqlSession cqlSession;
-    
+
  protected final CassandraOperations cassandraTemplate;
-    
+
  @SuppressWarnings("unchecked")
  public TodoRepositorySimpleCassandra(CqlSession cqlSession, CassandraOperations ops) {
    super(new MappingCassandraEntityInformation<TodoEntity, UUID>(
@@ -971,32 +1001,36 @@ public class TodoRepositorySimpleCassandra extends SimpleCassandraRepository<Tod
      .getRequiredPersistentEntity(TodoEntity.class), ops.getConverter()), ops);
    this.cqlSession = cqlSession;
    this.cassandraTemplate = ops;
- }  
-    
+ }
+
 }
 ```
-
 
 ### ✅ 12e. Start the application
 
 Start
+
 ```
 mvn spring-boot:run
 ```
 
-You can access Hello world 
+You can access Hello world
+
 ```
 http://localhost:8080/
 ```
 
 You can interact with the API
+
 ```
+
 ```
 
 You can work with an external user interface
-```
+
 ```
 
+```
 
 [🏠 Back to Table of Contents](#-table-of-content)
 
@@ -1006,17 +1040,17 @@ To isolate the `Quarkus` work from what we did previous let's create a new keypa
 
 ### ✅ 13a. Create a keyspace
 
-- *Locate the `new keyspace` button on the DB home page*
+- _Locate the `new keyspace` button on the DB home page_
 
 ![image](img/new_keyspace.png?raw=true)
 
-- *Create the `spring_data` keyspace the DB will shoft in maintenance for a few seconds.
+- \*Create the `spring_data` keyspace the DB will shoft in maintenance for a few seconds.
 
 ![image](img/new_keyspace3.png?raw=true)
 
 ### ✅ 13b. Setup the application
 
-- Import the project `3-quarkus` in your IDE. 
+- Import the project `3-quarkus` in your IDE.
 
 - Locate the configuration file `application.properties` in the folder `src/main/resources` (sounds familiar ?)
 
@@ -1031,7 +1065,8 @@ quarkus.cassandra.auth.password=<client_secret>
 
 ### ✅ 13c. Validate configuration
 
-- *Check Connectivity*
+- _Check Connectivity_
+
 ```bash
 cd ../3-quarkus
 mvn test -Dtest=com.datastaxdev.E24_QuarkusAstraConnectivity
@@ -1039,7 +1074,7 @@ mvn test -Dtest=com.datastaxdev.E24_QuarkusAstraConnectivity
 
 ### ✅ 13d. Browse the code
 
-- *Project configuration, notice we are not using the same set of drivers*
+- _Project configuration, notice we are not using the same set of drivers_
 
 ```xml
 <dependency>
@@ -1049,7 +1084,7 @@ mvn test -Dtest=com.datastaxdev.E24_QuarkusAstraConnectivity
 </dependency>
 ```
 
-- *Define a Pojo* 
+- _Define a Pojo_
 
 ```java
 @RegisterForReflection
@@ -1060,23 +1095,24 @@ public class Todo {
    // Getter and setters
 }
 ```
-    			
 
 ### ✅ 13e. Start the Application
 
-- *Start the application*
+- _Start the application_
+
 ```
 mvn quarkus:dev -DskipTests
 ```
 
 The application starts
+
 ```
 2021-12-02 17:53:52,114 WARN  [com.dat.oss.qua.dep.int.CassandraClientProcessor] (build-16) Micrometer metrics were enabled by configuration, but MicrometerMetricsFactory was not found.
 2021-12-02 17:53:52,116 WARN  [com.dat.oss.qua.dep.int.CassandraClientProcessor] (build-16) Make sure to include a dependency to the java-driver-metrics-micrometer module.
-__  ____  __  _____   ___  __ ____  ______ 
- --/ __ \/ / / / _ | / _ \/ //_/ / / / __/ 
- -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \   
---\___\_\____/_/ |_/_/|_/_/|_|\____/___/   
+__  ____  __  _____   ___  __ ____  ______
+ --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
+ -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \
+--\___\_\____/_/ |_/_/|_/_/|_|\____/___/
 2021-12-02 17:53:52,758 INFO  [com.dat.oss.dri.int.cor.DefaultMavenCoordinates] (Quarkus Main Thread) DataStax Java driver for Apache Cassandra(R) (com.datastax.oss:java-driver-core) version 4.13.0
 2021-12-02 17:53:53,067 INFO  [com.dat.oss.qua.run.int.qua.CassandraClientStarter] (Quarkus Main Thread) Eagerly initializing Quarkus Cassandra client.
 2021-12-02 17:53:53,919 INFO  [com.dat.oss.dri.int.cor.tim.Clock] (vert.x-eventloop-thread-0) Using native clock for microsecond precision
@@ -1090,7 +1126,8 @@ Tests paused
 Press [r] to resume testing, [o] Toggle test output, [h] for more options
 ```
 
-- *Press `h` to show more options
+- \*Press `h` to show more options
+
 ```bash
 == Continuous Testing
 
@@ -1112,10 +1149,9 @@ Press [r] to resume testing, [o] Toggle test output, [h] for more options
 [q] - Quits the application
 ```
 
-- *Press `w` to see the [web UI](http://localhost:8080/)
+- \*Press `w` to see the [web UI](http://localhost:8080/)
 
 ![image](img/quarkus_ui.png?raw=true)
-
 
 [🏠 Back to Table of Contents](#-table-of-content)
 
