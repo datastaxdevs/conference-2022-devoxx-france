@@ -2,7 +2,7 @@
 
 ### Construire des Applications performantes avec Apache Cassandra™
 
-<img src="img/badge-javazone.png?raw=true" width="200" align="right"/>
+<img src="img/badge.png?raw=true" width="200" align="right"/>
 
 Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **développeurs**. L'objectif est de vous rendre _dangeureux_ avec la technologie, savoir la mettre en oeuvre rapidement.
 
@@ -18,7 +18,7 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
 
 <img src="img/splash.png?raw=true" align="right" width="400px"/>
 
-- [Objectifs](#1-objectives)
+- [Objectifs](#1-objectifs)
 - [Foire aux questions](#2-Frequently-asked-questions)
 - [Supports de Formations](#3-materials-for-the-session)
 - [#**LAB1** - Création de base de donnée](#4-create-astra-db-instance)
@@ -34,8 +34,9 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
 - [#**LAB11** - Stargate Apis](#)
 - [#**LAB12** - Stargate SDK](#)
 
-## 1. Objectives
+## Objectifs
 
+- Comprendre la nature et l'architecture de la base de donnée NoSQL Apache Cassandra™ pour de
 - Discover what the NoSQL Database Apache Cassandra is and what are the relevant **use cases**
 - Understand how Apache Cassandra is different from relational database in the phylosophy and **data modelling**.
 - Practive on how **Java Applications** connect to the databases, what are the rules things to know.
