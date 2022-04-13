@@ -20,7 +20,7 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
 
 - [Objectifs](#1-objectifs)
 - [Foire aux questions](#2-Frequently-asked-questions)
-- [Supports de Formations](#3-materials-for-the-session)
+- [Supports de Formation](#3-materials-for-the-session)
 - [#**LAB1** - Création de base de donnée](#4-create-astra-db-instance)
 - [#**LAB2** - Tables et types de données](#5-create-a-table)
 - [#**LAB3** - Modèle de données `PetClinic`](#)
@@ -42,9 +42,7 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
 - 🎯 Avoir des exemples fonctionnels pour bien démarrer avec les principaux frameworks Java: `Spring`, `Quarkus` et `Micronaut`.
 - 🎯 Découvrir le composant **Stargate**, comprendre les différentes `Apis` et l'utiliser avec le `SDK.`
 
-[🏠 Retour à la table des matières](#-table-des-matières)
-
-## 2. Foire aux questions
+## Foire aux questions
 
 <p/>
 <details>
@@ -59,17 +57,19 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
 
 <p/>
 <details>
-<summary><b> 2️⃣ Puis-je faire les LABS sur ma machine ?</b></summary>
+<summary><b> 2️⃣ Puis-je exécuter les LABS sur ma machine ?</b></summary>
 <hr>
-<p>Afin de rendre l'expérience la plus agréable possible nous fournissons un environnement dans le cloud avec l'outil <pre>Gitpod</pre> mais rien de vous empêche d'utiliser votre machine. Durant chaque atelier nous listerons les pré-requis. Le contenu étant dense, le temps pour l’installation de tous les outils localement est limité. Voici ce que vous devrez avoir:
+<p>Afin de rendre l'expérience la plus agréable possible nous fournissons un environnement dans le cloud avec l'outil Gitpod mais rien de vous empêche d'utiliser votre machine. Durant chaque atelier nous listerons les pré-requis. Le contenu étant dense, le temps pour l’installation de tous les outils localement est limité.</p>
+
+<p>Voici une liste exhaustive:
 <ol>
 <li><b>Java 8+</b> ainsi que <b>Maven 3.6+</b> pour les LABS avec Java.
 <li><b>Python 3+</b> ainsi que <b>pip3</b> pour les LABS avec Python.
 <li><b>Node 16+</b> ainsi que <b>NPM *+</b> pour les LABS avec Javascript.
-<li><b>Docker</b> ainsi que <b>Docker-compose</b> pour démarrer les containeurs.
-<li>Une machine disposant d'au moins 8Go de mémoire vive.
-<li>2Go d'espace disque pour télécharger les différents images et outils.
-<li>Un atelier de development logiciel (IDE) comme Eclipse, IntelliJ, Netbean...
+<li><b>Docker</b> ainsi que <b>Docker-compose</b> pour démarrer les conteneurs.
+<li>Une machine disposant d'au moins <b>8Go de mémoire vive.</b>
+<li><b>2Go d'espace disque </b>pour télécharger les différents images et outils.
+<li>Un atelier de développement logiciel (IDE) comme Eclipse, IntelliJ, Netbean...
 </ol>
 </p>
 In this readme, we try to provide instructions for local development as well - but keep in mind that the main focus is development on Gitpod, hence <strong>We can't guarantee live support</strong> about local development in order to keep on track with the schedule. However, we will do our best to give you the info you need to succeed.
@@ -77,21 +77,26 @@ In this readme, we try to provide instructions for local development as well - b
 
 <p/>
 <details>
-<summary><b> 3️⃣ Do I need to pay for anything for this workshop?</b></summary>
+<summary><b> 3️⃣ Les outils resteront'ils gratuits après la session ?</b></summary>
 <hr>
-<b>No.</b> All tools and services we provide here are FREE.
+<b>Absolutement.</b> Toutes les solutions utilisées aujourd'hui sont gratuites. Pour les démonstrations avec les produits en Saas aucune carte de crédit ne sera demandée ni maintenant ni après.
 </details>
 <p/>
 <details>
-<summary><b> 4️⃣ Will I get a certificate if I attend this workshop?</b></summary>
+<summary><b> 4️⃣ S'agit t'il d'une formation certifiante ?</b></summary>
 <hr>
-Attending the session is not enough. You need to complete the homeworks detailed below and you will get a nice badge.
+
+<img src="img/certifications.png?raw=true" align="right" width="400px"/>
+Datastax propose <a href="https://www.datastax.com/dev/certifications">3 certifications </a> autour des technologies Apache Cassandra™. En 3h il nous est impossible de tout couvrir pour prétendre à la certification. Cependant tous les cours nécessaires sont disponibles sur <a href="https://academy.datastax.com">academy.datastax.com"</a> et <a href="https://datastax.com/dev">datastax.com/dev</a>. Participer à cette session (live) vous ouvre le droit à un voucher pour 2 tentatives gratuites aux certifications <i>(au lieu de 145$).</i>.</p>.
+
+<p>Vous ne partez pas les mains vides ! Vous repartez avec un tee-shirt ainsi qu'un magnifique BADGE pour se la jouer devant tout le monde sur Twitter et Linkedin. 
+</p>
 </details>
 <p/>
 
-[🏠 Back to Table of Contents](#-table-of-content)
+[🏠 Table des matières](#-table-des-matières)
 
-## 3. Materials for the Session
+## Supports de Formation
 
 It doesn't matter if you join our workshop live or you prefer to work at your own pace,
 we have you covered. In this repository, you'll find everything you need for this workshop:
