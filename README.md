@@ -1,4 +1,4 @@
-## Devoxx France 2022 🇫🇷
+## 🇫🇷 Devoxx France 2022 🇫🇷
 
 ### Construire des Applications performantes avec Apache Cassandra™
 
@@ -42,33 +42,39 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
 - 🎯 Avoir des exemples fonctionnels pour bien démarrer avec les principaux frameworks Java: `Spring`, `Quarkus` et `Micronaut`.
 - 🎯 Découvrir le composant **Stargate**, comprendre les différentes `Apis` et l'utiliser avec le `SDK.`
 
-[🏠 Back to Table of Contents](#-table-des-matières)
+[🏠 Retour à la table des matières](#-table-des-matières)
 
-## 2. Frequently asked questions
+## 2. Foire aux questions
 
 <p/>
 <details>
-<summary><b> 1️⃣ Can I run this workshop on my computer?</b></summary>
+<summary><b> 1️⃣ Quels sont les pré-requis ? </b></summary>
 <hr>
-<p>There is nothing preventing you from running the workshop on your own machine, If you do so, you will need the following
+<ul>
+<li>Vous devez maîtriser un <b>langage de programmation</b> <i>(Java, Javascript, Python - cette session s'adresse à des développeurs)</i> mais pas nécessairement une grande expérience.
+<li>Pour utiliser Gitpod vous aurez besoin d'un <b>compte Github ou Gitlab.</b>
+</ul>
+</p>
+</details>
+
+<p/>
+<details>
+<summary><b> 2️⃣ Puis-je faire les LABS sur ma machine ?</b></summary>
+<hr>
+<p>Afin de rendre l'expérience la plus agréable possible nous fournissons un environnement dans le cloud avec l'outil <pre>Gitpod</pre> mais rien de vous empêche d'utiliser votre machine. Durant chaque atelier nous listerons les pré-requis. Le contenu étant dense, le temps pour l’installation de tous les outils localement est limité. Voici ce que vous devrez avoir:
 <ol>
-<li><b>git</b> installed on your local system
-<li><b>JDK 8+</b> installed on your local system
-<li><b>Maven 3.6+</b> installed on your local system
+<li><b>Java 8+</b> ainsi que <b>Maven 3.6+</b> pour les LABS avec Java.
+<li><b>Python 3+</b> ainsi que <b>pip3</b> pour les LABS avec Python.
+<li><b>Node 16+</b> ainsi que <b>NPM *+</b> pour les LABS avec Javascript.
+<li><b>Docker</b> ainsi que <b>Docker-compose</b> pour démarrer les containeurs.
+<li>Une machine disposant d'au moins 8Go de mémoire vive.
+<li>2Go d'espace disque pour télécharger les différents images et outils.
+<li>Un atelier de development logiciel (IDE) comme Eclipse, IntelliJ, Netbean...
 </ol>
 </p>
 In this readme, we try to provide instructions for local development as well - but keep in mind that the main focus is development on Gitpod, hence <strong>We can't guarantee live support</strong> about local development in order to keep on track with the schedule. However, we will do our best to give you the info you need to succeed.
 </details>
-<p/>
-<details>
-<summary><b> 2️⃣ What other prerequisites are required?</b></summary>
-<hr>
-<ul>
-<li>You will need a GitHub account
-<li>You will also need an Astra account: don't worry, we'll work through that in the following
-</ul>
-</p>
-</details>
+
 <p/>
 <details>
 <summary><b> 3️⃣ Do I need to pay for anything for this workshop?</b></summary>
