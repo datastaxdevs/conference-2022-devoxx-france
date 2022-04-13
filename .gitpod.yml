@@ -2,29 +2,7 @@ image:
   file: .gitpod.Dockerfile
 
 tasks:
-  
-
-  # ------------------------------------
-  # SETUP USER INTERFACE
-  # ------------------------------------
-  - name: spring-petclinic-angular
-    init: |
-      gp open README.md
-      cd /workspace/workshop-spring-reactive/spring-petclinic-angular
-      npm install --silent
-      npm run build --silent
-    command: |
-      cd /workspace/workshop-spring-reactive/spring-petclinic-angular
-      echo "export const environment = {production: false, REST_API_URL: '$(gp url 9966)/petclinic/api/'};" > /workspace/workshop-spring-reactive/spring-petclinic-angular/src/environments/environment.ts 
-    env:
-      NG_CLI_ANALYTICS: ci
-  - name: spring-petclinic-reactive
-    command: |
-     mvn clean
-  # --------------------------------------
-  #  SETUP CQLSH and Create DB Workshop
-  # --------------------------------------
-  - name: setup-cqlsh
+  - name: astra-cqlsh
     env:
         CQLENG_ALLOW_SCHEMA_MANAGEMENT: 1
     before: |
@@ -33,13 +11,15 @@ tasks:
     command: |
       ./install-cqlsh
       ./cqlsh
-         
-     
+   - name: LAB1
+     before: |
+       docker pull cassandra:4.0.3
+     command: |
+       clear
+       echo "This is the Terminal for LAB1 with local Cassandra"
+       docker images
 ports:
-  - port: 4200
-    onOpen: open-browser
-    visibility: public
-  - port: 9966
+  - port: 9042
     onOpen: open-browser
     visibility: public
 
