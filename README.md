@@ -6,7 +6,7 @@
 
 Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **développeurs**. L'objectif est de vous rendre _dangeureux_ avec la technologie et savoir la mettre en oeuvre rapidement sur vos dans vos projets.
 
-[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/datastaxdevs/workshop-streaming-game)
+[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/datastaxdevs/conference-2022-devoxx)
 [![License Apache2](https://img.shields.io/hexpm/l/plug.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 [![Discord](https://img.shields.io/discord/685554030159593522)](https://discord.com/widget?id=685554030159593522&theme=dark)
 
@@ -21,7 +21,7 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
 - [Objectifs](#1-objectifs)
 - [Foire aux questions](#2-Frequently-asked-questions)
 - [Supports de Formation](#3-materials-for-the-session)
-- [#**LAB1** - Création de base de donnée](#4-create-astra-db-instance)
+- [#**LAB1** - Création de la base de donnée](#4-create-astra-db-instance)
 - [#**LAB2** - Tables et types de données](#5-create-a-table)
 - [#**LAB3** - Modèle de données `PetClinic`](#)
 - [#**LAB4** - Modèle de données `TimeSeries`](#7-sensor-data-modeling)
@@ -86,27 +86,51 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
 <hr>
 
 <img src="img/certifications.png?raw=true" align="right" width="320px"/>
-Datastax propose <a href="https://www.datastax.com/dev/certifications">3 certifications </a> autour des technologies Apache Cassandra™. En 3h il nous est impossible de tout couvrir pour prétendre à la certification. Cependant tous les cours nécessaires sont disponibles sur <a href="https://academy.datastax.com">academy.datastax.com"</a> et <a href="https://datastax.com/dev">datastax.com/dev</a>. Participer à cette session (live) vous ouvre le droit à un voucher pour 2 tentatives gratuites aux certifications <i>(au lieu de 145$).</i>.</p>.
+Datastax propose <a href="https://www.datastax.com/dev/certifications">3 certifications </a> autour des technologies Apache Cassandra™. En 3h il nous est impossible de tout couvrir pour prétendre à la certification. Cependant tous les cours nécessaires sont disponibles sur <a href="https://academy.datastax.com">academy.datastax.com"</a> et <a href="https://datastax.com/dev">datastax.com/dev</a>. Participer à cette session (live) vous ouvre le droit à un voucher pour 2 tentatives gratuites aux certifications <i>(au lieu de 145$).</i>.</p>
 
 <p>Vous ne partez pas les mains vides ! Vous repartez avec un tee-shirt ainsi qu'un magnifique BADGE pour se la jouer devant tout le monde sur Twitter et Linkedin. 
 </p>
 </details>
 <p/>
 
-[🏠 Table des matières](#-table-des-matières)
-
 ## Supports de Formation
 
-It doesn't matter if you join our workshop live or you prefer to work at your own pace,
-we have you covered. In this repository, you'll find everything you need for this workshop:
+Que vous soyez avec nous pour Devoxx ou que que vous regardiez la session maintenant sur Youtube voici toutes les supports nécessaires:
 
-- [Slide deck](slides/slides.pdf)
-- [Datastax Developers Discord chat](https://bit.ly/cassandra-workshop)
-- [Questions and Answers](https://community.datastax.com/)
+- [Les slides](slides/slides.pdf)
+- [Les différents supports pour LABS](/hands-on)
+- [Une invitation sur notre serveur Discord](https://bit.ly/cassandra-workshop) pour poser toutes vos questions.
+- [Notre forum, community.datastax.com](https://community.datastax.com/) pour échanger.
 
-[🏠 Back to Table of Contents](#-table-of-content)
+[🏠 Table des matières](#-table-des-matières)
 
-## 4. Create Astra DB Instance
+## LAB1 - Création de la base de donnée
+
+### 1a - DBAAS Astra
+
+#### ✅ 1a. Créer un compte sur Astra
+
+> 📖 Documentation: [Créer son compte Astra 🇬🇧](https://awesome-astra.github.io/docs/pages/astra/create-account/)
+
+[![](https://dabuttonfactory.com/button.png?t=+Connect+to+Astra&f=Open+Sans-Bold&ts=12&tc=fff&hp=23&vp=16&c=11&bgt=gradient&bgc=0b5394&ebgc=073763)](https://astra.dev/devoxx)
+
+#### ✅ 1b. Créer une base de donnée sur Astra
+
+> 📖 Documentation: [Créer une base de donnée sur Astra 🇬🇧](https://awesome-astra.github.io/docs/pages/astra/create-instance/)
+
+Pour la session aujourd'hui utilisons les valeurs suivantes. Vous pouvez les changer bien sûr mais ce sont celles définies par défaut dans les LABS.
+
+| Parameter     | Value                                                                                                                                                                                     |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Database name | `workshops`                                                                                                                                                                               |
+| Keyspace name | `devoxx`                                                                                                                                                                                  |
+| Region name   | Prenez `Google Cloud` et l'une des 3 régions `North America/us-east-1`, `Europe/europse-west-1` ou `Asia Pacific/Mumbai`. Les autres ne sont pas dans le plan gratuit et repérées par 🔒. |
+
+**Walkthrough:** _The Walkthrough mentions the wrong keyspace, make sure to use `spring_petclinic`_
+
+![image](doc/img/astra-create-db.gif?raw=true)
+
+### Installation avec Docker
 
 **`ASTRA DB`** is the simplest way to run Cassandra with zero operations at all - just push the button and get your cluster. No credit card required, $25.00 USD credit every month, roughly 20M read/write operations, 80GB storage monthly - sufficient to run small production workloads.
 
