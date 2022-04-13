@@ -4,7 +4,7 @@
 
 <img src="img/badge.png?raw=true" width="200" align="right"/>
 
-Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **développeurs**. L'objectif est de vous rendre _dangeureux_ avec la technologie, savoir la mettre en oeuvre rapidement.
+Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **développeurs**. L'objectif est de vous rendre _dangeureux_ avec la technologie et savoir la mettre en oeuvre rapidement sur vos dans vos projets.
 
 [![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/datastaxdevs/workshop-streaming-game)
 [![License Apache2](https://img.shields.io/hexpm/l/plug.svg)](http://www.apache.org/licenses/LICENSE-2.0)
@@ -36,14 +36,13 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
 
 ## Objectifs
 
-- Comprendre la nature et l'architecture de la base de donnée NoSQL Apache Cassandra™ pour de
-- Discover what the NoSQL Database Apache Cassandra is and what are the relevant **use cases**
-- Understand how Apache Cassandra is different from relational database in the phylosophy and **data modelling**.
-- Practive on how **Java Applications** connect to the databases, what are the rules things to know.
-- Get an overview of [Stargate](stargate.io), what it brings to the picture
-- Get you hands dirty to use it all and have samples codes to come back on.
+- 🎯 Comprendre la nature et l'architecture de la base de donnée NoSQL Apache Cassandra™ pour déterminer les **bons cas d'usage.**
+- 🎯 Comprendre les différences fondamentales avec les bases de données relationnelles et la méthodologie pour construire un modèle de donnée approprié.
+- 🎯 Savoir utiliser les drivers pour établir la connexion, construire ses requêtes et implémenter tout type de service.
+- 🎯 Avoir des exemples fonctionnels pour bien démarrer avec les principaux frameworks Java: `Spring`, `Quarkus` et `Micronaut`.
+- 🎯 Découvrir le composant **Stargate**, comprendre les différentes `Apis` et l'utiliser avec le `SDK.`
 
-[🏠 Back to Table of Contents](#-table-of-content)
+[🏠 Back to Table of Contents](#-table-des-matières)
 
 ## 2. Frequently asked questions
 
