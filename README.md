@@ -106,7 +106,7 @@ Que vous soyez avec nous pour Devoxx ou que que vous regardiez la session mainte
 
 ## LAB1 - Création de la base de donnée
 
-### 1.1 DBAAS Astra
+### 1.1 Environnement DBAAS Astra
 
 #### ✅ 1.1 Step a: Créer un compte sur Astra
 
@@ -164,15 +164,85 @@ Pour la session utilisez le role `Database Administrator` pour avoir accès à t
 
 ![](/img/astra-create-token.gif?raw=true)
 
-### 1.2 - Installation avec Docker
+Vos identifiants contiennent 3 champs:
 
-[Gitpod](https://www.gitpod.io/) is an IDE 100% online based on [VS Code](https://github.com/gitpod-io/vscode/blob/gp-code/LICENSE.txt?lang=en-US). To initialize your environment simply click on the button below _(CTRL + Click to open in new tab)_ You will be asked for you github account, as needed.
+- `ClientId` qui correspond à un identifiant utilisateur
+- `ClientSecret` qui correspond à un mot de passe utilisateur
+- `Token` qui correspond à une clé pour les Apis mais peut aussi servir de mot de passe avec le compte utilisateur générique `token`.
+
+### 1.2 - Environnement Docker
+
+#### ✅ 1.2 Step a: Démarrer `Gitpod`
+
+[Gitpod](https://www.gitpod.io/) est un IDE 100% dans le cloud. Il s'appuie sur [VS Code](https://github.com/gitpod-io/vscode/blob/gp-code/LICENSE.txt?lang=en-US) mais fourni également de nombreux outils pour développer.
+
+_Click-Droit_ sur le bouton pour ouvrir gitpod dans un nouveau TAB.
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/datastaxdevs/conferennce-2022-devoxx)
 
-## 5. Create a table
+Lorsque Gitpod est démarré localiser le `Terminal` et mettez le en plein écran.
 
-#### ✅ 5a. Locate the CQL Console
+#### ✅ 1.2 Step b: Lancer un cluster de `1 noeud`
+
+Dans le repertoire `LAB_01` repérerer le fichier `docker-compose-1noeud.yml`
+
+```yaml
+version: "2"
+services:
+  cassandra-seed:
+    image: cassandra:4.0.3
+    ports:
+      - 9042:9042
+    mem_limit: 2G
+    environment:
+      - HEAP_NEWSIZE=128M
+      - MAX_HEAP_SIZE=1024M
+      - CASSANDRA_SEEDS=cassandra-seed
+      - CASSANDRA_CLUSTER_NAME=javazone
+      - CASSANDRA_DC=dc1
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+```
+
+-
+
+```bash
+docker-compose up -f ./hands-on/LAB_01/docker-compose-1noeud.yml -d
+```
+
+- _Open CQLSH in interactive mode_
+
+```bash
+docker exec -it `docker ps | grep cassandra:4.0.1 | cut -b 1-12` cqlsh
+```
+
+- _Show MetaData_ :
+
+```bash
+cd 1-cassandra-drivers
+mvn exec:java -Dexec.mainClass=com.datastax.samples.E01_ClusterShowMetaData
+```
+
+- _Create the Keyspace_ :
+
+```bash
+mvn exec:java -Dexec.mainClass=com.datastax.samples.E02_CreateKeyspace
+```
+
+- _You have now a new keyspace 'javazone'_
+
+```sql
+describe keyspaces;
+```
+
+or
+
+```bash
+docker exec -it `docker ps | grep cassandra:4.0.1 | cut -b 1-12` cqlsh -e "describe keyspaces"
+```
+
+## LAB2 - Tables et types de données
+
+#### ✅ 2a. Locate the CQL Console
 
 As seen in the slides on the contrary of relational you start with the request and data model BEFORE CODING.
 
@@ -253,10 +323,6 @@ desc tables;
 <img width="1000" alt="Screenshot 2020-09-30 at 13 57 32" src="https://user-images.githubusercontent.com/20337262/94687995-e88a0f00-0324-11eb-8c7a-08c3dee00eaf.png">
 
 Aaaand **BOOM**, you created a table in your database. That's it. Now, we'll move to the next section in the presentation and break down the method used to create a data model with Apache Cassandra.
-
-[🏠 Back to Table of Contents](#table-of-contents)
-
-## 6. Execute CRUD operations
 
 CRUD operations stand for create, read, update, and delete. Simply put, they are the basic types of commands you need to work with ANY database in order to maintain data for your applications.
 
@@ -484,7 +550,13 @@ Notice the row is now removed from the comments_by_video table, it's as simple a
 
 [🏠 Back to Table of Contents](#-table-of-content)
 
-## 7. Sensor Data Modeling
+## LAB3- Modèle de données `PetClinic`
+
+```
+TODO
+```
+
+## LAB4- Modèle de données `TimeSeries`
 
 > _All Data modelling samples can be found in the [Katacoda LIbrary](https://www.katacoda.com/datastax/courses/cassandra-data-modeling)_
 
@@ -496,65 +568,7 @@ Notice the row is now removed from the comments_by_video table, it's as simple a
 
 [🏠 Back to Table of Contents](#-table-of-content)
 
-## 8. Order Management System Data Modelling
-
-- [Data Modelling methodology](https://www.datastax.com/learn/data-modeling-by-example/order-management)
-
-![image](https://www.datastax.com/sites/default/files/inline-images/%28web%29%20physical_1.png)
-
-- [Katacoda Scenario](https://www.katacoda.com/datastax/courses/cassandra-data-modeling/order-management-data)
-
-[🏠 Back to Table of Contents](#-table-of-content)
-
-## 9. Create Astra Token
-
-To connect to the database from Java code we need some credentials, this is what we are going to do here.
-
-#### ✅ 6a. Generate Token
-
-Following the [Manage Application Tokens docs](https://docs.datastax.com/en/astra/docs/manage-application-tokens.html) create a token with `Database Admnistrator` roles.
-
-- Go the `Organization Settings`
-
-- Go to `Token Management`
-
-- Pick the role `Database Admnistrator` on the select box
-
-- Click Generate token
-
-**👁️ Walkthrough**
-
-![image](img/astra-create-token.gif?raw=true)
-
-This is what the token page looks like. You can now download the values as a CSV. We will need those values but you can also keep this window open for use later.
-
-![image](img/astra-token.png?raw=true)
-
-Notice the clipboard icon at the end of each value.
-
-- `clientId:` We will use it as a _username_ to contact to the Cassandra database
-
-- `clientSecret:` We will use it as a _password_ to contact to the Cassandra database
-
-- `appToken:` We will use it as a api token Key to interact with APIs.
-
-#### ✅ 6b. Copy your token in your clipboard
-
-To know more about roles of each token you can have a look to [this video.](https://www.youtube.com/watch?v=TUTCLsBuUd4&list=PL2g2h-wyI4SpWK1G3UaxXhzZc6aUFXbvL&index=8)
-
-**Note: Make sure you don't close the window accidentally or otherwise - if you close this window before you copy the values, the application token is lost forever. They won't be available later for security reasons.**
-
-We are now set with the database and credentials. Let's start coding with Spring !
-
-[🏠 Back to Table of Contents](#-table-of-content)
-
-## 10. Native Drivers
-
-Let start browsing some JAVA code `\_0_/`.
-
-> ⚠️We expect you to be an experienced JAVA DEVELOPER.
-
-### ✅ 10a. Prerequisite
+## LAB5 - Introduction aux drivers
 
 #### 📦 Docker
 
@@ -596,6 +610,28 @@ javazone-4-sdk
 ```
 
 > ℹ️ _Full disclosure_: It is NOT a multi module maven (sorry), those are a grouping of multiple projects we have been building. Idea is to give you a lot of code to copy and get inspired. Some samples are standalone classes, others are unit tests.
+
+## LAB6 - Mapping Objet avec les drivers
+
+## LAB7 - Programmation reactive
+
+## LAB8 - Spring Data Cassandra
+
+## LAB9 - Cassandra Quarkus extension
+
+## LAB10 - Micronaut Cassandra
+
+## LAB11 - Stargate Apis
+
+## LAB12 - Stargate SDK
+
+## 10. Native Drivers
+
+Let start browsing some JAVA code `\_0_/`.
+
+> ⚠️We expect you to be an experienced JAVA DEVELOPER.
+
+### ✅ 10a. Prerequisite
 
 #### ✅ 10c. Keyspace Manipulations
 

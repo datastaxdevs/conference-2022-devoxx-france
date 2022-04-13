@@ -1,0 +1,14 @@
+version: "2"
+services:
+  cassandra-seed:
+    image: cassandra:4.0.3
+    ports:
+      - 9042:9042
+    mem_limit: 2G
+    environment:
+      - HEAP_NEWSIZE=128M
+      - MAX_HEAP_SIZE=1024M
+      - CASSANDRA_SEEDS=cassandra-seed
+      - CASSANDRA_CLUSTER_NAME=javazone
+      - CASSANDRA_DC=dc1
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
