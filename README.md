@@ -168,15 +168,9 @@ Vos identifiants contiennent 3 champs:
 - `ClientSecret` qui correspond à un mot de passe utilisateur
 - `Token` qui correspond à une clé pour les Apis mais peut aussi servir de mot de passe avec le compte utilisateur générique `token`.
 
-```
-export ASTRA_DB_NAME=workshops
-export ASTRA_DB_KEYSPACE=devoxx
-npm exec -y astra-setup $ASTRA_DB_NAME $SATRA_DB_KEYSPACE
-```
+### 1.2 - Démarrage et configuration Gitpod
 
-### 1.2 - Environnement Docker
-
-#### ✅ 1.2 Step a: Démarrer `Gitpod`
+#### ✅ 1.2 (a): Démarrer `Gitpod`
 
 [Gitpod](https://www.gitpod.io/) est un IDE 100% dans le cloud. Il s'appuie sur [VS Code](https://github.com/gitpod-io/vscode/blob/gp-code/LICENSE.txt?lang=en-US) mais fourni également de nombreux outils pour développer.
 
@@ -184,11 +178,49 @@ _Click-Droit_ sur le bouton pour ouvrir gitpod dans un nouveau TAB.
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/datastaxdevs/conferennce-2022-devoxx)
 
+#### ✅ 1.2 (b): Configurer `Gitpod`
+
+Plusieurs Terminaux vont s'ouvrir pour les différents LABS. Repérer le lab `astra-cqlsh` nous allons configurer un shell pour utiliser la base de donnée Cassandra dans ASTRA.
+
+![](/img/gitpod-terminal-astra-01.png?raw=true)
+
+#### ✅ 1.2 (c): ReDéfinissez le nom de la base de données
+
+```
+export ASTRA_DB_NAME=workshops
+```
+
+#### ✅ 1.2 (d): ReDéfinissez le nom du keyspace
+
+```
+export ASTRA_DB_KEYSPACE=devoxx
+```
+
+#### ✅ 1.2 (e): Configurer l'environnement
+
+```
+npm exec -y astra-setup $ASTRA_DB_NAME $ASTRA_DB_KEYSPACE
+```
+
+#### ✅ 1.2 (f): Vérifier la configuration des variables
+
+```
+cat /workspace/conference-2022-devoxx/.env
+```
+
+#### ✅ 1.2 (g): Vérifier que le zip de connexion est téléchargé
+
+```
+ls /home/gitpod/.cassandra/bootstrap.zip
+```
+
+### 1.3 - Docker
+
 Lorsque Gitpod est démarré localiser le `Terminal` et mettez le en plein écran.
 
 #### ✅ 1.2 Step b: Lancer un cluster de `1 noeud`
 
-Dans le repertoire `LAB_01` repérerer le fichier `docker-compose-1noeud.yml`
+Dans le repertoire `LAB_01` repérerer le fichier `docker-compose-1noeud.yml`. Nous allons utilisons l'[image officielle Cassandra](https://hub.docker.com/_/cassandra/)
 
 ```yaml
 version: "2"
