@@ -6,18 +6,17 @@ tasks:
     env:
         CQLENG_ALLOW_SCHEMA_MANAGEMENT: 1
     before: |
-      chmod 700 /workspace/workshop-spring-reactive/install-cqlsh
-      chmod 700 /workspace/workshop-spring-reactive/cqlsh
+      chmod 700 /workspace/conference-2022-devoxx/astra-cqlsh-install
+      chmod 700 /workspace/conference-2022-devoxx/astra-cqlsh-setup
     command: |
-      ./install-cqlsh
-      ./cqlsh
-   - name: LAB1
-     before: |
-       docker pull cassandra:4.0.3
-     command: |
-       clear
-       echo "This is the Terminal for LAB1 with local Cassandra"
-       docker images
+      ./astra-cqlsh-install
+  - name: local-cqlsh
+    before: |
+      docker pull cassandra:4.0.3
+    command: |
+      clear
+      echo "This is the Terminal for LAB1 with local Cassandra"
+      docker images
 ports:
   - port: 9042
     onOpen: open-browser
