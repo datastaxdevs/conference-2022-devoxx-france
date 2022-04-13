@@ -11,13 +11,13 @@ tasks:
     command: |
       ./install-cqlsh
       ./cqlsh
-   - name: LAB1
-     before: |
-       docker pull cassandra:4.0.3
-     command: |
+  - name: LAB1
+    before: |
+      docker pull cassandra:4.0.3
+    command: |
        clear
        echo "This is the Terminal for LAB1 with local Cassandra"
-       docker images
+       docker images | grep cassandra
 ports:
   - port: 9042
     onOpen: open-browser
