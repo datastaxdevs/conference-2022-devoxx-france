@@ -130,34 +130,32 @@ Pour la session aujourd'hui utilisons les valeurs suivantes. Vous pouvez les cha
 
 ![](/img/astra-create-db.gif?raw=true)
 
+Lorsque vous créez un compte vous créez également une Organization, il s'agit de votre tenant. A l'intérieur vous pouvez définir plusieurs bases de données. Vous pouvez inviter d'autres utilisateurs dans votre organisation.
+
+```mermaid
+  graph TD
+    USER(Utilisateur) -->|n...m|ORG(Organisations)
+    ORG -->|0..n|DB(Dabatases)
+    ORG -->|0..n|STR(Streaming Tenants)
+```
+
 #### ✅ 1.1 Step c: Créer vos identifiants pour Astra
 
 > 📖 Documentation: [Créer vos identifiants pour Astra 🇬🇧](https://awesome-astra.github.io/docs/pages/astra/create-token/#c-procedure)
 
-Lorsque vous créez un compte vous créez également une Organization, il s'agit de votre tenant.
+Lorsque vous créez un jeton, il faut lui associer un role qui regroupe plusieurs permissions.
 
 ```mermaid
-    graph LR
-        user>fa:fa-user Developer]-- Create Database --> cassandra[(fa:fa-database Cassandra)]
-
-        user-- Design -->usecase{{fa:fa-cube Use Case}}
-        usecase-- Workflow -->queries[fa:fa-bezier-curve queries]
-        usecase-- MCD -->entities[fa:fa-grip-vertical entities]
-        queries-- Chebotko modelization -->schema[fa:fa-list schema]
-        entities-- Chebotko modelization -->schema[fa:fa-list schema]
-        schema[fa:fa-list  schema]-- Inject -->cassandra[(fa:fa-database Cassandra)]
-
-        user-- prepare -->dataset{{fa:fa-coings DataSet}}
-        dataset-- input -->dsbulk-- load data -->cassandra
-
-        user-- Create Token -->token{{fa:fa-key Token}}
-        usecase-->API
-
-        API-->Request
-        token-->Request
-        schema-->Request
-        Request-- invoke -->cassandra
+  graph TD
+    USER(Utilisateur) -->|n...m|ORG(Organisations)
+    ORG -->|0..n|DB(Dabatases)
+    ORG -->|0..n|TOKEN(Tokens)
+    ORG -->|0..n|STR(Streaming Tenants)
+    TOKEN-->|1:1|ROLE(role)
+    ROLE-->|1..n|PERMISSIONS(permissions)
 ```
+
+Pour la session utilisez le role `Database Administrator` pour avoir accès à tout. N'oubliez pas de télécharger le fichier `CSV`, les informations affichées ne seront plus disponibles pour des raisons de sécurité.
 
 | Parameter | Value                    |
 | --------- | ------------------------ |
@@ -166,8 +164,6 @@ Lorsque vous créez un compte vous créez également une Organization, il s'agit
 **👁️ Walkthrough:** _Voici une petite animation pour retrouver les étapes_
 
 ![](/img/astra-create-token.gif?raw=true)
-
-> ⚠️ We will use the third argument called `TOKEN` that looks like `AstraCS:...` make sure you copy it in the clipboard.
 
 ### 1.2 - Installation avec Docker
 
