@@ -10,7 +10,7 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
 [![License Apache2](https://img.shields.io/hexpm/l/plug.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 [![Discord](https://img.shields.io/discord/685554030159593522)](https://discord.com/widget?id=685554030159593522&theme=dark)
 
-⏲️ **Durée:** 3 heures (avec Speakers) ou 60 minutes (exercices)
+⏲️ **Durée:** 3 heures
 
 🎓 **Niveau** Débutant à intermédiaire
 
@@ -37,16 +37,16 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
 ## Objectifs
 
 - 🎯 Comprendre la nature et l'architecture de la base de donnée NoSQL Apache Cassandra™ pour déterminer les **bons cas d'usage.**
-- 🎯 Comprendre les différences fondamentales avec les bases de données relationnelles et la méthodologie pour construire un modèle de donnée approprié.
-- 🎯 Savoir utiliser les drivers pour établir la connexion, construire ses requêtes et implémenter tout type de service.
-- 🎯 Avoir des exemples fonctionnels pour bien démarrer avec les principaux frameworks Java: `Spring`, `Quarkus` et `Micronaut`.
-- 🎯 Découvrir le composant **Stargate**, comprendre les différentes `Apis` et l'utiliser avec le `SDK.`
+- 🎯 Comprendre les différences fondamentales avec les bases de données relationnelles et la **méthodologie pour construire un modèle de donnée** approprié.
+- 🎯 Savoir **utiliser les drivers** pour établir la connexion, construire ses requêtes et implémenter tout type de service.
+- 🎯 Disposer d'**exemples fonctionnels** pour bien démarrer avec les principaux frameworks Java: `Spring`, `Quarkus` et `Micronaut`.
+- 🎯 Découvrir le composant **Stargate**, comprendre les différentes `Apis`, tester son utilisation avec le `SDK.`
 
 ## Foire aux questions
 
 <p/>
 <details>
-<summary><b> 1️⃣ Quels sont les pré-requis ? </b></summary>
+<summary><b> 1️⃣ Quels sont les pré-requis à cette session ? </b></summary>
 <hr>
 <ul>
 <li>Vous devez maîtriser un <b>langage de programmation</b> <i>(Java, Javascript, Python - cette session s'adresse à des développeurs)</i> mais pas nécessairement une grande expérience.
@@ -59,34 +59,33 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
 <details>
 <summary><b> 2️⃣ Puis-je exécuter les LABS sur ma machine ?</b></summary>
 <hr>
-<p>Afin de rendre l'expérience la plus agréable possible nous fournissons un environnement dans le cloud avec l'outil Gitpod mais rien de vous empêche d'utiliser votre machine. Durant chaque atelier nous listerons les pré-requis. Le contenu étant dense, le temps pour l’installation de tous les outils localement est limité.</p>
+<p>Afin de rendre l'expérience la plus agréable possible nous fournissons un environnement dans le cloud avec l'outil Gitpod mais rien de vous empêche d'utiliser votre machine. Durant chaque atelier nous listerons les pré-requis.</p>
 
-<p>Voici une liste exhaustive:
+<p>Le contenu étant dense, le temps pour l’installation de tous les outils localement est limité. Voici une liste exhaustive:
 <ol>
 <li><b>Java 8+</b> ainsi que <b>Maven 3.6+</b> pour les LABS avec Java.
 <li><b>Python 3+</b> ainsi que <b>pip3</b> pour les LABS avec Python.
-<li><b>Node 16+</b> ainsi que <b>NPM *+</b> pour les LABS avec Javascript.
+<li><b>Node 16+</b> ainsi que <b>NPM 8+</b> pour les LABS avec Javascript.
 <li><b>Docker</b> ainsi que <b>Docker-compose</b> pour démarrer les conteneurs.
 <li>Une machine disposant d'au moins <b>8Go de mémoire vive.</b>
 <li><b>2Go d'espace disque </b>pour télécharger les différents images et outils.
-<li>Un atelier de développement logiciel (IDE) comme Eclipse, IntelliJ, Netbean...
+<li>Un atelier de développement logiciel **(IDE)** comme Eclipse, IntelliJ, Netbean...
 </ol>
 </p>
-In this readme, we try to provide instructions for local development as well - but keep in mind that the main focus is development on Gitpod, hence <strong>We can't guarantee live support</strong> about local development in order to keep on track with the schedule. However, we will do our best to give you the info you need to succeed.
 </details>
 
 <p/>
 <details>
 <summary><b> 3️⃣ Les outils resteront'ils gratuits après la session ?</b></summary>
 <hr>
-<b>Absolutement.</b> Toutes les solutions utilisées aujourd'hui sont gratuites. Pour les démonstrations avec les produits en Saas aucune carte de crédit ne sera demandée ni maintenant ni après.
+<b>Absolutement.</b> Toutes les solutions utilisées aujourd'hui sont gratsuites. Pour les démonstrations avec les produits en Saas aucune carte de crédit ne sera demandée ni maintenant ni après.
 </details>
 <p/>
 <details>
 <summary><b> 4️⃣ S'agit t'il d'une formation certifiante ?</b></summary>
 <hr>
 
-<img src="img/certifications.png?raw=true" align="right" width="400px"/>
+<img src="img/certifications.png?raw=true" align="right" width="320px"/>
 Datastax propose <a href="https://www.datastax.com/dev/certifications">3 certifications </a> autour des technologies Apache Cassandra™. En 3h il nous est impossible de tout couvrir pour prétendre à la certification. Cependant tous les cours nécessaires sont disponibles sur <a href="https://academy.datastax.com">academy.datastax.com"</a> et <a href="https://datastax.com/dev">datastax.com/dev</a>. Participer à cette session (live) vous ouvre le droit à un voucher pour 2 tentatives gratuites aux certifications <i>(au lieu de 145$).</i>.</p>.
 
 <p>Vous ne partez pas les mains vides ! Vous repartez avec un tee-shirt ainsi qu'un magnifique BADGE pour se la jouer devant tout le monde sur Twitter et Linkedin. 
