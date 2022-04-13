@@ -18,20 +18,21 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
 
 <img src="img/splash.png?raw=true" align="right" width="400px"/>
 
-1. [Objectifs](#1-objectives)
-2. [Foire aux questions](#2-Frequently-asked-questions)
-3. [Supports de Formations](#3-materials-for-the-session)
-4. [#**LAB1** - Création de base de donnée](#4-create-astra-db-instance)
-5. [#**LAB2** - Tables et types de données](#5-create-a-table)
-6. [#**LAB3** - Exemple Modèle de données Iot](#7-sensor-data-modeling)
-7. [#**LAB4** - Exemple Modèle de données système de commande](#8--order-management-system-data-modelling)
-8.
-9. [Native Drivers](#10-native-drivers)
-10. [Drivers Object Mapping](#11-drivers-object-mapping)
-11. [Spring Data Cassandra](#12-spring-data-cassandra)
-12. [Cassandra Quarkus extension](#13-cassandra-quarkus-extension)
-13. [Overview of Stargate APis](#14-overview-of-stargate-apis)
-14. [Astra and Stargate SDK](#15-astra-and-stargate-sdk)
+- [Objectifs](#1-objectives)
+- [Foire aux questions](#2-Frequently-asked-questions)
+- [Supports de Formations](#3-materials-for-the-session)
+- [#**LAB1** - Création de base de donnée](#4-create-astra-db-instance)
+- [#**LAB2** - Tables et types de données](#5-create-a-table)
+- [#**LAB3** - Modèle de données `PetClinic`](#)
+- [#**LAB4** - Modèle de données `TimeSeries`](#7-sensor-data-modeling)
+- [#**LAB5** - Introduction aux drivers](#)
+- [#**LAB6** - Mapping Objet avec les drivers](#)
+- [#**LAB7** - Programmation reactive](#)
+- [#**LAB8** - Spring Data Cassandra](#12-spring-data-cassandra)
+- [#**LAB9** - Cassandra Quarkus extension](#13-cassandra-quarkus-extension)
+- [#**LAB10** - Micronaut Cassandra](#)
+- [#**LAB11** - Stargate Apis](#)
+- [#**LAB12** - Stargate SDK](#)
 
 ## 1. Objectives
 
@@ -325,7 +326,7 @@ VALUES(08765309-1234-9999-9999-111111111111, NOW(), 55555555-5555-5555-5555-5555
 
 **✅ Step 6c. C(R)UD = read = read data**
 
-Now that we've inserted a set of data, let's take a look at how to read that data back out. This is done with a **SELECT** statement. In its simplest form we could just execute a statement like the following **\_**cough*\*\* \*\****cough\_**:
+Now that we've inserted a set of data, let's take a look at how to read that data back out. This is done with a **SELECT** statement. In its simplest form we could just execute a statement like the following **\_**cough\*\*\* \*\***\*cough\_**:
 
 ```sql
 SELECT * FROM comments_by_user;
