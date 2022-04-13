@@ -18,10 +18,10 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
 
 <img src="img/splash.png?raw=true" align="right" width="400px"/>
 
-- [Objectifs](#1-objectifs)
-- [Foire aux questions](#2-Frequently-asked-questions)
-- [Supports de Formation](#3-materials-for-the-session)
-- [#**LAB1** - Création de la base de donnée](#4-create-astra-db-instance)
+- [Objectifs](#objectifs)
+- [Foire aux questions](#foire-aux-questions)
+- [Supports de Formation](#supports-de-formation)
+- [#**LAB1** - Création de la base de donnée](#lab1---création-de-la-base-de-donnée)
 - [#**LAB2** - Tables et types de données](#5-create-a-table)
 - [#**LAB3** - Modèle de données `PetClinic`](#)
 - [#**LAB4** - Modèle de données `TimeSeries`](#7-sensor-data-modeling)
@@ -136,7 +136,7 @@ Pour la session aujourd'hui utilisons les valeurs suivantes. Vous pouvez les cha
 
 Lorsque vous créez un compte vous créez également une Organization, il s'agit de votre tenant.
 
-````mermaid
+```mermaid
     graph LR
         user>fa:fa-user Developer]-- Create Database --> cassandra[(fa:fa-database Cassandra)]
 
@@ -157,8 +157,7 @@ Lorsque vous créez un compte vous créez également une Organization, il s'agit
         token-->Request
         schema-->Request
         Request-- invoke -->cassandra
-    ```
-
+```
 
 | Parameter | Value                    |
 | --------- | ------------------------ |
@@ -175,7 +174,6 @@ Lorsque vous créez un compte vous créez également une Organization, il s'agit
 [Gitpod](https://www.gitpod.io/) is an IDE 100% online based on [VS Code](https://github.com/gitpod-io/vscode/blob/gp-code/LICENSE.txt?lang=en-US). To initialize your environment simply click on the button below _(CTRL + Click to open in new tab)_ You will be asked for you github account, as needed.
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/datastaxdevs/conferennce-2022-devoxx)
-
 
 ## 5. Create a table
 
@@ -195,11 +193,11 @@ First, let's **_DESCRIBE_** all of the keyspaces that are in the database. This 
 
 📘 **Command to execute**
 
-````
+```
 
 desc KEYSPACES;
 
-````
+```
 
 _"desc" is short for "describe", either is valid._
 
@@ -213,7 +211,7 @@ _"desc" is short for "describe", either is valid._
 
 ```sql
 use javazone;
-````
+```
 
 Depending on your setup you might see a different set of keyspaces than in the image. The one we care about for now is **_javazone_**. From here, execute the **_USE_** command with the **_javazone_** keyspace to tell the database our context is within **_javazone_**.
 
