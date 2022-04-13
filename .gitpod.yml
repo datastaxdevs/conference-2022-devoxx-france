@@ -6,8 +6,8 @@ tasks:
     env:
         CQLENG_ALLOW_SCHEMA_MANAGEMENT: 1
     before: |
+      chmod 700 /workspace/conference-2022-devoxx/astra-cqlsh
       chmod 700 /workspace/conference-2022-devoxx/astra-cqlsh-install
-      chmod 700 /workspace/conference-2022-devoxx/astra-cqlsh-setup
     command: |
       ./astra-cqlsh-install
   - name: local-cqlsh
@@ -15,8 +15,9 @@ tasks:
       docker pull cassandra:4.0.3
     command: |
       clear
-      echo "This is the Terminal for LAB1 with local Cassandra"
-      docker images
+      echo "Starting Cassandra 4....."
+      docker-compose -f /workspace/conference-2022-devoxx/hands-on/LAB_01/docker-compose-1noeud.yml
+      echo "Ready"
 ports:
   - port: 9042
     onOpen: open-browser
