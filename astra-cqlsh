@@ -17,4 +17,4 @@ echo -e "${GREEN}[OK]${NC} - Database TOKEN is ${BLUE}${ASTRA_DB_ADMIN_TOKEN}${N
 echo -e "${GREEN}[OK]${NC} - Secure Connect Bundle downloaded"
 echo -e "${GREEN}[OK]${NC} - Launching CQLSH...."
 
-/workspace/conference-2022-devoxxe/tools/cqlsh-astra/bin/cqlsh -u token -p ${ASTRA_DB_ADMIN_TOKEN} -b /home/gitpod/.cassandra/bootstrap.zip
+/workspace/conference-2022-devoxx/tools/cqlsh-astra/bin/cqlsh -u token -p ${ASTRA_DB_ADMIN_TOKEN} -b /home/gitpod/.cassandra/bootstrap.zip
