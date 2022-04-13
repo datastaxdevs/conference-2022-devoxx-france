@@ -97,7 +97,7 @@ Datastax propose <a href="https://www.datastax.com/dev/certifications">3 certifi
 
 Que vous soyez avec nous pour Devoxx ou que que vous regardiez la session maintenant sur Youtube voici toutes les supports nécessaires:
 
-- [Les slides](slides/slides.pdf)
+- [Les slides](slides.pdf)
 - [Les différents supports pour LABS](/hands-on)
 - [Une invitation sur notre serveur Discord](https://bit.ly/cassandra-workshop) pour poser toutes vos questions.
 - [Notre forum, community.datastax.com](https://community.datastax.com/) pour échanger.
@@ -106,67 +106,76 @@ Que vous soyez avec nous pour Devoxx ou que que vous regardiez la session mainte
 
 ## LAB1 - Création de la base de donnée
 
-### 1a - DBAAS Astra
+### 1.1 DBAAS Astra
 
-#### ✅ 1a. Créer un compte sur Astra
+#### ✅ 1.1 Step a: Créer un compte sur Astra
 
 > 📖 Documentation: [Créer son compte Astra 🇬🇧](https://awesome-astra.github.io/docs/pages/astra/create-account/)
 
 [![](https://dabuttonfactory.com/button.png?t=+Connect+to+Astra&f=Open+Sans-Bold&ts=12&tc=fff&hp=23&vp=16&c=11&bgt=gradient&bgc=0b5394&ebgc=073763)](https://astra.dev/devoxx)
 
-#### ✅ 1b. Créer une base de donnée sur Astra
+#### ✅ 1.1 Step b: Créer une base de donnée sur Astra
 
 > 📖 Documentation: [Créer une base de donnée sur Astra 🇬🇧](https://awesome-astra.github.io/docs/pages/astra/create-instance/)
 
 Pour la session aujourd'hui utilisons les valeurs suivantes. Vous pouvez les changer bien sûr mais ce sont celles définies par défaut dans les LABS.
 
-| Parameter     | Value                                                                                                                                                                                     |
-| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Database name | `workshops`                                                                                                                                                                               |
-| Keyspace name | `devoxx`                                                                                                                                                                                  |
-| Region name   | Prenez `Google Cloud` et l'une des 3 régions `North America/us-east-1`, `Europe/europse-west-1` ou `Asia Pacific/Mumbai`. Les autres ne sont pas dans le plan gratuit et repérées par 🔒. |
+| Paramètre     | Valeur                                                                                                                                                                                   |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Database name | `workshops`                                                                                                                                                                              |
+| Keyspace name | `devoxx`                                                                                                                                                                                 |
+| Region name   | Prenez `Google Cloud` et l'une des 3 régions `North America/us-east-1`, `Europe/europe-west-1` ou `Asia Pacific/Mumbai`. Les autres ne sont pas dans le plan gratuit et repérées par 🔒. |
 
-**Walkthrough:** _The Walkthrough mentions the wrong keyspace, make sure to use `spring_petclinic`_
+**Walkthrough:** _Voici une petite animation mais attention de bien utiliser les valeurs dans le tableau ci-dessus._
 
-![image](doc/img/astra-create-db.gif?raw=true)
+![](/img/astra-create-db.gif?raw=true)
 
-### Installation avec Docker
+#### ✅ 1.1 Step c: Créer vos identifiants pour Astra
 
-**`ASTRA DB`** is the simplest way to run Cassandra with zero operations at all - just push the button and get your cluster. No credit card required, $25.00 USD credit every month, roughly 20M read/write operations, 80GB storage monthly - sufficient to run small production workloads.
+> 📖 Documentation: [Créer vos identifiants pour Astra 🇬🇧](https://awesome-astra.github.io/docs/pages/astra/create-token/#c-procedure)
 
-#### ✅ 4a. Register
+Lorsque vous créez un compte vous créez également une Organization, il s'agit de votre tenant.
 
-If you do have an account yet register and sign In to Astra DB this is FREE and NO CREDIT CARD asked. [https://astra.datastax.com](https://astra.datastax.com): You can use your `Github`, `Google` accounts or register with an `email`.
+````mermaid
+    graph LR
+        user>fa:fa-user Developer]-- Create Database --> cassandra[(fa:fa-database Cassandra)]
 
-_Make sure to chose a password with minimum 8 characters, containing upper and lowercase letters, at least one number and special character_
+        user-- Design -->usecase{{fa:fa-cube Use Case}}
+        usecase-- Workflow -->queries[fa:fa-bezier-curve queries]
+        usecase-- MCD -->entities[fa:fa-grip-vertical entities]
+        queries-- Chebotko modelization -->schema[fa:fa-list schema]
+        entities-- Chebotko modelization -->schema[fa:fa-list schema]
+        schema[fa:fa-list  schema]-- Inject -->cassandra[(fa:fa-database Cassandra)]
 
-#### ✅ 4b. Create a "FREE" plan
+        user-- prepare -->dataset{{fa:fa-coings DataSet}}
+        dataset-- input -->dsbulk-- load data -->cassandra
 
-Follow this [guide](https://docs.datastax.com/en/astra/docs/creating-your-astra-database.html), to set up a pay as you go database with a free $25 monthly credit. You will find below recommended values to enter:
+        user-- Create Token -->token{{fa:fa-key Token}}
+        usecase-->API
 
-- **For the database name** - `javazone`
+        API-->Request
+        token-->Request
+        schema-->Request
+        Request-- invoke -->cassandra
+    ```
 
-- **For the keyspace name** - `javazone`
 
-_You can technically use whatever you want and update the code to reflect the keyspace. This is really to get you on a happy path for the first run._
+| Parameter | Value                    |
+| --------- | ------------------------ |
+| Role      | `Database Administrator` |
 
-- **For provider and region**: Choose a provider (GCP, Azure or AWS) and then the related region is where your database will reside physically (choose one close to you or your users).
+**👁️ Walkthrough:** _Voici une petite animation pour retrouver les étapes_
 
-- **Create the database**. Review all the fields to make sure they are as shown, and click the `Create Database` button.
+![](/img/astra-create-token.gif?raw=true)
 
-You will see your new database `pending` in the Dashboard.
+> ⚠️ We will use the third argument called `TOKEN` that looks like `AstraCS:...` make sure you copy it in the clipboard.
 
-![my-pic](img/db-pending.png?raw=true)
+### 1.2 - Installation avec Docker
 
-The status will change to `Active` when the database is ready, this will only take 2-3 minutes. You will also receive an email when it is ready.
+[Gitpod](https://www.gitpod.io/) is an IDE 100% online based on [VS Code](https://github.com/gitpod-io/vscode/blob/gp-code/LICENSE.txt?lang=en-US). To initialize your environment simply click on the button below _(CTRL + Click to open in new tab)_ You will be asked for you github account, as needed.
 
-**👁️ Walkthrough**
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/datastaxdevs/conferennce-2022-devoxx)
 
-_The Walkthrough mentions the wrong keyspace, make sure to use `javazone`_
-
-![image](img/astra-create-db.gif?raw=true)
-
-[🏠 Back to Table of Contents](#-table-of-content)
 
 ## 5. Create a table
 
@@ -186,9 +195,11 @@ First, let's **_DESCRIBE_** all of the keyspaces that are in the database. This 
 
 📘 **Command to execute**
 
-```
+````
+
 desc KEYSPACES;
-```
+
+````
 
 _"desc" is short for "describe", either is valid._
 
@@ -202,7 +213,7 @@ _"desc" is short for "describe", either is valid._
 
 ```sql
 use javazone;
-```
+````
 
 Depending on your setup you might see a different set of keyspaces than in the image. The one we care about for now is **_javazone_**. From here, execute the **_USE_** command with the **_javazone_** keyspace to tell the database our context is within **_javazone_**.
 
