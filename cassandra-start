@@ -1,12 +1,18 @@
 #!/bin/bash
-
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-echo -e ""
+clear
 echo -e "${BLUE}------------------------------------------------------------${NC}"
-echo -e "${BLUE}--  CqlSH (LOCAL DOCKER)                                 ---${NC}"
+echo -e "${BLUE}--  Starting Cassandra 4 (1 node)                        ---${NC}"
 echo -e "${BLUE}------------------------------------------------------------${NC}"
-echo -e ""
-docker exec -it `docker ps | grep noeud1 | cut -b 1-12` cqlsh
+echo -e "${GREEN}[OK]${NC} - Launching Local Cassandra....."
+docker-compose -f /workspace/conference-2022-devoxx/hands-on/LAB_01/docker-compose-1noeud.yml up -d
+echo -e "${GREEN}[OK]${NC} - Waiting for Cassandra to start...."
+while [ `docker container logs `docker ps | grep noeud1 | cut -b 1-12` | grep "Starting listening for CQL clients" | wc -l` -lt 1 ]; do
+   sleep 100
+done
+echo -e "${GREEN}[OK]${NC} - Cassandra is Ready."
+
+
