@@ -516,13 +516,13 @@ INSERT INTO city_by_country(country, city, population) VALUES('JP','Tokyo', 3743
 INSERT INTO city_by_country(country, city, population) VALUES('IN','MUMbai', 20200000);
 ```
 
-- `[✅030]` Lister toute la table (PAS BIEN !)
+- `[✅.030]` Lister toute la table (PAS BIEN !)
 
 ```sql
 select * from city_by_country;
 ```
 
-- `[✅031]` - **Lister les villes de France**
+- `[✅.031]` - **Lister les villes de France**
 
 <p/>
 <details>
@@ -533,7 +533,7 @@ select * from city_by_country;
 
 > ℹ️ _Notez qu'elles s'affichent par ordre alphabétique._
 
-- `[✅032]`- **Afficher `Brest` (parce que)**
+- `[✅.032]`- **Afficher `Brest` (parce que)**
 
 <p/>
 <details>
