@@ -852,9 +852,159 @@ Vérification:<pre>SELECT id, name, emails FROM users;</pre>
 
 Il est possible d'imbriquées les collections les unes dans les autres. On peut ainsi avoir une liste de liste de maps. (`LIST<LIST<MAP<TEXT,TEXT>>>`).
 
-Les collections imbrique
+Les collections imbriquées doivent contenir le terme `FROZEN`. Elles sont stockées comme un blob. En d'autres termes si l'un des items est mis à jour c'est toute la liste qui est réécrite.
 
-### 2.2.6 - Les `UDT` ou User Defined Type
+#### `✅.054`- Ajouter une colonne nommée `crew` de type `MAP<TEXT,<LIST<TEXT>>>` dans la table `movies`
+
+```sql
+ALTER TABLE movies
+ADD crew MAP<TEXT,FROZEN<LIST<TEXT>>>;
+SELECT title, year, crew FROM movies;
+```
+
+#### `✅.055`- Ajouter/Supprimer de cette `MAP`
+
+```sql
+UPDATE movies
+SET crew = {
+  'cast': ['Johnny Depp', 'Mia Wasikowska'],
+  'directed by': ['Tim Burton']
+ }
+WHERE id = 5069cc15-4300-4595-ae77-381c3af5dc5e;
+SELECT title, year, crew FROM movies;
+```
+
+### 2.2.6 - Les `Tuples`
+
+Un tuple est une liste de **taille fixe**. Chaque item de la liste peut avoir son propre type. Un tuple sera donc de la forme `TUPLE<type1, type2, ...typeN>`
+
+#### `✅.056`- Ajouter une colonne nommée `full_name` de type `TUPLE<TEXT,TEXT,TEXT>` dans la table `movies`
+
+```
+ALTER TABLE users ADD full_name TUPLE<TEXT,TEXT,TEXT>;
+
+UPDATE users
+SET full_name = ('Joe', 'The', 'Great')
+WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
+
+SELECT name, full_name FROM users;
+```
+
+A l'inverse des User Defined types (UDT) il est nécessaire de mettre à jour tout le tuple à chaque fois et c'est pour cette raison qu'ils sont peu utilisés.
+
+### 2.2.7 - Les `UDT` ou User Defined Type
+
+Les `UDT` ou `User Defined Type` sont des structures _custom_ que vous pouvez définir commr vous voulez, des sous-types à votre convenance. Il est possible de les imbriquer également avec la contrainte FROZEN présentée en [2.2.5](#).
+
+#### `✅.057`- Création d'un `UDT`
+
+```sql
+CREATE TYPE IF NOT EXISTS ADDRESS (
+    street  TEXT,
+    city    TEXT,
+    state   TEXT,
+    zipcode INT
+);
+```
+
+#### `✅.058`- Ajouter/Supprimer une colonne `address` dans la table `users`
+
+```sql
+ALTER TABLE users ADD address ADDRESS;
+SELECT name, address FROM users;
+```
+
+#### `✅.059`- Ajouter une adresse pour l'utilisateur `7902a572-e7dc-4428-b056-0571af415df3`
+
+La mise à jour d'un `UDT` est faite avec des accolades `{ attribut:'valeur'}`. Le nom de l'attribut ne prend pas de guillemets.
+
+```sql
+UPDATE users
+SET address = { street: '1100 Congress Ave',
+                city: 'Austin',
+                state: 'Texas',
+                postal_code: '78701' }
+WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
+SELECT name, address FROM users
+WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
+```
+
+#### `✅.060`- Mettre à jour un champ d'UDT
+
+```sql
+UPDATE users
+SET address.state = 'TX'
+WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
+SELECT name,
+       address.street      AS street,
+       address.city        AS city,
+       address.state       AS state,
+       address.postal_code AS zip
+FROM users
+WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
+```
+
+#### `✅.061`- Exercice UDT
+
+Ajouter une colonne `previous_addresses` sur la table `user` comme une liste d'addresses et ajouter 2 valeurs pour un user.
+
+p/>
+
+<details>
+<summary>Cliquer pour afficher la solution</summary>
+<pre>
+ALTER TABLE users 
+ADD previous_addresses LIST<FROZEN<ADDRESS>>;
+
+UPDATE users
+SET previous_addresses = [
+{ street: '10th and L St',
+city: 'Sacramento',
+state: 'CA',
+postal_code: '95814' } ]
+WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
+
+UPDATE users
+SET previous_addresses = previous_addresses + [
+{ street: 'State St and Washington Ave',
+city: 'Albany',
+state: 'NY',
+postal_code: '12224' } ]
+WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
+
+Vérification:<pre>SELECT name, address, previous_addresses FROM users
+WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
+
+</pre>
+
+</details>
+<p/>
+
+### 2.2.8 - Les `Counter`
+
+#### `✅.062`- Ajouter Colonnes
+
+```
+TODO
+```
+
+#### `✅.063`- Mise à jour
+
+```
+TODO
+```
+
+#### `✅.064`- Exercice
+
+```
+TODO
+```
+
+### 2.2.9 - Requêter avec `JSON`
+
+Il est possible de requêter directement en JSON les tables. Cependant les documents JSON devront respecter le schéma des tables.
+
+#### `✅.065`- Créer une table `videos` avec un `UDT`
 
 ```sql
 CREATE TYPE IF NOT EXISTS video_format (
@@ -863,31 +1013,92 @@ CREATE TYPE IF NOT EXISTS video_format (
 );
 
 CREATE TABLE IF NOT EXISTS videos (
-  videoid    uuid,
-  title      text,
-  upload     timestamp,
-  email      text,
-  url        text,
-  tags       set <text>,
-  frames     list<int>,
-  formats    map <text,frozen<video_format>>,
-  PRIMARY KEY (videoid)
+ videoid   uuid,
+ title     text,
+ upload    timestamp,
+ email     text,
+ url       text,
+ tags      set <text>,
+ frames    list<int>,
+ formats   map <text,frozen<video_format>>,
+ PRIMARY KEY (videoid)
 );
+```
 
+#### `✅.066`- Insertions en CQL
+
+```sql
+INSERT INTO videos(videoid, email, title, upload, url, tags, frames, formats)
+VALUES(uuid(), 'clu@sample.com', 'sample video',
+     toTimeStamp(now()), 'http://google.fr',
+     { 'cassandra','accelerate','2020'},
+     [ 1, 2, 3, 4],
+     { 'mp4':{width:1,height:1},'ogg':{width:1,height:1}});
+
+INSERT INTO videos(videoid, email, title, upload, url)
+VALUES(uuid(), 'clu@sample.com', 'video2', toTimeStamp(now()), 'http://google.fr');
+
+select videoid,email,title from videos;
 
 ```
 
-- `[✅.039]`- **Travailler avec les listes, set, map**
+#### `✅.067`- Insertions avec `JSON`
 
-- `[✅.038]`- **Travailler avec les sets**
+```cql
+INSERT INTO videos JSON '{
+   "videoid":"e466f561-4ea4-4eb7-8dcc-126e0fbfd573",
+     "email":"clunven@sample.com",
+     "title":"A video inserted with JSON",
+     "upload":"2020-02-26 15:09:22 +00:00",
+     "url": "http://google.fr",
+     "frames": [1,2,3,4],
+     "tags":   [ "cassandra","accelerate", "2020"],
+     "formats": {
+        "mp4": {"width":1,"height":1},
+        "ogg": {"width":1,"height":1}
+     }
+}';
 
-## LAB3- Modèle de données `PetClinic`
+select videoid,email,title from videos;
+```
+
+#### `✅.068`- Requetage enregistrement avec `JSON`
+
+_Traditionnellement:_
+
+```sql
+select * from videos
+WHERE videoid=e466f561-4ea4-4eb7-8dcc-126e0fbfd573;
+```
+
+_Avec l'option JSON:_
+
+```sql
+select JSON * from videos
+WHERE videoid=e466f561-4ea4-4eb7-8dcc-126e0fbfd573;
+```
+
+# LAB3- Batches et Lightweight Transactions
+
+## 3.1 Les Batches
+
+#### `✅.068`- Requetage enregistrement avec `JSON`
+
+#### `✅.068`- Requetage enregistrement avec `JSON`
+
+## 3.2 Les Lightweights transactions
+
+#### `✅.068`- Requetage enregistrement avec `JSON`
+
+#### `✅.068`- Requetage enregistrement avec `JSON`
+
+# LAB4- Modèle de données `PetClinic`
 
 ```
 TODO
 ```
 
-## LAB4- Modèle de données `TimeSeries`
+# LAB5- Modèle de données `TimeSeries`
 
 > _All Data modelling samples can be found in the [Katacoda LIbrary](https://www.katacoda.com/datastax/courses/cassandra-data-modeling)_
 
@@ -899,7 +1110,7 @@ TODO
 
 [🏠 Back to Table of Contents](#-table-of-content)
 
-## LAB5 - Introduction aux drivers
+# LAB5 - Introduction aux drivers
 
 #### 📦 Docker
 
