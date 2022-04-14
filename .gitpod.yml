@@ -20,7 +20,6 @@ tasks:
       docker pull cassandra:4.0.3
     command: |
       ./scripts/cassandra-start 2>/dev/null
-      ./scripts/cassandra-cqlsh
 ports:
   # Access Cassandra node
   - port: 9042

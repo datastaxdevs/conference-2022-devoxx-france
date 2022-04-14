@@ -110,11 +110,13 @@ Que vous soyez avec nous pour Devoxx ou que que vous regardiez la session mainte
 
 [Gitpod](https://www.gitpod.io/) est un IDE 100% dans le cloud. Il s'appuie sur [VS Code](https://github.com/gitpod-io/vscode/blob/gp-code/LICENSE.txt?lang=en-US) mais fourni également de nombreux outils pour développer.
 
-_Click-Droit_ sur le bouton pour ouvrir gitpod dans un nouveau TAB.
+[`cmd-001`]: _Click-Droit_ sur le bouton pour ouvrir gitpod dans un nouveau TAB.
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/datastaxdevs/conferennce-2022-devoxx)
 
 ### 1.2 - Apache Cassandra™ dans `Docker`
+
+> ℹ️ Lors du premier copier-coller le navigateur vous invite à autoriser les copies depuis le presse-papier, il est nécessaire de le faire.
 
 Lorsque Gitpod est démarré, localiser le terminal `cassandra-docker`. Il devrait contenir uniquement un message en bleu.
 
@@ -131,11 +133,15 @@ Dans le répertoire `labs` repérer le fichier `docker-compose.yml`. Nous allons
 
 - Ouvrir le fichier et visualiser comment le `seed` est un service séparé. La recommentation est de 1 à 2 `seeds` par datacenter (anneau).
 
+[`cmd-002`]
+
 ```bash
 gp open /workspace/conference-2022-devoxx/labs/docker-compose.yml
 ```
 
 - Lancer les 2 premiers noeuds avec `docker-compose`
+
+[`cmd-003`]
 
 ```bash
 cd /workspace/conference-2022-devoxx/labs/
@@ -145,9 +151,10 @@ docker-compose up -d
 > 🖥️ Résultat
 >
 > ```
-> Creating network "labs_cassandra" with the default driver
-> Creating labs_dc1_seed_1 ... done
-> Creating labs_dc1_noeud_1 ... done
+> [+] Running 3/3
+>  ⠿ Network labs_cassandra           Created      0.0s
+>  ⠿ Container labs-dc1_seed-1        Started      0.4s
+>  ⠿ Container labs-dc1_noeud-1       Started      1.2s
 > ```
 
 - Les deux services démarrent. Le second attendra le bootstrap du seed (30s). Pour avoir le statut utiliser l'un ou l'autre des commandes.
@@ -173,10 +180,16 @@ _Avec Docker Compose_
 > labs_dc1_seed_1    docker-entrypoint.sh cassa ...   Up      7000/tcp, 7001/tcp, 7199/tcp, 0.0.0.0:9042->9042/tcp,:::9042->9042/tcp, 9160/tcp
 > ```
 
-- Vérification du démarrage du cluster
+- Sauvegarder l'identifiant de conteneur
 
 ```bash
 export dc1_seed_containerid=`docker ps | grep dc1_seed | cut -b 1-12`
+echo "container ID saved: $dc1_seed_containerid"
+```
+
+- Vérification du démarrage du cluster
+
+```
 docker exec -it $dc1_seed_containerid nodetool status
 ```
 
@@ -194,10 +207,10 @@ docker exec -it $dc1_seed_containerid nodetool status
 
 #### ✅ 1.2 - (b). Scale up du cluster
 
-- Ajouter le 3e noeud (scaling du noeud non seed)
+- Ajouter le 3e noeud (scaling du noeud non seed). On notera que la commande n'est pas trop car elle redémarre le `dc1_noeud` existant mais l'ancienne `docker-compose scale` est déprécié. Bon c'est cool cela démontre que Cassandra gère les environnements hostiles.
 
 ```bash
-docker-compose up -d --scale dc1_noeud=2
+docker-compose up --scale dc1_noeud=2 -d
 ```
 
 - Après environ minute
@@ -358,19 +371,19 @@ Retour dans `Gitpod`. Repérer le terminal `cassandra-astra` nous allons configu
 
 ![](/img/gitpod-terminal-astra-01.png?raw=true)
 
-#### ✅ 1.3 (e): ReDéfinissez le nom de la base de données
+- ReDéfinissez le nom de la base de données
 
 ```bash
 export ASTRA_DB_NAME=workshops
 ```
 
-#### ✅ 1.3 (f): ReDéfinissez le nom du keyspace
+- ReDéfinissez le nom du keyspace
 
 ```bash
 export ASTRA_DB_KEYSPACE=devoxx
 ```
 
-#### ✅ 1.3 (g): Configurer l'environnement
+- Configurer l'environnement
 
 ```bash
 npm exec -y astra-setup $ASTRA_DB_NAME $ASTRA_DB_KEYSPACE
@@ -428,95 +441,46 @@ system_schema          data_endpoint_auth  ecommerce
 
 ## LAB2 - Tables et types de données
 
-#### ✅ 2a. Locate the CQL Console
+Nous sommes dans `cqlSH`
 
-As seen in the slides on the contrary of relational you start with the request and data model BEFORE CODING.
+### ✅ 2.1 - Ma premiére table
 
-Let's start with the CQL console for the database as whown below.
-
-![image](img/db-cqlconsole-1.png?raw=true)
-
-#### ✅ Step 5b. Describe keyspaces
-
-Ok, now we're ready to rock. Creating tables is quite easy, but before we create one we need to tell the database which keyspace we are working with.
-
-First, let's **_DESCRIBE_** all of the keyspaces that are in the database. This will give us a list of the available keyspaces.
-
-📘 **Command to execute**
-
-```
-
-desc KEYSPACES;
-
-```
-
-_"desc" is short for "describe", either is valid._
-
-> CQL commands usually end with a semicolon `;`. If you hit Enter, nothing happens and you don't even get your prompt back, most likely it's because you have not closed the command with `;`. If in trouble, you can always get back to the prompt with `Ctrl-C` and start typing the command anew.
-
-📗 **Expected output**
-
-<img width="1000" alt="Screenshot 2020-09-30 at 13 54 55" src="https://user-images.githubusercontent.com/20337262/94687725-8cbf8600-0324-11eb-83b0-fbd3d7fbdadc.png">
-
-#### ✅ Step 5c. Use JavaZone
+- Afficher les keyspaces (ne pas oublier le `;`)
 
 ```sql
-use javazone;
+describe KEYSPACES;
 ```
 
-Depending on your setup you might see a different set of keyspaces than in the image. The one we care about for now is **_javazone_**. From here, execute the **_USE_** command with the **_javazone_** keyspace to tell the database our context is within **_javazone_**.
-
-> Take advantage of the TAB-completion in the CQL Console. Try typing `use kill` and then pressing TAB, for example.
-
-📘 **Command to execute**
+- Sélectionner le keyspace `devoxx`
 
 ```sql
-use javazone;
+use devoxx;
 ```
 
-📗 **Expected output**
-
-![image](img/db-cqlconsole-2.png?raw=true)
-
-Notice how the prompt displays `<username>@cqlsh:javazone>` informing us we are **using** the **_javazone_** keyspace. Now we are ready to create our table.
-
-**✅ Step 5d. Create the _users_by_city_ table**
-
-At this point we can execute a command to create the **_users_by_city_** table using the information provided during the workshop presentation. Just copy/paste the following command into your CQL console at the prompt.
-
-📘 **Command to execute**
+- Lister les tables (pas trop de suspense...)
 
 ```sql
-CREATE TABLE IF NOT EXISTS users_by_city (
-	city text,
-	last_name text,
-	first_name text,
-	address text,
-	email text,
-	PRIMARY KEY ((city), last_name, first_name, email));
-```
-
-Then **_DESCRIBE_** your keyspace tables to ensure it is there.
-
-📘 **Command to execute**
-
-```
 desc tables;
 ```
 
-📗 **Expected output**
+- Création de votre première table (celle des slides). Notez ici les types simples `text` et la clé primaire en plusieurs parties.
 
-<img width="1000" alt="Screenshot 2020-09-30 at 13 57 32" src="https://user-images.githubusercontent.com/20337262/94687995-e88a0f00-0324-11eb-8c7a-08c3dee00eaf.png">
+```sql
+CREATE TABLE IF NOT EXISTS city_by_country
+ (
+	country     text,
+	city        text,
+	population  int,
+	PRIMARY KEY ((country), city));
+```
 
-Aaaand **BOOM**, you created a table in your database. That's it. Now, we'll move to the next section in the presentation and break down the method used to create a data model with Apache Cassandra.
+- Insertion de quelques lignes
 
-CRUD operations stand for create, read, update, and delete. Simply put, they are the basic types of commands you need to work with ANY database in order to maintain data for your applications.
+```sql
+INSERT INTO users_by_city(city, last_name, fir)
+```
 
 #### ✅ Step 6a. Create a couple more tables
-
-We started by creating the **_users_by_city_** table earlier, but now we need to create some tables to support **user** and **video** comments per the **_"Art of Data Modeling"_** section of the presentation. Let's go ahead and do that now. Execute the following statements to create our tables.
-
-📘 **Commands to execute**
 
 ```sql
 CREATE TABLE IF NOT EXISTS comments_by_user (
@@ -535,18 +499,6 @@ CREATE TABLE IF NOT EXISTS comments_by_video (
     PRIMARY KEY ((videoid), commentid)
 ) WITH CLUSTERING ORDER BY (commentid DESC);
 ```
-
-Then **_DESCRIBE_** your keyspace tables to ensure they are both there.
-
-📘 **Command to execute**
-
-```sql
-desc tables;
-```
-
-📗 **Expected output**
-
-<img width="1000" alt="Screenshot 2020-09-30 at 13 59 50" src="https://user-images.githubusercontent.com/20337262/94688257-3bfc5d00-0325-11eb-9ec6-40d2596fb71e.png">
 
 **✅ Step 6b. (C)RUD = create = insert data**
 
