@@ -291,7 +291,7 @@ describe keyspaces;
 
 Astra est un logiciel de sofware-as-a-service dans le cloud que l'on peut utiliser gratuitement jusqu'à quelques millions de requêtes par mois sans carte de crédit ni limite de temps, parfait pour les environnements de tests et workshop ^\_^.
 
-### 1.3.1 - Configuration Astra
+#### 1.3.1 - Configuration Astra
 
 - [✅ `015`] Créer un compte sur Astra
 
@@ -441,7 +441,7 @@ Pour le lab suivant vous pouvez utiliser l'un ou l'autre...
 
 Nous sommes dans `cqlSH`.
 
-### ✅ 2.1 - Ma première table
+### ✅ 2.1 - Tables et Types simples
 
 - `[✅025]` Afficher les keyspaces (ne pas oublier le `;`)
 
@@ -601,12 +601,216 @@ TRUNCATE city_by_country;
 </pre>
 Vérification:<pre>select * from city_by_country;</pre>
 </details>
+<p/>
 
-### ✅ 2.2 - Comprendre les types
+### 2.2 - Comprendre les types avancés
 
-- `[✅.038]`- **Créer une table complexe**
+Nous avons vu plusieurs types simples comme `int` et `text`. Il en existe une variété assez simples à utiliser: `VARCHAR`, `ASCII`, `TINYINT`, `SMALLINT`, `INT`, `BIGINT`, `VARINT`, `FLOAT`, `DOUBLE`, `DECIMAL`, `TIME`, `TIMESTAMP`, `DATE`, `DURATION`, `BOOLEAN`, `BLOB`, et `INET`. Vous en retrouvez un tableau dans la [documentation Datastax](https://docs.datastax.com/en/cql-oss/3.x/cql/cql_reference/cql_data_types_c.html).
+
+Il existe en revanche des types de données dits avancés sur lesquels il convient de s'attarder:
+
+- Les identifiants uniques ou `UUID` dont les types sont: `UUID` et `TIMEUUID`
+- Les collections: `SET`, `LIST` and `MAP`
+- Les tuples: `TUPLE`
+- Les types personnalisés ou `UDT` (_User-Defined-Types_): `CREATE TYPE`, `ALTER TYPE`, `DROP TYPE` and `DESCRIBE TYPE`
+- Les compteurs: `COUNTER`
+
+### 2.2.1 - Les `UUIDS`
+
+Un `UUID` est un nombre sur 128 bits qui peut être généré automatiquement. Ils sont utilisés pour identifier une entité ou une relation dans les bases Cassandra.
+
+Ils fournissent une maniére efficace de créer des idenfiants sans introduire de synchronisation entre les noeuds. Ainsi on s'affranchit d'`UPSERT` involontaire lorsque les identifiants sont déjà utilisés lors des accès concurrents (`MAX()`)
+
+Le CQL, Cassandra Query Language supporte les types suivants:
+
+- `UUID` est un UUID dit de version 4 généré de manière aléatoire. Pour les générer on utilise la fonction `uuid()`.
+- `TIMEUUID` est un UUID dit de version 1, il est construit sur la base de l'adresse MAC et d'un timestamp. Pour les générer on utilise la fonction `now()`. On peut extraire le `timestamp` depuis le `TIMEUUID` avec les fonctions `unixTimestampOf()` ou `dateOf()`.
+
+- **`✅.039`- Comprendre les `UUID`**
 
 ```sql
+CREATE TABLE IF NOT EXISTS users (
+  id UUID,
+  name TEXT,
+  age INT,
+  PRIMARY KEY ((id))
+);
+```
+
+- **`✅.040`- Travailler avec les `UUID`**
+
+```sql
+INSERT INTO users (id, name, age) VALUES (7902a572-e7dc-4428-b056-0571af415df3, 'Joe', 25);
+INSERT INTO users (id, name, age) VALUES (uuid(), 'Jen', 27);
+SELECT * FROM users;
+```
+
+- **`✅.041`- Exercice `UUID`**
+
+Créer une tables `movies`, dont la partition est `id` de type `UUID` et insérer les lignes suivantes:
+
+| id                                   | title               | year     | duration |
+| ------------------------------------ | ------------------- | -------- | -------- |
+| 5069cc15-4300-4595-ae77-381c3af5dc5e | Alice in Wonderland | 2010 108 |
+| uuid()                               | Alice in Wonderland | 1951     | 75       |
+
+<p/>
+<details>
+<summary>Cliquer pour afficher la solution</summary>
+<pre>
+CREATE TABLE movies (
+  id UUID,
+  title TEXT,
+  year INT,
+  duration INT,
+  PRIMARY KEY ((id))
+);
+
+INSERT INTO movies (id, title, year, duration)
+VALUES (5069cc15-4300-4595-ae77-381c3af5dc5e,
+'Alice au pays des Merveilles', 2010, 108);
+
+INSERT INTO movies (id, title, year, duration)
+VALUES (uuid(), 'Alice', 1951, 75);
+
+</pre>
+Vérification:<pre>SELECT * FROM movies;</pre>
+</details>
+<p/>
+
+### 2.2.2 - Les `SET`
+
+Comme en Java un `SET` est un attribut multi-valué, non ordonné, qui assure l'unicité de chaque enregistrement (dédoublonnage). Il a lui même un `type` qui indique quels sont les objets que l'ont peut y insérer.
+
+- **`✅.042`- Ajouter une colonne dans la table précedent nommée `production`**
+
+```sql
+ALTER TABLE movies ADD production SET<TEXT>;
+```
+
+- **`✅.043`- Mise à jour des enregistrements**
+
+Pour mettre à jour la valeur d'un set ou utilise des accolades `{}`.
+
+```sql
+UPDATE movies
+SET production = { 'Walt Disney Pictures',
+                   'Roth Films' }
+WHERE id = 5069cc15-4300-4595-ae77-381c3af5dc5e;
+
+UPDATE movies
+SET production = production + { 'Team Todd' }
+WHERE id = 5069cc15-4300-4595-ae77-381c3af5dc5e;
+
+SELECT title, year, production FROM movies;
+```
+
+- **`✅.044`- Exercice `SET`**
+
+Ajouter une colonne `genres` de type `SET<TEXT>` et ajouter les valeurs `Aventure`, `Famille` et `Fantasie`.
+
+<p/>
+<details>
+<summary>Cliquer pour afficher la solution</summary>
+<pre>
+ALTER TABLE movies ADD genres SET<TEXT>;
+
+UPDATE movies
+SET genres = { 'Adventure', 'Family', 'Fantasy' }
+WHERE id = 5069cc15-4300-4595-ae77-381c3af5dc5e;
+
+</pre>
+Vérification:<pre>SELECT title, year, genres FROM movies;</pre>
+</details>
+<p/>
+
+### 2.2.3 - Les `LIST`
+
+Comme en Java une `LIST` est un attribut multi-valué, qui conserve l'ordre d'insertion. Il a lui même un `type` qui indique quels sont les objets que l'ont peut y insérer. Les données sont indexées, on peut donc y accéder en fournissant l'offset.
+
+- **`✅.045`- Ajouter une colonne nommée `searches` de type `LIST<TEXT>` dans la table `users`**
+
+```sql
+ALTER TABLE users ADD searches LIST<TEXT>;
+SELECT id, name, searches FROM users;
+```
+
+- **`✅.046`- Insérer des valeurs dans une liste**
+
+Pour mettre à jour la valeur d'une `LIST` ou utilise des crochets `[]`.
+
+```sql
+UPDATE users
+SET searches = [ 'Alice au pays des merveilles' ]
+WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
+
+UPDATE users
+SET searches = searches + [ 'Comédies' ]
+WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
+
+UPDATE users
+SET searches = searches + [ 'Alice au pays des merveilles' ]
+WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
+
+SELECT id, name, searches FROM users;
+```
+
+- **`✅.047`- Ajouter/Supprimer des éléments d'une liste**
+
+```sql
+DELETE searches[0] FROM users
+WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
+
+UPDATE users
+SET searches = searches + [ 'New releases' ]
+WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
+
+SELECT id, name, searches FROM users;
+```
+
+- **`✅.048`- Modifier un élément d'une liste**
+
+```sql
+UPDATE USERS SET searches[2]='cedrick' WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
+```
+
+- **`✅.049`- Exercice LIST**
+
+Ajouter une colonne `emails` de type `LIST<TEXT>` à la table `users` et ajouter 2 entrée pour `7902a572-e7dc-4428-b056-0571af415df3`
+
+<p/>
+<details>
+<summary>Cliquer pour afficher la solution</summary>
+<pre>
+ALTER TABLE users ADD emails LIST<TEXT>;
+UPDATE users SET emails = [ 'cedrick@datastax.com', 'duy@datastax.com' ]
+WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;</pre>
+Vérification:<pre>SELECT id, name, emails FROM users;</pre>
+</details>
+<p/>
+
+### 2.2.4 - Les `MAP`
+
+Les maps sont une collection de clé/valeur. Chaque clé est unique. La clé et la valeur sont toute deux typées, on peut écrire une map sous la forme `MAP<TEXT, TEXT>`.
+
+```sql
+CREATE TYPE IF NOT EXISTS video_format (
+  width   int,
+  height  int
+);
+
+CREATE TABLE IF NOT EXISTS videos (
+  videoid    uuid,
+  title      text,
+  upload     timestamp,
+  email      text,
+  url        text,
+  tags       set <text>,
+  frames     list<int>,
+  formats    map <text,frozen<video_format>>,
+  PRIMARY KEY (videoid)
+);
+
 
 ```
 
