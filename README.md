@@ -174,14 +174,14 @@ docker ps
 > labs_dc1_seed_1    docker-entrypoint.sh cassa ...   Up      7000/tcp, 7001/tcp, 7199/tcp, 0.0.0.0:9042->9042/tcp,:::9042->9042/tcp, 9160/tcp
 > ```
 
-- [✅ `006`] Sauvegarder l'identifiant de conteneur
+#### `✅.006`- Sauvegarder l'identifiant de conteneur
 
 ```bash
 export dc1_seed_containerid=`docker ps | grep dc1_seed | cut -b 1-12`
 echo "container ID saved: $dc1_seed_containerid"
 ```
 
-- [✅ `007`] Vérification du démarrage du cluster
+#### `✅.007`- Vérification du démarrage du cluster
 
 ```
 docker exec -it $dc1_seed_containerid nodetool status
