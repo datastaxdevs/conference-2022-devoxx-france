@@ -735,7 +735,7 @@ ALTER TABLE users ADD searches LIST<TEXT>;
 SELECT id, name, searches FROM users;
 ```
 
-- **`✅.046`- Insérer des valeurs dans une liste**
+#### `✅.046`- Insérer des valeurs dans une liste
 
 Pour mettre à jour la valeur d'une `LIST` ou utilise des crochets `[]`.
 
@@ -755,7 +755,7 @@ WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 SELECT id, name, searches FROM users;
 ```
 
-- **`✅.047`- Ajouter/Supprimer des éléments d'une liste**
+#### `✅.047`- Ajouter/Supprimer des éléments d'une liste
 
 ```sql
 DELETE searches[0] FROM users
@@ -768,13 +768,13 @@ WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 SELECT id, name, searches FROM users;
 ```
 
-- **`✅.048`- Modifier un élément d'une liste**
+#### `✅.048`- Modifier un élément d'une liste
 
 ```sql
 UPDATE USERS SET searches[2]='cedrick' WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 ```
 
-- **`✅.049`- Exercice LIST**
+#### `✅.049`- Exercice LIST
 
 Ajouter une colonne `emails` de type `LIST<TEXT>` à la table `users` et ajouter 2 entrée pour `7902a572-e7dc-4428-b056-0571af415df3`
 
@@ -793,23 +793,60 @@ Vérification:<pre>SELECT id, name, emails FROM users;</pre>
 
 Les maps sont une collection de clé/valeur. Chaque clé est unique. La clé et la valeur sont toute deux typées, on peut écrire une map sous la forme `MAP<TEXT, TEXT>`.
 
-- #### `✅.050`- Ajouter une colonne nommée `session` de type `MAP<TIMEUUID, INT>` dans la table `users`
+#### `✅.050`- Ajouter une colonne nommée `session` de type `MAP<TIMEUUID, INT>` dans la table `users`
 
 ```sql
 ALTER TABLE users ADD sessions MAP<TIMEUUID,INT>;
 SELECT name, sessions FROM users;
 ```
 
-#### `✅.051`- Ajouter/Supprimer des éléments d'une liste
+#### `✅.051`- Ajouter/Supprimer des éléments d'une `MAP`
+
+Pour mettre à jour la valeur d'une `MAP` ou utilise à nouveau les accolade `{ cle1:valeur1 , cle2:valeur2 }`. Il faut noter qu'il n'y a PAS de guillemets. C'est important afin de ne pas les pas confondre avec les `UDT`.
 
 ```sql
 UPDATE users
-SET sessions = { now(): 32,
-    e22deb70-b65f-11ea-9aac-99396fc4f757: 7 }
+SET sessions = { now(): 32, e22deb70-b65f-11ea-9aac-99396fc4f757: 7 }
 WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 
 SELECT name, sessions FROM users;
 ```
+
+#### `✅.052`- Remplacer un élément d'une `MAP`
+
+```sql
+UPDATE users
+SET sessions[e22deb70-b65f-11ea-9aac-99396fc4f757] = 9
+WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
+
+SELECT name, sessions FROM users;
+```
+
+#### `✅.053`- Exercice sur les `MAP`
+
+Ajouter une collone `preferences` sur la table `users` de type `MAP<TEXT,TEXT>`. Insérer les valeurs `color=noir, qualité=auto` dans cette map.
+
+<p/>
+<details>
+<summary>Cliquer pour afficher la solution</summary>
+<pre>
+ALTER TABLE users ADD preferences MAP<TEXT,TEXT>;
+UPDATE users 
+SET preferences['color'] = 'dark'
+WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
+
+UPDATE users
+SET preferences['quality'] = 'auto'
+WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;</pre>
+
+Vérification:<pre>SELECT id, name, emails FROM users;</pre>
+
+</details>
+<p/>
+
+### 2.2.5 - Collections Imbriquées 🪆🪆🪆
+
+### 2.2.6 - Les `UDT` ou User Defined Type
 
 ```sql
 CREATE TYPE IF NOT EXISTS video_format (
