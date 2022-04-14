@@ -106,11 +106,9 @@ Que vous soyez avec nous pour Devoxx ou que que vous regardiez la session mainte
 
 ### 1.1 - Démarrage de `Gitpod`
 
-#### ✅ 1.1 (a): Démarrer `Gitpod`
-
 [Gitpod](https://www.gitpod.io/) est un IDE 100% dans le cloud. Il s'appuie sur [VS Code](https://github.com/gitpod-io/vscode/blob/gp-code/LICENSE.txt?lang=en-US) mais fourni également de nombreux outils pour développer.
 
-[`cmd-001`]: _Click-Droit_ sur le bouton pour ouvrir gitpod dans un nouveau TAB.
+[✅ `001`]: _Click-Droit_ sur le bouton pour ouvrir gitpod dans un nouveau TAB.
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/datastaxdevs/conferennce-2022-devoxx)
 
@@ -127,21 +125,17 @@ Lorsque Gitpod est démarré, localiser le terminal `cassandra-docker`. Il devra
 ------------------------------------------------------------
 ```
 
-#### ✅ 1.2 - (a). Démarrage du cluster
+#### 1.2.1 - Démarrage du cluster
 
 Dans le répertoire `labs` repérer le fichier `docker-compose.yml`. Nous allons utiliser l'[image officielle Docker Cassandra](https://hub.docker.com/_/cassandra/).
 
-- Ouvrir le fichier et visualiser comment le `seed` est un service séparé. La recommentation est de 1 à 2 `seeds` par datacenter (anneau).
-
-[`cmd-002`]
+- [✅ `002`] Ouvrir le fichier et visualiser comment le `seed` est un service séparé. La recommentation est de 1 à 2 `seeds` par datacenter (anneau).
 
 ```bash
 gp open /workspace/conference-2022-devoxx/labs/docker-compose.yml
 ```
 
-- Lancer les 2 premiers noeuds avec `docker-compose`
-
-[`cmd-003`]
+- [✅ `003`] Lancer les 2 premiers noeuds avec `docker-compose`
 
 ```bash
 cd /workspace/conference-2022-devoxx/labs/
@@ -157,15 +151,13 @@ docker-compose up -d
 >  ⠿ Container labs-dc1_noeud-1       Started      1.2s
 > ```
 
-- Les deux services démarrent. Le second attendra le bootstrap du seed (30s). Pour avoir le statut utiliser l'un ou l'autre des commandes.
-
-_Avec Docker:_
+- [✅ `004`] Les deux services démarrent. Le second attendra le bootstrap du seed (30s). Pour avoir le statut utiliser docker:
 
 ```bash
 docker ps
 ```
 
-_Avec Docker Compose_
+- [✅ `005`] Vous pouvez également utiliser docker-compose.
 
 ```bash
  docker-compose ps
@@ -180,14 +172,14 @@ _Avec Docker Compose_
 > labs_dc1_seed_1    docker-entrypoint.sh cassa ...   Up      7000/tcp, 7001/tcp, 7199/tcp, 0.0.0.0:9042->9042/tcp,:::9042->9042/tcp, 9160/tcp
 > ```
 
-- Sauvegarder l'identifiant de conteneur
+- [✅ `006`] Sauvegarder l'identifiant de conteneur
 
 ```bash
 export dc1_seed_containerid=`docker ps | grep dc1_seed | cut -b 1-12`
 echo "container ID saved: $dc1_seed_containerid"
 ```
 
-- Vérification du démarrage du cluster
+- [✅ `007`] Vérification du démarrage du cluster
 
 ```
 docker exec -it $dc1_seed_containerid nodetool status
@@ -205,15 +197,15 @@ docker exec -it $dc1_seed_containerid nodetool status
 > UN  172.28.0.3  69.05 KiB  16      100.0%            25f43936-be10-471d-b8ac-7efe93834712  rack1
 > ```
 
-#### ✅ 1.2 - (b). Scale up du cluster
+#### 1.2.2 - Scale up du cluster
 
-- Ajouter le 3e noeud (scaling du noeud non seed). On notera que la commande n'est pas trop car elle redémarre le `dc1_noeud` existant mais l'ancienne `docker-compose scale` est déprécié. Bon c'est cool cela démontre que Cassandra gère les environnements hostiles.
+- [✅ `008`] Ajouter le 3e noeud (scaling du noeud non seed). On notera que la commande n'est pas trop car elle redémarre le `dc1_noeud` existant mais l'ancienne `docker-compose scale` est déprécié. Bon c'est cool cela démontre que Cassandra gère les environnements hostiles.
 
 ```bash
 docker-compose up --scale dc1_noeud=2 -d
 ```
 
-- Après environ minute
+- [`009`] Après environ minute
 
 ```bash
 docker exec -it $dc1_seed_containerid nodetool status
@@ -232,80 +224,82 @@ docker exec -it $dc1_seed_containerid nodetool status
 > UN  172.28.0.4  69.06 KiB  16      76.0%             fe43b0d0-952b-48ec-86e1-d73ace617dc8  rack1
 > ```
 
-#### ✅ 1.2 - (c). Création d'un `keyspace'
+#### 1.2.3 - Création d'un `keyspace'
 
-- Ouvrez un console CQLSH interactif
+- [✅ `010`] Ouvrez un console CQLSH interactif
 
 ```bash
 docker exec -it $dc1_seed_containerid cqlsh
 ```
 
-- Vous êtes sur le noeud `dc1_seed`
+- [✅ `011`] Vous êtes sur le noeud `dc1_seed`
 
 ```sql
 select cluster_name,data_center,rack,broadcast_address from system.local;
 ```
 
-```
-cqlsh> select cluster_name,data_center,rack,broadcast_address from system.local;
+> 🖥️ Résultat (après environ 1min)
+>
+> ```
+>  cluster_name | data_center | rack  | broadcast_address
+> --------------+-------------+-------+-------------------
+>       handson |         dc1 | rack1 |        172.28.0.2
+>
+> (1 rows)
+> ```
 
- cluster_name | data_center | rack  | broadcast_address
---------------+-------------+-------+-------------------
-      handson |         dc1 | rack1 |        172.28.0.2
-
-(1 rows)
-```
-
-- Et vous avez 2 autres noeuds
+- [✅ `012`] Et vous avez 2 autres noeuds:
 
 ```sql
 select data_center,rack,peer from system.peers;
 ```
 
-```
-cqlsh> select data_center,rack,peer from system.peers;
+> 🖥️ Résultat (après environ 1min)
+>
+> ```
+> cqlsh> select data_center,rack,peer from system.peers;
+>
+> data_center | rack  | peer
+> -------------+-------+------------
+>         dc1 | rack1 | 172.28.0.4
+>         dc1 | rack1 | 172.28.0.3
+>
+> (2 rows)
+> ```
 
- data_center | rack  | peer
--------------+-------+------------
-         dc1 | rack1 | 172.28.0.4
-         dc1 | rack1 | 172.28.0.3
-
-(2 rows)
-```
-
-- Création du keyspace
+- [✅ `013`] Création du keyspace
 
 ```
 CREATE KEYSPACE IF NOT EXISTS devoxx
 WITH REPLICATION = {'class' : 'NetworkTopologyStrategy', 'dc1' : 3};
 ```
 
-- Vérification
+- [✅ `014`] Vérification
 
 ```sql
 describe keyspaces;
 ```
 
-```
-devoxx  system_auth         system_schema  system_views
-system  system_distributed  system_traces  system_virtual_schema
-```
-
-```bash
-docker exec -it `docker ps | grep cassandra:4.0.1 | cut -b 1-12` cqlsh -e "describe keyspaces"
-```
+> 🖥️ Résultat (après environ 1min)
+>
+> ```
+> devoxx  system_auth         system_schema  system_views
+> system  system_distributed  system_traces  system_virtual_schema
+> ```
 
 ### 1.3 Environnement DBAAS Astra
 
 Astra est un logiciel de sofware-as-a-service dans le cloud que l'on peut utiliser gratuitement jusqu'à quelques millions de requêtes par mois sans carte de crédit ni limite de temps, parfait pour les environnements de tests et workshop ^\_^.
 
-#### ✅ 1.3 - (a): Créer un compte sur Astra
+### 1.3.1 - Configuration Astra
+
+- [✅ `015`] Créer un compte sur Astra
 
 > 📖 Documentation: [Créer son compte Astra 🇬🇧](https://awesome-astra.github.io/docs/pages/astra/create-account/)
 
 [![](https://dabuttonfactory.com/button.png?t=+Connect+to+Astra&f=Open+Sans-Bold&ts=12&tc=fff&hp=23&vp=16&c=11&bgt=gradient&bgc=0b5394&ebgc=073763)](https://astra.dev/devoxx)
 
-#### ✅ 1.3 - (b): Créer une base de donnée sur Astra
+- [✅ `016`] Créer une base de donnée sur Astra
 
 > 📖 Documentation: [Créer une base de donnée sur Astra 🇬🇧](https://awesome-astra.github.io/docs/pages/astra/create-instance/)
 
@@ -333,7 +327,7 @@ Lorsque vous créez un compte vous créez également une Organization, il s'agit
     ORG -->|0..n|STR(Streaming Tenants)
 ```
 
-#### ✅ 1.3 - (c): Créer vos identifiants sur Astra
+- [✅ `017`] Créer vos identifiants sur Astra
 
 > 📖 Documentation: [Créer vos identifiants pour Astra 🇬🇧](https://awesome-astra.github.io/docs/pages/astra/create-token/#c-procedure)
 
@@ -365,25 +359,25 @@ Vos identifiants contiennent 3 champs:
 - `ClientSecret` qui correspond à un mot de passe utilisateur
 - `Token` qui correspond à une clé pour les Apis mais peut aussi servir de mot de passe avec le compte utilisateur générique `token`.
 
-#### ✅ 1.3 (d): Configurer `Gitpod`
+#### 1.3.2 - Configurer `Gitpod`
 
 Retour dans `Gitpod`. Repérer le terminal `cassandra-astra` nous allons configurer `cqlsh` pour utiliser la base de donnée Cassandra dans ASTRA 🚀. Notez que la CQL COnsole est également disponible dans l'interface Astra en tant que TAB.
 
 ![](/img/gitpod-terminal-astra-01.png?raw=true)
 
-- ReDéfinissez le nom de la base de données
+- [✅ `018`] ReDéfinissez le nom de la base de données
 
 ```bash
 export ASTRA_DB_NAME=workshops
 ```
 
-- ReDéfinissez le nom du keyspace
+- [✅ `019`] ReDéfinissez le nom du keyspace
 
 ```bash
 export ASTRA_DB_KEYSPACE=devoxx
 ```
 
-- Configurer l'environnement
+- [✅ `020`] Configurer l'environnement avec `astra-setup`
 
 ```bash
 npm exec -y astra-setup $ASTRA_DB_NAME $ASTRA_DB_KEYSPACE
@@ -399,19 +393,19 @@ npm exec -y astra-setup $ASTRA_DB_NAME $ASTRA_DB_KEYSPACE
 > /workspace/conference-2022-devoxx/scripts/astra-cqlsh-install
 > ```
 
-- Vérifier la configuration des variables
+- [✅ `021`] Vérifier la configuration des variables
 
 ```bash
 cat /workspace/conference-2022-devoxx/.env
 ```
 
-- Vérifier que le zip de connexion est téléchargé
+- [✅ `022`] Vérifier que le zip de connexion est téléchargé
 
 ```bash
 ls -l /home/gitpod/.cassandra/bootstrap.zip
 ```
 
-- Lancement de `CqlSH`
+- [✅ `023`] Lancement de `CqlSH`
 
 ```bash
 /workspace/conference-2022-devoxx/scripts/astra-cqlsh
@@ -421,63 +415,126 @@ ls -l /home/gitpod/.cassandra/bootstrap.zip
 >
 > ![](/img/gitpod-terminal-astra-03.png?raw=true)
 
-- Vérification
+- [✅ `024`] Vérification
 
 ```sql
 DESCRIBE KEYSPACES;
 ```
 
-```
-token@cqlsh> describe KEYSPACEs;
-
-system_virtual_schema  system_auth         better_reads      todos
-devoxx                 system_views        spring_petclinic  feeds_reader
-undefined              system              native_java
-netflix                datastax_sla        system_traces
-system_schema          data_endpoint_auth  ecommerce
-```
+> 🖥️ **Résultat:**
+>
+> ```
+> token@cqlsh> describe KEYSPACEs;
+>
+> system_virtual_schema  system_auth         better_reads      todos
+> devoxx                 system_views        spring_petclinic  feeds_reader
+> undefined              system              native_java
+> netflix                datastax_sla        system_traces
+> system_schema          data_endpoint_auth  ecommerce
+> ```
 
 🪄🪄🪄🪄🪄 Magique 🪄🪄🪄 . Pour le lab suivant vous pouvez utiliser l'un ou l'autre...
 
 ## LAB2 - Tables et types de données
 
-Nous sommes dans `cqlSH`
+Nous sommes dans `cqlSH`.
 
 ### ✅ 2.1 - Ma premiére table
 
-- Afficher les keyspaces (ne pas oublier le `;`)
+- [✅ `025`] Afficher les keyspaces (ne pas oublier le `;`)
 
 ```sql
 describe KEYSPACES;
 ```
 
-- Sélectionner le keyspace `devoxx`
+- [✅ `026`] Sélectionner le keyspace `devoxx`
 
 ```sql
 use devoxx;
 ```
 
-- Lister les tables (pas trop de suspense...)
+- [✅ `027`] Lister les tables (pas trop de suspense...)
 
 ```sql
 desc tables;
 ```
 
-- Création de votre première table (celle des slides). Notez ici les types simples `text` et la clé primaire en plusieurs parties.
+- [✅ `028`] Création de votre première table (celle des slides). Notez ici les types simples `text` et la clé primaire en plusieurs parties.
 
 ```sql
-CREATE TABLE IF NOT EXISTS city_by_country
- (
+CREATE TABLE IF NOT EXISTS city_by_country (
 	country     text,
 	city        text,
 	population  int,
-	PRIMARY KEY ((country), city));
+	PRIMARY KEY ((country), city)
+);
 ```
 
-- Insertion de quelques lignes
+- [✅ `029`] Insertion de quelques lignes, la France d'abord puis le reste du monde.
 
 ```sql
-INSERT INTO users_by_city(city, last_name, fir)
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Paris', 2187526);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Marseille', 863310);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Lyon', 516092);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Toulouse', 479553);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Nice', 340017);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Nantes', 309346);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Montpellier', 285121);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Strasbourg', 280966);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Bordeaux', 254436);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Lille', 232787);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Rennes', 216815);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Reims', 182460);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Saint-Étienne', 172565);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Toulon', 171953);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Le Havre', 170147);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Grenoble', 158454);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Dijon', 156920);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Angers', 150610);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Saint-Denis', 147931);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Villeurbanne', 147712);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Clermont-Ferrand', 143886);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Le Mans', 142946);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Aix-en-Provence', 142482);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Brest',  140064);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Tours', 135787);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Amiens', 134057);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Limoges', 132175);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Annecy', 126924);
+INSERT INTO city_by_country(country, city, population) VALUES('FR','Perpignan', 120158);
+INSERT INTO city_by_country(country, city, population) VALUES('USA','New York', 8000000);
+INSERT INTO city_by_country(country, city, population) VALUES('USA','Los Angeles', 4000000);
+INSERT INTO city_by_country(country, city, population) VALUES('DE','Berlin', 3350000);
+INSERT INTO city_by_country(country, city, population) VALUES('UK','London', 9200000);
+INSERT INTO city_by_country(country, city, population) VALUES('AU','Sydney', 4900000);
+INSERT INTO city_by_country(country, city, population) VALUES('DE','Nuremberg', 500000);
+INSERT INTO city_by_country(country, city, population) VALUES('CA','Toronto', 6200000);
+INSERT INTO city_by_country(country, city, population) VALUES('CA','Montreal', 4200000);
+INSERT INTO city_by_country(country, city, population) VALUES('JP','Tokyo', 37430000);
+INSERT INTO city_by_country(country, city, population) VALUES('IN','MUMbai', 20200000);
+```
+
+- [✅ `030`] Lister toute la table (PAS BIEN !)
+
+```sql
+select * from city_by_country;
+```
+
+- [✅ `031`] Lister les villes de France (bien !)
+
+<p/>
+<details>
+<summary><b> Solution </b></summary>
+<pre>select * from city_by_country WHERE country='FR';</pre>
+</p>
+</details>
+
+> ℹ️ _Notez qu'elles s'affiche par ordre alphabétique._
+
+- [✅ `032`] Afficher `Brest` (parce que)
+
+```sql
+select * from city_by_country WHERE country='FR' AND city='Brest';
 ```
 
 #### ✅ Step 6a. Create a couple more tables
