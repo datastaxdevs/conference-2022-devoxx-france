@@ -793,14 +793,14 @@ Vérification:<pre>SELECT id, name, emails FROM users;</pre>
 
 Les maps sont une collection de clé/valeur. Chaque clé est unique. La clé et la valeur sont toute deux typées, on peut écrire une map sous la forme `MAP<TEXT, TEXT>`.
 
-- **`✅.050`- Ajouter une colonne nommée `session` de type `MAP<TIMEUUID, INT>` dans la table `users`**
+- #### `✅.050`- Ajouter une colonne nommée `session` de type `MAP<TIMEUUID, INT>` dans la table `users`
 
 ```sql
 ALTER TABLE users ADD sessions MAP<TIMEUUID,INT>;
 SELECT name, sessions FROM users;
 ```
 
-- #### `✅.051`- Ajouter/Supprimer des éléments d'une liste
+#### `✅.051`- Ajouter/Supprimer des éléments d'une liste
 
 ```sql
 UPDATE users
