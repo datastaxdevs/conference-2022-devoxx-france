@@ -433,33 +433,35 @@ DESCRIBE KEYSPACES;
 > system_schema          data_endpoint_auth  ecommerce
 > ```
 
-🪄🪄🪄🪄🪄 Magique 🪄🪄🪄 . Pour le lab suivant vous pouvez utiliser l'un ou l'autre...
+🪄🪄🪄🪄🪄 Magique 🪄🪄🪄 .
+
+Pour le lab suivant vous pouvez utiliser l'un ou l'autre...
 
 ## LAB2 - Tables et types de données
 
 Nous sommes dans `cqlSH`.
 
-### ✅ 2.1 - Ma premiére table
+### ✅ 2.1 - Ma première table
 
-- [✅ `025`] Afficher les keyspaces (ne pas oublier le `;`)
+- `[✅025]` Afficher les keyspaces (ne pas oublier le `;`)
 
 ```sql
 describe KEYSPACES;
 ```
 
-- [✅ `026`] Sélectionner le keyspace `devoxx`
+- `[✅026]` Sélectionner le keyspace `devoxx`
 
 ```sql
 use devoxx;
 ```
 
-- [✅ `027`] Lister les tables (pas trop de suspense...)
+- `[✅027]` Lister les tables (pas trop de suspense...)
 
 ```sql
 desc tables;
 ```
 
-- [✅ `028`] Création de votre première table (celle des slides). Notez ici les types simples `text` et la clé primaire en plusieurs parties.
+- `[✅028]` Création de votre première table (celle des slides). Notez ici les types simples `text` et la clé primaire en plusieurs parties.
 
 ```sql
 CREATE TABLE IF NOT EXISTS city_by_country (
@@ -470,7 +472,7 @@ CREATE TABLE IF NOT EXISTS city_by_country (
 );
 ```
 
-- [✅ `029`] Insertion de quelques lignes, la France d'abord puis le reste du monde.
+- `[✅029]` Insertion de quelques lignes, la France d'abord puis le reste du monde.
 
 ```sql
 INSERT INTO city_by_country(country, city, population) VALUES('FR','Paris', 2187526);
@@ -514,28 +516,31 @@ INSERT INTO city_by_country(country, city, population) VALUES('JP','Tokyo', 3743
 INSERT INTO city_by_country(country, city, population) VALUES('IN','MUMbai', 20200000);
 ```
 
-- [✅ `030`] Lister toute la table (PAS BIEN !)
+- `[✅030]` Lister toute la table (PAS BIEN !)
 
 ```sql
 select * from city_by_country;
 ```
 
-- [✅ `031`] Lister les villes de France (bien !)
+- `[✅031]` - **Lister les villes de France**
 
 <p/>
 <details>
-<summary><b> Solution </b></summary>
+<summary>Cliquer pour afficher la solution</summary>
 <pre>select * from city_by_country WHERE country='FR';</pre>
 </p>
 </details>
 
-> ℹ️ _Notez qu'elles s'affiche par ordre alphabétique._
+> ℹ️ _Notez qu'elles s'affichent par ordre alphabétique._
 
-- [✅ `032`] Afficher `Brest` (parce que)
+- `[✅032]`- **Afficher `Brest` (parce que)**
 
-```sql
-select * from city_by_country WHERE country='FR' AND city='Brest';
-```
+<p/>
+<details>
+<summary>Cliquer pour afficher la solution</summary>
+<pre>select * from city_by_country WHERE country='FR' AND city='Brest';</pre>
+</p>
+</details>
 
 #### ✅ Step 6a. Create a couple more tables
 
