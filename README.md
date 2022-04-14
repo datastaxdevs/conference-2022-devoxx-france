@@ -108,7 +108,7 @@ Que vous soyez avec nous pour Devoxx ou que que vous regardiez la session mainte
 
 [Gitpod](https://www.gitpod.io/) est un IDE 100% dans le cloud. Il s'appuie sur [VS Code](https://github.com/gitpod-io/vscode/blob/gp-code/LICENSE.txt?lang=en-US) mais fourni également de nombreux outils pour développer.
 
-[✅ `001`]: _Click-Droit_ sur le bouton pour ouvrir gitpod dans un nouveau TAB.
+#### `✅.001`- _Click-Droit_ sur le bouton pour ouvrir gitpod dans un nouveau TAB.
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/datastaxdevs/conferennce-2022-devoxx)
 
@@ -129,13 +129,13 @@ Lorsque Gitpod est démarré, localiser le terminal `cassandra-docker`. Il devra
 
 Dans le répertoire `labs` repérer le fichier `docker-compose.yml`. Nous allons utiliser l'[image officielle Docker Cassandra](https://hub.docker.com/_/cassandra/).
 
-- [✅ `002`] Ouvrir le fichier et visualiser comment le `seed` est un service séparé. La recommentation est de 1 à 2 `seeds` par datacenter (anneau).
+#### `✅.002`- Ouvrir le fichier et visualiser comment le `seed` est un service séparé. La recommentation est de 1 à 2 `seeds` par datacenter (anneau).
 
 ```bash
 gp open /workspace/conference-2022-devoxx/labs/docker-compose.yml
 ```
 
-- [✅ `003`] Lancer les 2 premiers noeuds avec `docker-compose`
+#### `✅.003`- Lancer les 2 premiers noeuds avec `docker-compose`
 
 ```bash
 cd /workspace/conference-2022-devoxx/labs/
@@ -151,13 +151,15 @@ docker-compose up -d
 >  ⠿ Container labs-dc1_noeud-1       Started      1.2s
 > ```
 
-- [✅ `004`] Les deux services démarrent. Le second attendra le bootstrap du seed (30s). Pour avoir le statut utiliser docker:
+#### `✅.004`- Afficher le statut des conteneurs
+
+Les deux services démarrent. Le second attendra le bootstrap du seed (30s). Pour avoir le statut utiliser docker:
 
 ```bash
 docker ps
 ```
 
-- [✅ `005`] Vous pouvez également utiliser docker-compose.
+#### `✅.005`- Afficher le statut des conteneurs avec `docker-compose`
 
 ```bash
  docker-compose ps
@@ -845,6 +847,10 @@ Vérification:<pre>SELECT id, name, emails FROM users;</pre>
 <p/>
 
 ### 2.2.5 - Collections Imbriquées 🪆🪆🪆
+
+Il est possible d'imbriquées les collections les unes dans les autres. On peut ainsi avoir une liste de liste de maps. (`LIST<LIST<MAP<TEXT,TEXT>>>`).
+
+Les collections imbrique
 
 ### 2.2.6 - Les `UDT` ou User Defined Type
 
