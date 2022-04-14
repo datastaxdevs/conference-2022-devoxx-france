@@ -104,7 +104,7 @@ Que vous soyez avec nous pour Devoxx ou que que vous regardiez la session mainte
 
 ## LAB1 - Création de la base de donnée
 
-### 1.1 - Démarrage de `Gitpod`
+## 1.1 - Démarrage de `Gitpod`
 
 [Gitpod](https://www.gitpod.io/) est un IDE 100% dans le cloud. Il s'appuie sur [VS Code](https://github.com/gitpod-io/vscode/blob/gp-code/LICENSE.txt?lang=en-US) mais fourni également de nombreux outils pour développer.
 
@@ -112,7 +112,7 @@ Que vous soyez avec nous pour Devoxx ou que que vous regardiez la session mainte
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/datastaxdevs/conferennce-2022-devoxx)
 
-### 1.2 - Apache Cassandra™ dans `Docker`
+## 1.2 - Apache Cassandra™ dans `Docker`
 
 > ℹ️ Lors du premier copier-coller le navigateur vous invite à autoriser les copies depuis le presse-papier, il est nécessaire de le faire.
 
@@ -125,7 +125,7 @@ Lorsque Gitpod est démarré, localiser le terminal `cassandra-docker`. Il devra
 ------------------------------------------------------------
 ```
 
-#### 1.2.1 - Démarrage du cluster
+### 1.2.1 - Démarrage du cluster
 
 Dans le répertoire `labs` repérer le fichier `docker-compose.yml`. Nous allons utiliser l'[image officielle Docker Cassandra](https://hub.docker.com/_/cassandra/).
 
@@ -199,15 +199,17 @@ docker exec -it $dc1_seed_containerid nodetool status
 > UN  172.28.0.3  69.05 KiB  16      100.0%            25f43936-be10-471d-b8ac-7efe93834712  rack1
 > ```
 
-#### 1.2.2 - Scale up du cluster
+### 1.2.2 - Scale up du cluster
 
-- [✅ `008`] Ajouter le 3e noeud (scaling du noeud non seed). On notera que la commande n'est pas trop car elle redémarre le `dc1_noeud` existant mais l'ancienne `docker-compose scale` est déprécié. Bon c'est cool cela démontre que Cassandra gère les environnements hostiles.
+#### `✅.008`- Ajouter le 3e noeud (scaling du noeud non seed).
+
+On notera que la commande n'est pas trop car elle redémarre le `dc1_noeud` existant mais l'ancienne `docker-compose scale` est déprécié. Bon c'est cool cela démontre que Cassandra gère les environnements hostiles.
 
 ```bash
 docker-compose up --scale dc1_noeud=2 -d
 ```
 
-- [`009`] Après environ minute
+#### `✅.009`- Vérifier le statut après environ minute
 
 ```bash
 docker exec -it $dc1_seed_containerid nodetool status
@@ -226,15 +228,15 @@ docker exec -it $dc1_seed_containerid nodetool status
 > UN  172.28.0.4  69.06 KiB  16      76.0%             fe43b0d0-952b-48ec-86e1-d73ace617dc8  rack1
 > ```
 
-#### 1.2.3 - Création d'un `keyspace'
+### 1.2.3 - Création d'un `keyspace'
 
-- [✅ `010`] Ouvrez un console CQLSH interactif
+#### `✅.010`- Ouvrez un console CQLSH interactif
 
 ```bash
 docker exec -it $dc1_seed_containerid cqlsh
 ```
 
-- [✅ `011`] Vous êtes sur le noeud `dc1_seed`
+#### `✅.011`- Vous êtes sur le noeud `dc1_seed`
 
 ```sql
 select cluster_name,data_center,rack,broadcast_address from system.local;
@@ -250,7 +252,7 @@ select cluster_name,data_center,rack,broadcast_address from system.local;
 > (1 rows)
 > ```
 
-- [✅ `012`] Et vous avez 2 autres noeuds:
+#### `✅.012`- Et vous avez 2 autres noeuds:
 
 ```sql
 select data_center,rack,peer from system.peers;
@@ -269,14 +271,14 @@ select data_center,rack,peer from system.peers;
 > (2 rows)
 > ```
 
-- [✅ `013`] Création du keyspace
+#### `✅.013`- Création du keyspace
 
 ```
 CREATE KEYSPACE IF NOT EXISTS devoxx
 WITH REPLICATION = {'class' : 'NetworkTopologyStrategy', 'dc1' : 3};
 ```
 
-- [✅ `014`] Vérification
+#### `✅.014`- Vérification
 
 ```sql
 describe keyspaces;
@@ -289,19 +291,19 @@ describe keyspaces;
 > system  system_distributed  system_traces  system_virtual_schema
 > ```
 
-### 1.3 Environnement DBAAS Astra
+## 1.3 Environnement DBAAS Astra
 
 Astra est un logiciel de sofware-as-a-service dans le cloud que l'on peut utiliser gratuitement jusqu'à quelques millions de requêtes par mois sans carte de crédit ni limite de temps, parfait pour les environnements de tests et workshop ^\_^.
 
-#### 1.3.1 - Configuration Astra
+### 1.3.1 - Configuration Astra
 
-- [✅ `015`] Créer un compte sur Astra
+#### `✅.015`- Créer un compte sur Astra
 
 > 📖 Documentation: [Créer son compte Astra 🇬🇧](https://awesome-astra.github.io/docs/pages/astra/create-account/)
 
 [![](https://dabuttonfactory.com/button.png?t=+Connect+to+Astra&f=Open+Sans-Bold&ts=12&tc=fff&hp=23&vp=16&c=11&bgt=gradient&bgc=0b5394&ebgc=073763)](https://astra.dev/devoxx)
 
-- [✅ `016`] Créer une base de donnée sur Astra
+#### `✅.016`- Créer une base de donnée sur Astra
 
 > 📖 Documentation: [Créer une base de donnée sur Astra 🇬🇧](https://awesome-astra.github.io/docs/pages/astra/create-instance/)
 
@@ -329,7 +331,7 @@ Lorsque vous créez un compte vous créez également une Organization, il s'agit
     ORG -->|0..n|STR(Streaming Tenants)
 ```
 
-- [✅ `017`] Créer vos identifiants sur Astra
+#### `✅.017`- Créer vos identifiants sur Astra
 
 > 📖 Documentation: [Créer vos identifiants pour Astra 🇬🇧](https://awesome-astra.github.io/docs/pages/astra/create-token/#c-procedure)
 
@@ -361,25 +363,25 @@ Vos identifiants contiennent 3 champs:
 - `ClientSecret` qui correspond à un mot de passe utilisateur
 - `Token` qui correspond à une clé pour les Apis mais peut aussi servir de mot de passe avec le compte utilisateur générique `token`.
 
-#### 1.3.2 - Configurer `Gitpod`
+### 1.3.2 - Configurer `Gitpod`
 
 Retour dans `Gitpod`. Repérer le terminal `cassandra-astra` nous allons configurer `cqlsh` pour utiliser la base de donnée Cassandra dans ASTRA 🚀. Notez que la CQL COnsole est également disponible dans l'interface Astra en tant que TAB.
 
 ![](/img/gitpod-terminal-astra-01.png?raw=true)
 
-- [✅ `018`] ReDéfinissez le nom de la base de données
+#### `✅.018`- ReDéfinissez le nom de la base de données
 
 ```bash
 export ASTRA_DB_NAME=workshops
 ```
 
-- [✅ `019`] ReDéfinissez le nom du keyspace
+#### `✅.019`- ReDéfinissez le nom du keyspace
 
 ```bash
 export ASTRA_DB_KEYSPACE=devoxx
 ```
 
-- [✅ `020`] Configurer l'environnement avec `astra-setup`
+#### `✅.020`- Configurer l'environnement avec `astra-setup`
 
 ```bash
 npm exec -y astra-setup $ASTRA_DB_NAME $ASTRA_DB_KEYSPACE
@@ -395,19 +397,19 @@ npm exec -y astra-setup $ASTRA_DB_NAME $ASTRA_DB_KEYSPACE
 > /workspace/conference-2022-devoxx/scripts/astra-cqlsh-install
 > ```
 
-- [✅ `021`] Vérifier la configuration des variables
+#### `✅.021`- Vérifier la configuration des variables
 
 ```bash
 cat /workspace/conference-2022-devoxx/.env
 ```
 
-- [✅ `022`] Vérifier que le zip de connexion est téléchargé
+#### `✅.022`- Vérifier que le zip de connexion est téléchargé
 
 ```bash
 ls -l /home/gitpod/.cassandra/bootstrap.zip
 ```
 
-- [✅ `023`] Lancement de `CqlSH`
+#### `✅.023`- Lancement de `CqlSH`
 
 ```bash
 /workspace/conference-2022-devoxx/scripts/astra-cqlsh
@@ -417,7 +419,7 @@ ls -l /home/gitpod/.cassandra/bootstrap.zip
 >
 > ![](/img/gitpod-terminal-astra-03.png?raw=true)
 
-- [✅ `024`] Vérification
+#### `✅.024`- Vérification
 
 ```sql
 DESCRIBE KEYSPACES;
@@ -439,31 +441,31 @@ DESCRIBE KEYSPACES;
 
 Pour le lab suivant vous pouvez utiliser l'un ou l'autre...
 
-## LAB2 - Tables et types de données
+# LAB2 - Tables et types de données
 
 Nous sommes dans `cqlSH`.
 
-### ✅ 2.1 - Tables et Types simples
+## ✅ 2.1 - Tables et Types simples
 
-- `[✅025]` Afficher les keyspaces (ne pas oublier le `;`)
+#### `✅.025`- Afficher les keyspaces (ne pas oublier le `;`)
 
 ```sql
 describe KEYSPACES;
 ```
 
-- `[✅026]` Sélectionner le keyspace `devoxx`
+#### `✅.026`- Sélectionner le keyspace `devoxx`
 
 ```sql
 use devoxx;
 ```
 
-- `[✅027]` Lister les tables (pas trop de suspense...)
+#### `✅.027`- Lister les tables (pas trop de suspense...)
 
 ```sql
 desc tables;
 ```
 
-- `[✅028]` Création de votre première table (celle des slides). Notez ici les types simples `text` et la clé primaire en plusieurs parties.
+#### `✅.028`- Création de votre première table (celle des slides). Notez ici les types simples `text` et la clé primaire en plusieurs parties.
 
 ```sql
 CREATE TABLE IF NOT EXISTS city_by_country (
@@ -474,7 +476,7 @@ CREATE TABLE IF NOT EXISTS city_by_country (
 );
 ```
 
-- `[✅029]` Insertion de quelques lignes, la France d'abord puis le reste du monde.
+#### `✅.029`- Insertion de quelques lignes, la France d'abord puis le reste du monde.
 
 ```sql
 INSERT INTO city_by_country(country, city, population) VALUES('FR','Paris', 2187526);
@@ -518,13 +520,13 @@ INSERT INTO city_by_country(country, city, population) VALUES('JP','Tokyo', 3743
 INSERT INTO city_by_country(country, city, population) VALUES('IN','MUMbai', 20200000);
 ```
 
-- `[✅.030]` Lister toute la table (PAS BIEN !)
+#### `✅.030`- Lister toute la table (PAS BIEN !)
 
 ```sql
 select * from city_by_country;
 ```
 
-- `[✅.031]` - **Lister les villes de France**
+#### `✅.031`- Lister les villes de France\*\*
 
 <p/>
 <details>
@@ -534,7 +536,7 @@ select * from city_by_country;
 </details>
 <p/>
 
-- `[✅.032]`- **Afficher `Brest` (parce que)**
+#### `✅.032`- Afficher `Brest` (parce que)
 
 <p/>
 <details>
@@ -544,7 +546,7 @@ select * from city_by_country;
 </details>
 <p/>
 
-- `[✅.033]`- **Mettre à jour la valeur de Brest à `142000`**
+#### `✅.033`- Mettre à jour la valeur de Brest à `142000`
 
 <p/>
 <details>
@@ -559,7 +561,7 @@ ou Avec Insert (tout insert est un upset)
 </details>
 <p/>
 
-- `[✅.034]`- **Supprimer Tokyo**
+#### `✅.034`- Supprimer Tokyo
 
 <p/>
 <details>
@@ -582,7 +584,7 @@ DELETE FROM city_by_country WHERE country='CA';
 Vérification:<pre>select * from city_by_country WHERE country='CA';</pre>
 </details>
 
-- `[✅.036]`- **Supprimer la population de Sydney `(AU, Sydney)`**
+#### `✅.036`- upprimer la population de Sydney `(AU, Sydney)`
 
 <p/>
 <details>
@@ -593,7 +595,7 @@ DELETE population FROM city_by_country WHERE country='AU' and city='Sydney';
 Vérification:<pre>select * from city_by_country WHERE country='AU';</pre>
 </details>
 
-- `[✅.037]`- **Vider la table**
+#### `✅.037`- Vider la table
 
 <p/>
 <details>
@@ -605,7 +607,7 @@ Vérification:<pre>select * from city_by_country;</pre>
 </details>
 <p/>
 
-### 2.2 - Comprendre les types avancés
+## 2.2 - Comprendre les types avancés
 
 Nous avons vu plusieurs types simples comme `int` et `text`. Il en existe une variété assez simples à utiliser: `VARCHAR`, `ASCII`, `TINYINT`, `SMALLINT`, `INT`, `BIGINT`, `VARINT`, `FLOAT`, `DOUBLE`, `DECIMAL`, `TIME`, `TIMESTAMP`, `DATE`, `DURATION`, `BOOLEAN`, `BLOB`, et `INET`. Vous en retrouvez un tableau dans la [documentation Datastax](https://docs.datastax.com/en/cql-oss/3.x/cql/cql_reference/cql_data_types_c.html).
 
@@ -628,7 +630,7 @@ Le CQL, Cassandra Query Language supporte les types suivants:
 - `UUID` est un UUID dit de version 4 généré de manière aléatoire. Pour les générer on utilise la fonction `uuid()`.
 - `TIMEUUID` est un UUID dit de version 1, il est construit sur la base de l'adresse MAC et d'un timestamp. Pour les générer on utilise la fonction `now()`. On peut extraire le `timestamp` depuis le `TIMEUUID` avec les fonctions `unixTimestampOf()` ou `dateOf()`.
 
-- **`✅.039`- Comprendre les `UUID`**
+#### `✅.039`- Comprendre les `UUID`
 
 ```sql
 CREATE TABLE IF NOT EXISTS users (
@@ -639,7 +641,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 ```
 
-- **`✅.040`- Travailler avec les `UUID`**
+#### `✅.040`- Travailler avec les `UUID`
 
 ```sql
 INSERT INTO users (id, name, age) VALUES (7902a572-e7dc-4428-b056-0571af415df3, 'Joe', 25);
@@ -647,7 +649,7 @@ INSERT INTO users (id, name, age) VALUES (uuid(), 'Jen', 27);
 SELECT * FROM users;
 ```
 
-- **`✅.041`- Exercice `UUID`**
+#### `✅.041`- Exercice `UUID`
 
 Créer une tables `movies`, dont la partition est `id` de type `UUID` et insérer les lignes suivantes:
 
@@ -684,13 +686,13 @@ Vérification:<pre>SELECT * FROM movies;</pre>
 
 Comme en Java un `SET` est un attribut multi-valué, non ordonné, qui assure l'unicité de chaque enregistrement (dédoublonnage). Il a lui même un `type` qui indique quels sont les objets que l'ont peut y insérer.
 
-- **`✅.042`- Ajouter une colonne dans la table précedent nommée `production`**
+#### `✅.042`- Ajouter une colonne dans la table précedent nommée `production`
 
 ```sql
 ALTER TABLE movies ADD production SET<TEXT>;
 ```
 
-- **`✅.043`- Mise à jour des enregistrements**
+#### `✅.043`- Mise à jour des enregistrements
 
 Pour mettre à jour la valeur d'un set ou utilise des accolades `{}`.
 
@@ -707,7 +709,7 @@ WHERE id = 5069cc15-4300-4595-ae77-381c3af5dc5e;
 SELECT title, year, production FROM movies;
 ```
 
-- **`✅.044`- Exercice `SET`**
+#### `✅.044`- Exercice `SET`\*\*
 
 Ajouter une colonne `genres` de type `SET<TEXT>` et ajouter les valeurs `Aventure`, `Famille` et `Fantasie`.
 
@@ -730,7 +732,7 @@ Vérification:<pre>SELECT title, year, genres FROM movies;</pre>
 
 Comme en Java une `LIST` est un attribut multi-valué, qui conserve l'ordre d'insertion. Il a lui même un `type` qui indique quels sont les objets que l'ont peut y insérer. Les données sont indexées, on peut donc y accéder en fournissant l'offset.
 
-- **`✅.045`- Ajouter une colonne nommée `searches` de type `LIST<TEXT>` dans la table `users`**
+#### `✅.045`- Ajouter une colonne nommée `searches` de type `LIST<TEXT>` dans la table `users`
 
 ```sql
 ALTER TABLE users ADD searches LIST<TEXT>;
