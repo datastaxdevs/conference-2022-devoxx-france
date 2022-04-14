@@ -1,0 +1,38 @@
+version: "2"
+services:
+  
+  # Pour construire un DC l'un des noeud est un seed
+  dc1_seed:
+    image: cassandra:4.0.3
+    ports:
+      - 9042:9042
+    networks:
+      - cassandra
+    mem_limit: 2G
+    environment:
+      - CASSANDRA_DC=dc1
+      - CASSANDRA_SEEDS=dc1_seed
+      - CASSANDRA_CLUSTER_NAME=handson
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - HEAP_NEWSIZE=128M
+      - MAX_HEAP_SIZE=1024M
+      
+  dc1_noeud:
+    image: cassandra:4.0.3
+    command: /bin/bash -c "echo 'On attend que dc1_seed bootstrap pendant 30s' && sleep 30 && /usr/local/bin/docker-entrypoint.sh cassandra -f"
+    mem_limit: 2G
+    networks:
+      - cassandra
+    depends_on:
+      - dc1_seed
+    environment:
+      - CASSANDRA_DC=dc1
+      - CASSANDRA_SEEDS=dc1_seed
+      - CASSANDRA_CLUSTER_NAME=handson
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - HEAP_NEWSIZE=128M
+      - MAX_HEAP_SIZE=1024M
+
+networks:
+  cassandra:
+

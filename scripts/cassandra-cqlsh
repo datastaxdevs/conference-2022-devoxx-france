@@ -9,4 +9,4 @@ echo -e "${BLUE}------------------------------------------------------------${NC
 echo -e "${BLUE}--  CqlSH (LOCAL DOCKER)                                 ---${NC}"
 echo -e "${BLUE}------------------------------------------------------------${NC}"
 echo -e ""
-docker exec -it `docker ps | grep noeud1 | cut -b 1-12` cqlsh
+docker exec -it `docker ps | grep dc1_seed | cut -b 1-12` cqlsh

@@ -104,15 +104,195 @@ Que vous soyez avec nous pour Devoxx ou que que vous regardiez la session mainte
 
 ## LAB1 - Création de la base de donnée
 
-### 1.1 Environnement DBAAS Astra
+### 1.1 - Démarrage de `Gitpod`
 
-#### ✅ 1.1 Step a: Créer un compte sur Astra
+#### ✅ 1.1 (a): Démarrer `Gitpod`
+
+[Gitpod](https://www.gitpod.io/) est un IDE 100% dans le cloud. Il s'appuie sur [VS Code](https://github.com/gitpod-io/vscode/blob/gp-code/LICENSE.txt?lang=en-US) mais fourni également de nombreux outils pour développer.
+
+_Click-Droit_ sur le bouton pour ouvrir gitpod dans un nouveau TAB.
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/datastaxdevs/conferennce-2022-devoxx)
+
+### 1.2 - Apache Cassandra™ dans `Docker`
+
+Lorsque Gitpod est démarré, localiser le terminal `cassandra-docker`. Il devrait contenir uniquement un message en bleu.
+
+```
+------------------------------------------------------------
+---        Bienvenue à Devoxx France 2022                ---
+--           Local Cassandra (Docker)                    ---
+------------------------------------------------------------
+```
+
+#### ✅ 1.2 - (a). Démarrage du cluster
+
+Dans le répertoire `labs` repérer le fichier `docker-compose.yml`. Nous allons utiliser l'[image officielle Docker Cassandra](https://hub.docker.com/_/cassandra/).
+
+- Ouvrir le fichier et visualiser comment le `seed` est un service séparé. La recommentation est de 1 à 2 `seeds` par datacenter (anneau).
+
+```bash
+gp open /workspace/conference-2022-devoxx/labs/docker-compose.yml
+```
+
+- Lancer les 2 premiers noeuds avec `docker-compose`
+
+```bash
+cd /workspace/conference-2022-devoxx/labs/
+docker-compose up -d
+```
+
+> 🖥️ Résultat
+>
+> ```
+> Creating network "labs_cassandra" with the default driver
+> Creating labs_dc1_seed_1 ... done
+> Creating labs_dc1_noeud_1 ... done
+> ```
+
+- Les deux services démarrent. Le second attendra le bootstrap du seed (30s). Pour avoir le statut utiliser l'un ou l'autre des commandes.
+
+_Avec Docker:_
+
+```bash
+docker ps
+```
+
+_Avec Docker Compose_
+
+```bash
+ docker-compose ps
+```
+
+> 🖥️ Résultat
+>
+> ```bash
+>     Name                    Command               State                                        Ports
+> --------------------------------------------------------------------------------------------------------------------------------------------
+> labs_dc1_noeud_1   docker-entrypoint.sh /bin/ ...   Up      7000/tcp, 7001/tcp, 7199/tcp, 9042/tcp, 9160/tcp
+> labs_dc1_seed_1    docker-entrypoint.sh cassa ...   Up      7000/tcp, 7001/tcp, 7199/tcp, 0.0.0.0:9042->9042/tcp,:::9042->9042/tcp, 9160/tcp
+> ```
+
+- Vérification du démarrage du cluster
+
+```bash
+export dc1_seed_containerid=`docker ps | grep dc1_seed | cut -b 1-12`
+docker exec -it $dc1_seed_containerid nodetool status
+```
+
+> 🖥️ Résultat (après environ 1min)
+>
+> ```
+> Datacenter: dc1
+> ===============
+> Status=Up/Down
+> |/ State=Normal/Leaving/Joining/Moving
+> --  Address     Load       Tokens  Owns (effective)  Host > ID                               Rack
+> UN  172.28.0.2  69.05 KiB  16      100.0%8707bea1-ac47-4da0-9e96-5541d3e1431d  rack1
+> UN  172.28.0.3  69.05 KiB  16      100.0%            25f43936-be10-471d-b8ac-7efe93834712  rack1
+> ```
+
+#### ✅ 1.2 - (b). Scale up du cluster
+
+- Ajouter le 3e noeud (scaling du noeud non seed)
+
+```bash
+docker-compose up -d --scale dc1_noeud=2
+```
+
+- Après environ minute
+
+```bash
+docker exec -it $dc1_seed_containerid nodetool status
+```
+
+> 🖥️ Résultat (après environ 1min)
+>
+> ```
+> Datacenter: dc1
+> ===============
+> Status=Up/Down
+> |/ State=Normal/Leaving/Joining/Moving
+> --  Address     Load       Tokens  Owns (effective)  Host > ID                               Rack
+> UN  172.28.0.2  69.05 KiB  16      100.0%8707bea1-ac47-4da0-9e96-5541d3e1431d  rack1
+> UN  172.28.0.3  69.05 KiB  16      100.0%            25f43936-be10-471d-b8ac-7efe93834712  rack1
+> UN  172.28.0.4  69.06 KiB  16      76.0%             fe43b0d0-952b-48ec-86e1-d73ace617dc8  rack1
+> ```
+
+#### ✅ 1.2 - (c). Création d'un `keyspace'
+
+- Ouvrez un console CQLSH interactif
+
+```bash
+docker exec -it $dc1_seed_containerid cqlsh
+```
+
+- Vous êtes sur le noeud `dc1_seed`
+
+```sql
+select cluster_name,data_center,rack,broadcast_address from system.local;
+```
+
+```
+cqlsh> select cluster_name,data_center,rack,broadcast_address from system.local;
+
+ cluster_name | data_center | rack  | broadcast_address
+--------------+-------------+-------+-------------------
+      handson |         dc1 | rack1 |        172.28.0.2
+
+(1 rows)
+```
+
+- Et vous avez 2 autres noeuds
+
+```sql
+select data_center,rack,peer from system.peers;
+```
+
+```
+cqlsh> select data_center,rack,peer from system.peers;
+
+ data_center | rack  | peer
+-------------+-------+------------
+         dc1 | rack1 | 172.28.0.4
+         dc1 | rack1 | 172.28.0.3
+
+(2 rows)
+```
+
+- Création du keyspace
+
+```
+CREATE KEYSPACE IF NOT EXISTS devoxx
+WITH REPLICATION = {'class' : 'NetworkTopologyStrategy', 'dc1' : 3};
+```
+
+- Vérification
+
+```sql
+describe keyspaces;
+```
+
+```
+devoxx  system_auth         system_schema  system_views
+system  system_distributed  system_traces  system_virtual_schema
+```
+
+```bash
+docker exec -it `docker ps | grep cassandra:4.0.1 | cut -b 1-12` cqlsh -e "describe keyspaces"
+```
+
+### 1.3 Environnement DBAAS Astra
+
+Astra est un logiciel de sofware-as-a-service dans le cloud que l'on peut utiliser gratuitement jusqu'à quelques millions de requêtes par mois sans carte de crédit ni limite de temps, parfait pour les environnements de tests et workshop ^\_^.
+
+#### ✅ 1.3 - (a): Créer un compte sur Astra
 
 > 📖 Documentation: [Créer son compte Astra 🇬🇧](https://awesome-astra.github.io/docs/pages/astra/create-account/)
 
 [![](https://dabuttonfactory.com/button.png?t=+Connect+to+Astra&f=Open+Sans-Bold&ts=12&tc=fff&hp=23&vp=16&c=11&bgt=gradient&bgc=0b5394&ebgc=073763)](https://astra.dev/devoxx)
 
-#### ✅ 1.1 Step b: Créer une base de donnée sur Astra
+#### ✅ 1.3 - (b): Créer une base de donnée sur Astra
 
 > 📖 Documentation: [Créer une base de donnée sur Astra 🇬🇧](https://awesome-astra.github.io/docs/pages/astra/create-instance/)
 
@@ -124,9 +304,11 @@ Pour la session aujourd'hui utilisons les valeurs suivantes. Vous pouvez les cha
 | Keyspace name | `devoxx`                                                                                                                                                                                 |
 | Region name   | Prenez `Google Cloud` et l'une des 3 régions `North America/us-east-1`, `Europe/europe-west-1` ou `Asia Pacific/Mumbai`. Les autres ne sont pas dans le plan gratuit et repérées par 🔒. |
 
-**Walkthrough:** _Voici une petite animation mais attention de bien utiliser les valeurs dans le tableau ci-dessus._
-
-![](/img/astra-create-db.gif?raw=true)
+> 🖥️ **Résultat:**
+>
+> _Voici une petite animation mais attention à bien utiliser les valeurs dans le tableau ci-dessus._
+>
+> ![](/img/astra-create-db.gif?raw=true)
 
 Lorsque vous créez un compte vous créez également une Organization, il s'agit de votre tenant. A l'intérieur vous pouvez définir plusieurs bases de données. Vous pouvez inviter d'autres utilisateurs dans votre organisation.
 
@@ -138,7 +320,7 @@ Lorsque vous créez un compte vous créez également une Organization, il s'agit
     ORG -->|0..n|STR(Streaming Tenants)
 ```
 
-#### ✅ 1.1 Step c: Créer vos identifiants pour Astra
+#### ✅ 1.3 - (c): Créer vos identifiants sur Astra
 
 > 📖 Documentation: [Créer vos identifiants pour Astra 🇬🇧](https://awesome-astra.github.io/docs/pages/astra/create-token/#c-procedure)
 
@@ -158,9 +340,11 @@ Pour la session utilisez le role `Database Administrator` pour avoir accès à t
 | --------- | ------------------------ |
 | Role      | `Database Administrator` |
 
-**👁️ Walkthrough:** _Voici une petite animation pour retrouver les étapes_
-
-![](/img/astra-create-token.gif?raw=true)
+> 🖥️ **Résultat:**
+>
+> _Voici une petite animation pour retrouver les étapes_
+>
+> ![](/img/astra-create-token.gif?raw=true)
 
 Vos identifiants contiennent 3 champs:
 
@@ -168,115 +352,79 @@ Vos identifiants contiennent 3 champs:
 - `ClientSecret` qui correspond à un mot de passe utilisateur
 - `Token` qui correspond à une clé pour les Apis mais peut aussi servir de mot de passe avec le compte utilisateur générique `token`.
 
-### 1.2 - Démarrage et configuration Gitpod
+#### ✅ 1.3 (d): Configurer `Gitpod`
 
-#### ✅ 1.2 (a): Démarrer `Gitpod`
-
-[Gitpod](https://www.gitpod.io/) est un IDE 100% dans le cloud. Il s'appuie sur [VS Code](https://github.com/gitpod-io/vscode/blob/gp-code/LICENSE.txt?lang=en-US) mais fourni également de nombreux outils pour développer.
-
-_Click-Droit_ sur le bouton pour ouvrir gitpod dans un nouveau TAB.
-
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/datastaxdevs/conferennce-2022-devoxx)
-
-#### ✅ 1.2 (b): Configurer `Gitpod`
-
-Plusieurs Terminaux vont s'ouvrir pour les différents LABS. Repérer le lab `astra-cqlsh` nous allons configurer un shell pour utiliser la base de donnée Cassandra dans ASTRA.
+Retour dans `Gitpod`. Repérer le terminal `cassandra-astra` nous allons configurer `cqlsh` pour utiliser la base de donnée Cassandra dans ASTRA 🚀. Notez que la CQL COnsole est également disponible dans l'interface Astra en tant que TAB.
 
 ![](/img/gitpod-terminal-astra-01.png?raw=true)
 
-#### ✅ 1.2 (c): ReDéfinissez le nom de la base de données
+#### ✅ 1.3 (e): ReDéfinissez le nom de la base de données
 
-```
+```bash
 export ASTRA_DB_NAME=workshops
 ```
 
-#### ✅ 1.2 (d): ReDéfinissez le nom du keyspace
+#### ✅ 1.3 (f): ReDéfinissez le nom du keyspace
 
-```
+```bash
 export ASTRA_DB_KEYSPACE=devoxx
 ```
 
-#### ✅ 1.2 (e): Configurer l'environnement
+#### ✅ 1.3 (g): Configurer l'environnement
 
-```
+```bash
 npm exec -y astra-setup $ASTRA_DB_NAME $ASTRA_DB_KEYSPACE
 ```
 
-#### ✅ 1.2 (f): Vérifier la configuration des variables
+> 🖥️ **Résultat:**
+>
+> ![](/img/gitpod-terminal-astra-02.png?raw=true)
+>
+> _Il est arrivé que le script remonte des erreurs de timeout. Pour le relancer il faut simplement_
+>
+> ```
+> /workspace/conference-2022-devoxx/scripts/astra-cqlsh-install
+> ```
 
-```
+- Vérifier la configuration des variables
+
+```bash
 cat /workspace/conference-2022-devoxx/.env
 ```
 
-#### ✅ 1.2 (g): Vérifier que le zip de connexion est téléchargé
-
-```
-ls /home/gitpod/.cassandra/bootstrap.zip
-```
-
-### 1.3 - Docker
-
-Lorsque Gitpod est démarré localiser le `Terminal` et mettez le en plein écran.
-
-#### ✅ 1.2 Step b: Lancer un cluster de `1 noeud`
-
-Dans le repertoire `LAB_01` repérerer le fichier `docker-compose-1noeud.yml`. Nous allons utilisons l'[image officielle Cassandra](https://hub.docker.com/_/cassandra/)
-
-```yaml
-version: "2"
-services:
-  cassandra-seed:
-    image: cassandra:4.0.3
-    ports:
-      - 9042:9042
-    mem_limit: 2G
-    environment:
-      - HEAP_NEWSIZE=128M
-      - MAX_HEAP_SIZE=1024M
-      - CASSANDRA_SEEDS=cassandra-seed
-      - CASSANDRA_CLUSTER_NAME=javazone
-      - CASSANDRA_DC=dc1
-      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
-```
-
--
+- Vérifier que le zip de connexion est téléchargé
 
 ```bash
-docker-compose up -f ./hands-on/LAB_01/docker-compose-1noeud.yml -d
+ls -l /home/gitpod/.cassandra/bootstrap.zip
 ```
 
-- _Open CQLSH in interactive mode_
+- Lancement de `CqlSH`
 
 ```bash
-docker exec -it `docker ps | grep cassandra:4.0.1 | cut -b 1-12` cqlsh
+/workspace/conference-2022-devoxx/scripts/astra-cqlsh
 ```
 
-- _Show MetaData_ :
+> 🖥️ **Résultat:**
+>
+> ![](/img/gitpod-terminal-astra-03.png?raw=true)
 
-```bash
-cd 1-cassandra-drivers
-mvn exec:java -Dexec.mainClass=com.datastax.samples.E01_ClusterShowMetaData
-```
-
-- _Create the Keyspace_ :
-
-```bash
-mvn exec:java -Dexec.mainClass=com.datastax.samples.E02_CreateKeyspace
-```
-
-- _You have now a new keyspace 'javazone'_
+- Vérification
 
 ```sql
-describe keyspaces;
+DESCRIBE KEYSPACES;
 ```
 
-or
+```
+token@cqlsh> describe KEYSPACEs;
 
-```bash
-docker exec -it `docker ps | grep cassandra:4.0.1 | cut -b 1-12` cqlsh -e "describe keyspaces"
+system_virtual_schema  system_auth         better_reads      todos
+devoxx                 system_views        spring_petclinic  feeds_reader
+undefined              system              native_java
+netflix                datastax_sla        system_traces
+system_schema          data_endpoint_auth  ecommerce
 ```
 
-[🏠 Table des matières](#-table-des-matières)
+🪄🪄🪄🪄🪄 Magique 🪄🪄🪄 . Pour le lab suivant vous pouvez utiliser l'un ou l'autre...
 
 ## LAB2 - Tables et types de données
 

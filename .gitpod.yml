@@ -2,7 +2,10 @@ image:
   file: .gitpod.Dockerfile
 
 tasks:
-  - name: astra-cqlsh
+  # -------------------------------------------------
+  # Install Cqlsh for Astra and setup for a DB
+  # -------------------------------------------------
+  - name: cassandra-astra
     env:
         CQLENG_ALLOW_SCHEMA_MANAGEMENT: 1
     before: |
@@ -12,12 +15,14 @@ tasks:
       chmod 700 /workspace/conference-2022-devoxx/scripts/cassandra-cqlsh
     command: |
       ./scripts/astra-cqlsh-install
-  - name: local-cqlsh
+  - name: cassandra-docker
     before: |
       docker pull cassandra:4.0.3
     command: |
-      ./scripts/cassandra-start
+      ./scripts/cassandra-start 2>/dev/null
+      ./scripts/cassandra-cqlsh
 ports:
+  # Access Cassandra node
   - port: 9042
     onOpen: ignore
     visibility: public
@@ -35,6 +40,12 @@ github:
 
 vscode:
   extensions:
+    # Lombok
     - GabrielBB.vscode-lombok
+    # Java
     - vscjava.vscode-java-pack
+    # Spring Boot
     - Pivotal.vscode-boot-dev-pack
+    # Docker Containers
+    - ms-azuretools.vscode-docker
+  
