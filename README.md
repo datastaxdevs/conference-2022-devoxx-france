@@ -21,18 +21,50 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
 - [Objectifs](#objectifs)
 - [Foire aux questions](#foire-aux-questions)
 - [Supports de Formation](#supports-de-formation)
-- [#**LAB1** - Création de la base de donnée](#lab1---création-de-la-base-de-donnée)
-- [#**LAB2** - Tables et types de données](#lab2---tables-et-types-de-données)
-- [#**LAB3** - Modèle de données `PetClinic`](#lab3--modèle-de-données-petclinic)
-- [#**LAB4** - Modèle de données `TimeSeries`](#lab4--modèle-de-données-timeseries)
-- [#**LAB5** - Introduction aux drivers](#lab5---introduction-aux-drivers)
-- [#**LAB6** - Mapping Objet avec les drivers](#lab6---mapping-objet-avec-les-drivers)
-- [#**LAB7** - Programmation reactive](#lab7---programmation-reactive)
-- [#**LAB8** - Spring Data Cassandra](#lab8---spring-data-cassandra)
-- [#**LAB9** - Cassandra Quarkus extension](#lab9---cassandra-quarkus-extension)
-- [#**LAB10** - Micronaut Cassandra](#lab10---micronaut-cassandra)
-- [#**LAB11** - Stargate Apis](#lab11---stargate-apis)
-- [#**LAB12** - Stargate SDK](#lab12---stargate-sdk)
+- [#**LAB 1** - Initialisation des Environnements](#lab1---création-de-la-base-de-donnée)
+  - 1.1 - Démarrage de `Gitpod`
+  - 1.2 - Apache Cassandra™ dans `Docker`
+  - 1.3 - Apache Cassandra™ avec `Astra` (dbaas)
+- [#**LAB 2** - Les Fondamentaux d'Apache Cassandra™](#lab2---tables-et-types-de-données)
+  - 2.1 - Tables et types de données simples
+  - 2.2 - Opérations Create, Read, Update, Delete
+  - 2.3 - Grammaire des requêtes avec CQL
+  - 2.4 - Types de données avancés
+  - 2.5 - Lightweight Transactions
+  - 2.6 - Batches
+  - 2.7 - Indexs secondaires
+  - 2.8 - Niveau de consistance
+- [#**LAB 3** - La modélisation de données par l'exemple](#lab3--modèle-de-données-petclinic)
+  - 3.1 - Méthodologie
+  - 3.2 - Modèle de données timeseries
+  - 3.2 - De SQL à NoSQL avec Petclinic
+- [#**LAB 4** - Introduction aux drivers](#lab4---introduction-aux-drivers)
+  - 4.1 - Connectivité
+  - 4.2 - Création des `Statements`
+  - 4.3 - Parsing des résultats
+  - 4.4 - Pagination
+  - 4.5 - Programmation Asynchrone
+  - 4.6 - Programmation Réactive
+  - 4.7 - Object Mapping
+- [#**LAB 5** - Spring Data Cassandra](#lab8---spring-data-cassandra)
+  - 5.1 - Configuration
+  - 5.2 - Repositories
+  - 5.3 - Cassandra Operations
+  - 5.4 - Full Spring Boot Application
+- [#**LAB 6** - Cassandra Quarkus extension](#lab9---cassandra-quarkus-extension)
+  - 6.1 - Configuration
+  - 6.2 - Full Application
+  - 6.3 - Native Compilation
+- [#**LAB 7** - Micronaut Cassandra](#lab10---micronaut-cassandra)
+  - 7.1 - Configuration
+  - 7.2 - Full Application
+- [#**LAB 8** - Stargate Apis](#lab11---stargate-apis)
+  - 8.1 - Introduction à Stargate
+  - 8.2 - Rest Apis
+  - 8.3 - Document Apis
+  - 8.4 - GraphQL Apis
+  - 8.5 - SDK COnfiguration
+  - 8.6 - SDK Usage
 
 ## Objectifs
 
@@ -291,7 +323,7 @@ describe keyspaces;
 > system  system_distributed  system_traces  system_virtual_schema
 > ```
 
-## 1.3 Environnement DBAAS Astra
+## 1.3 - Apache Cassandra™ avec `Astra` (dbaas)
 
 Astra est un logiciel de sofware-as-a-service dans le cloud que l'on peut utiliser gratuitement jusqu'à quelques millions de requêtes par mois sans carte de crédit ni limite de temps, parfait pour les environnements de tests et workshop ^\_^.
 
@@ -369,13 +401,13 @@ Retour dans `Gitpod`. Repérer le terminal `cassandra-astra` nous allons configu
 
 ![](/img/gitpod-terminal-astra-01.png?raw=true)
 
-#### `✅.018`- ReDéfinissez le nom de la base de données
+#### `✅.018`- re-saisisser le nom de la base de données
 
 ```bash
 export ASTRA_DB_NAME=workshops
 ```
 
-#### `✅.019`- ReDéfinissez le nom du keyspace
+#### `✅.019`- re-saisisser le nom du `keyspace`
 
 ```bash
 export ASTRA_DB_KEYSPACE=devoxx
@@ -437,15 +469,11 @@ DESCRIBE KEYSPACES;
 > system_schema          data_endpoint_auth  ecommerce
 > ```
 
-🪄🪄🪄🪄🪄 Magique 🪄🪄🪄 .
+# LAB2 - Les Fondamentaux d'Apache Cassandra™
 
-Pour le lab suivant vous pouvez utiliser l'un ou l'autre...
+Afin d'aborder les différentes notions nous travaillerons dans le shell `CQLSH`. Vous pouvez utilisez celui en local dans docker ou Astra à votre convenance.
 
-# LAB2 - Tables et types de données
-
-Nous sommes dans `cqlSH`.
-
-## ✅ 2.1 - Tables et Types simples
+## ✅ 2.1 - Tables et types de données simples
 
 #### `✅.025`- Afficher les keyspaces (ne pas oublier le `;`)
 
@@ -520,13 +548,15 @@ INSERT INTO city_by_country(country, city, population) VALUES('JP','Tokyo', 3743
 INSERT INTO city_by_country(country, city, population) VALUES('IN','MUMbai', 20200000);
 ```
 
-#### `✅.030`- Lister toute la table (PAS BIEN !)
+#### `✅.030`- Lister toute la table
 
 ```sql
 select * from city_by_country;
 ```
 
-#### `✅.031`- Lister les villes de France\*\*
+## ✅ 2.2 - Opérations Create, Read, Update, Delete
+
+#### `✅.031`- Lister les villes de France
 
 <p/>
 <details>
@@ -536,7 +566,7 @@ select * from city_by_country;
 </details>
 <p/>
 
-#### `✅.032`- Afficher `Brest` (parce que)
+#### `✅.032`- Rechercher la ville de `Brest`
 
 <p/>
 <details>
@@ -573,7 +603,7 @@ Vérification:<pre>select * from city_by_country WHERE country='JP';</pre>
 </details>
 <p/>
 
-- `[✅.035]`- **Supprimer le Canada `(CA)`**
+#### `✅.035`- Supprimer le Canada `(CA)`
 
 <p/>
 <details>
@@ -583,8 +613,9 @@ DELETE FROM city_by_country WHERE country='CA';
 </pre>
 Vérification:<pre>select * from city_by_country WHERE country='CA';</pre>
 </details>
+<p/>
 
-#### `✅.036`- upprimer la population de Sydney `(AU, Sydney)`
+#### `✅.036`- Supprimer la population de Sydney `(AU, Sydney)`
 
 <p/>
 <details>
@@ -594,20 +625,117 @@ DELETE population FROM city_by_country WHERE country='AU' and city='Sydney';
 </pre>
 Vérification:<pre>select * from city_by_country WHERE country='AU';</pre>
 </details>
-
-#### `✅.037`- Vider la table
-
 <p/>
-<details>
-<summary>Cliquer pour afficher la solution</summary>
-<pre>
+
+## 2.3 - Grammaire des requêtes avec CQL
+
+Dans cette partie nous présenterons les capacités de requêtage des tables.
+
+```sql
+SELECT [DISTINCT] * |
+       select_expression [AS column_name][ , ... ]
+FROM   [keyspace_name.] table_name
+[WHERE partition_key_predicate
+  [AND clustering_key_predicate]]
+[GROUP BY primary_key_column_name][ , ... ]
+[ORDER BY clustering_key_column_name ASC|DESC][ , ... ]
+[PER PARTITION LIMIT number]
+[LIMIT number]
+[ALLOW FILTERING]
+```
+
+Dans la clause _`SELECT`_ on trouve :
+
+- les caractères généraux comme `*`
+- le nom des colonnes
+- des aggrégats comme `COUNT()` et `AVG()`
+- des fonctions numériques notamment sur le time-to-live (`TTL`) et le timestamp d'écriture (`WRITETIME`).
+
+Dans la clause _`FROM`_ on trouve :
+
+- le nom du keyspace et de la table
+- on peut omettre le nom du keyspace si le shell est déjà positionné sur le keyspace.
+
+Dans la clause _`WHERE`_ on trouve les critères de filtre des enregistrements mais aussi des partitions.
+
+- On doit trouver **au minimum** l'ensemble des colonnes de la clé de partition. (`partition key`)
+- On trouve ensuite des filtres sur les clustering colonnes (`clustering key`) dans **l'ordre de définition** de la clé primaire.
+- Tous les prédicats sont des égalités (`=` ou `IN()`) sauf celui de la dernières clustering colonne où l'on retrouve une inégalité. (`>`, `<`, `>=`, `<=`).
+
+La clause de `GROUP BY` permet de grouper les enregistrements par clé de partition puis clustering colonnes (`clustering key`) dans **l'ordre de définition** de la clé primaire.
+
+Les clauses `LIMIT` et ` PER PARTITION LIMIT` permettent de limiter le nombre d'enregistrement retournés globalement ou par partition
+
+Enfin la clause `ALLOW FILTERING` permet d'autoriser le full scan cluster et de ne pas seulement rechercher sur la clé primaire. La règle est de **toujours éviter de l'utiliser**. Il existe un cas aux limites lorsque la clé de partition est connue et que la taille de la partition est failble.
+
+#### `✅.037`- Requête sur la clé de paritition `=`
+
+```sql
+select * from city_by_country WHERE country='FR';
+```
+
+#### `✅.038`- Requête sur la clé de partition `IN`
+
+```sql
+select * from city_by_country WHERE country IN('CA', 'DE');
+```
+
+#### `✅.039`- Requête avec égalité sur la cluster key
+
+```sql
+select * from city_by_country WHERE country='FR' AND city='Brest';
+```
+
+#### `✅.040`- Requête avec in-égalité sur la cluster key
+
+```sql
+select * from city_by_country WHERE country='FR' AND city>'P';
+```
+
+#### `✅.041`- Requête avec `GROUP BY` et fonction `AVG`
+
+```sql
+SELECT country, AVG(CAST(population AS FLOAT)) AS population_moyenne
+FROM city_by_country
+GROUP BY country;
+```
+
+#### `✅.042`- Requête avec `GROUP BY` et fonction `COUNT`
+
+```sql
+SELECT country, count(city) as nb_villes
+FROM city_by_country
+GROUP BY country;
+```
+
+#### `✅.043`- Requêtes avec `ALLOW FILTERING`
+
+```sql
+SELECT city,population FROM city_by_country WHERE population > 1000000;
+```
+
+```sql
+SELECT city,population FROM city_by_country WHERE population > 1000000 ALLOW FILTERING;
+```
+
+```cqsqll
+SELECT city,population FROM city_by_country WHERE country='FR'
+AND population > 1000000
+```
+
+```sql
+SELECT city,population FROM city_by_country WHERE country='FR'
+AND population > 1000000
+ALLOW FILTERING;
+```
+
+#### `✅.044`- Vider la table
+
+```sql
 TRUNCATE city_by_country;
-</pre>
-Vérification:<pre>select * from city_by_country;</pre>
-</details>
-<p/>
+```
 
-## 2.2 - Comprendre les types avancés
+## 2.4 - Types de données avancés
 
 Nous avons vu plusieurs types simples comme `int` et `text`. Il en existe une variété assez simples à utiliser: `VARCHAR`, `ASCII`, `TINYINT`, `SMALLINT`, `INT`, `BIGINT`, `VARINT`, `FLOAT`, `DOUBLE`, `DECIMAL`, `TIME`, `TIMESTAMP`, `DATE`, `DURATION`, `BOOLEAN`, `BLOB`, et `INET`. Vous en retrouvez un tableau dans la [documentation Datastax](https://docs.datastax.com/en/cql-oss/3.x/cql/cql_reference/cql_data_types_c.html).
 
@@ -619,7 +747,7 @@ Il existe en revanche des types de données dits avancés sur lesquels il convie
 - Les types personnalisés ou `UDT` (_User-Defined-Types_): `CREATE TYPE`, `ALTER TYPE`, `DROP TYPE` and `DESCRIBE TYPE`
 - Les compteurs: `COUNTER`
 
-### 2.2.1 - Les `UUIDS`
+### 2.4.1 - Les `UUIDS`
 
 Un `UUID` est un nombre sur 128 bits qui peut être généré automatiquement. Ils sont utilisés pour identifier une entité ou une relation dans les bases Cassandra.
 
@@ -682,7 +810,7 @@ Vérification:<pre>SELECT * FROM movies;</pre>
 </details>
 <p/>
 
-### 2.2.2 - Les `SET`
+### 2.4.2 - Les `SET`
 
 Comme en Java un `SET` est un attribut multi-valué, non ordonné, qui assure l'unicité de chaque enregistrement (dédoublonnage). Il a lui même un `type` qui indique quels sont les objets que l'ont peut y insérer.
 
@@ -728,7 +856,7 @@ Vérification:<pre>SELECT title, year, genres FROM movies;</pre>
 </details>
 <p/>
 
-### 2.2.3 - Les `LIST`
+### 2.4.3 - Les `LIST`
 
 Comme en Java une `LIST` est un attribut multi-valué, qui conserve l'ordre d'insertion. Il a lui même un `type` qui indique quels sont les objets que l'ont peut y insérer. Les données sont indexées, on peut donc y accéder en fournissant l'offset.
 
@@ -793,7 +921,7 @@ Vérification:<pre>SELECT id, name, emails FROM users;</pre>
 </details>
 <p/>
 
-### 2.2.4 - Les `MAP`
+### 2.4.4 - Les `MAP`
 
 Les maps sont une collection de clé/valeur. Chaque clé est unique. La clé et la valeur sont toute deux typées, on peut écrire une map sous la forme `MAP<TEXT, TEXT>`.
 
@@ -848,7 +976,7 @@ Vérification:<pre>SELECT id, name, emails FROM users;</pre>
 </details>
 <p/>
 
-### 2.2.5 - Collections Imbriquées 🪆🪆🪆
+### 2.4.5 - Collections Imbriquées 🪆🪆🪆
 
 Il est possible d'imbriquées les collections les unes dans les autres. On peut ainsi avoir une liste de liste de maps. (`LIST<LIST<MAP<TEXT,TEXT>>>`).
 
@@ -874,7 +1002,7 @@ WHERE id = 5069cc15-4300-4595-ae77-381c3af5dc5e;
 SELECT title, year, crew FROM movies;
 ```
 
-### 2.2.6 - Les `Tuples`
+### 2.4.6 - Les `Tuples`
 
 Un tuple est une liste de **taille fixe**. Chaque item de la liste peut avoir son propre type. Un tuple sera donc de la forme `TUPLE<type1, type2, ...typeN>`
 
@@ -892,7 +1020,7 @@ SELECT name, full_name FROM users;
 
 A l'inverse des User Defined types (UDT) il est nécessaire de mettre à jour tout le tuple à chaque fois et c'est pour cette raison qu'ils sont peu utilisés.
 
-### 2.2.7 - Les `UDT` ou User Defined Type
+### 2.4.7 - Les `UDT` ou User Defined Type
 
 Les `UDT` ou `User Defined Type` sont des structures _custom_ que vous pouvez définir commr vous voulez, des sous-types à votre convenance. Il est possible de les imbriquer également avec la contrainte FROZEN présentée en [2.2.5](#).
 
@@ -948,8 +1076,7 @@ WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 
 Ajouter une colonne `previous_addresses` sur la table `user` comme une liste d'addresses et ajouter 2 valeurs pour un user.
 
-p/>
-
+<p/>
 <details>
 <summary>Cliquer pour afficher la solution</summary>
 <pre>
@@ -980,27 +1107,68 @@ WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 </details>
 <p/>
 
-### 2.2.8 - Les `Counter`
+### 2.4.8 - Les `Counter`
 
-#### `✅.062`- Ajouter Colonnes
+Un `counter` est un entier signé de 64 bits. Ce dernier est distribué mais sa mise à jour peut-être réalisée de manière rapide _(pas de lecture avant écriture)_ sans race condition _(accès concurrents)_
+
+Cassandra définit le type `COUNTER` mais induit plsuieurs restrictions:
+
+- La valeur ne peut pas être forcée ou réinitialisée, on ne peut qu'incrémenter ou décrémenter. Si la valeur n'existait pas elle est insérée en considérant que la valeur par défaut était `0`.
+- Une table avec un `COUNTER` ne doit avoir que des counters en dehors de sa clé primaire
+
+#### `✅.062`- Création du schéma
 
 ```
-TODO
+CREATE TABLE movie_stats (
+  id UUID,
+  num_ratings COUNTER,
+  sum_ratings COUNTER,
+  PRIMARY KEY ((id))
+);
 ```
 
-#### `✅.063`- Mise à jour
+#### `✅.063`- Mises à jour
 
-```
-TODO
+```sql
+UPDATE movie_stats
+SET num_ratings = num_ratings + 1,
+    sum_ratings = sum_ratings + 7
+WHERE id = 5069cc15-4300-4595-ae77-381c3af5dc5e;
+
+UPDATE movie_stats
+SET num_ratings = num_ratings + 1,
+    sum_ratings = sum_ratings + 9
+WHERE id = 5069cc15-4300-4595-ae77-381c3af5dc5e;
+
+SELECT * FROM movie_stats;
 ```
 
 #### `✅.064`- Exercice
 
-```
-TODO
-```
+Ajouter un nouveau `counter` avec le nom `num_views` indiquant le nombre de vues pour chaque film et incrémenter le 3 fois.
 
-### 2.2.9 - Requêter avec `JSON`
+<p/>
+<details>
+<summary>Cliquer pour afficher la solution</summary>
+<pre>
+ALTER TABLE movie_stats ADD num_views COUNTER;
+
+UPDATE movie_stats
+SET num_views = num_views + 1
+WHERE id = 5069cc15-4300-4595-ae77-381c3af5dc5e;
+
+UPDATE movie_stats
+SET num_views = num_views + 1
+WHERE id = 5069cc15-4300-4595-ae77-381c3af5dc5e;
+
+UPDATE movie_stats
+SET num_views = num_views + 1
+WHERE id = 5069cc15-4300-4595-ae77-381c3af5dc5e;</pre>Vérification:<pre>SSELECT \* FROM movie_stats;</pre>
+
+</details>
+<p/>
+
+### 2.4.9 - Requêter avec `JSON`
 
 Il est possible de requêter directement en JSON les tables. Cependant les documents JSON devront respecter le schéma des tables.
 
@@ -1078,80 +1246,344 @@ select JSON * from videos
 WHERE videoid=e466f561-4ea4-4eb7-8dcc-126e0fbfd573;
 ```
 
-# LAB3- Batches et Lightweight Transactions
+## 2.5 - Batches
 
-## 3.1 Les Batches
+## 2.6 - Index Secondaires
 
-#### `✅.068`- Requetage enregistrement avec `JSON`
+## 2.7 - Niveau de consistence
 
-#### `✅.068`- Requetage enregistrement avec `JSON`
+### 2.7.1 - Introduction
 
-## 3.2 Les Lightweights transactions
+Dans un cluster Apache Cassandra™ la donnée est répliquée plusieurs fois dans chaque anneau, c'est le facteur de réplication. `REPLICATION_FACTOR`. Il est spécifié à la création du keyspace.
 
-#### `✅.068`- Requetage enregistrement avec `JSON`
+Lorsque l'on lit ou écrit dans la base on définit combien de replicas doivent valider la réception du message c'est le `CONSISTENCY LEVEL` ou niveau de consistance. Il est spécifié à chaque requête.
 
-#### `✅.068`- Requetage enregistrement avec `JSON`
+Les principaux sont dans le tableau ci-dessous mais vous pouvez la liste exhaustive [ici](https://docs.datastax.com/en/dse/6.8/cql/cql/cql_reference/cqlsh_commands/cqlshConsistency.html).
 
-# LAB4- Modèle de données `PetClinic`
+| Consistency Level | Description                                                                                       |
+| ----------------- | ------------------------------------------------------------------------------------------------- |
+| ONE,TWO,THREE     | 1,2 ou 3 noeuds doivent répondre respectivement. _(`ONE` est non disponible sur Astra)_.          |
+| LOCAL_ONE         | Un seul noeud dans l'anneau local `local datacenter` doit répondre. _(non disponible sur Astra)_. |
+| QUORUM            | Une majorité des noeuds (n/2 + 1) doivent répondre.                                               |
+| LOCAL_QUORUM      | Une majorité des noeuds dans l'anneau local `local datacenter` (n/2 + 1) doivent répondre.        |
+| EACH_QUORUM       | Une majorité des noeuds (n/2 + 1) dans **chaque** anneau doivent répondre.                        |
+| ALL               | Tous les noeuds doivent répondre mais alors la disponibilité n'est plus assurée.                  |
+
+### 2.7.2 - Démonstration
+
+Dans la session d'aujourd'hui nous avons un cluster avec un anneau (`dc1` dans docker, `eu-central-1` dans astra) contenant 3 noeuds.
+
+![my-pic](img/cluster-astra.png?raw=true)
+
+![my-pic](img/cluster-docker.png?raw=true)
+
+#### `✅.000`- Afficher et Définir le niveau de consistance
+
+```sql
+CONSISTENCY;
+CONSISTENCY LOCAL_QUORUM;
+```
+
+#### `✅.000`- Tracer les acknowlegments
+
+```sql
+TRACING ON;
+select country,city,population from city_by_country where country='DE';
+TRACING OFF;
+```
+
+#### `✅.000`- Règle d'or pour la consistance.
+
+La règle d'or afin d'obtenir un système consistant à tout instant ( `immediate consistency`) c'est d'avoir, la somme des niveaux de consistance en lecture et écriture supérieur au facteur de rèplication.
 
 ```
-TODO
+CL_READ + CL_WRITE > RF
 ```
 
-# LAB5- Modèle de données `TimeSeries`
+Avec une écriture en quorum, j'ai la confirmation de 2 noeuds sur les 3.
+![my-pic](img/cl_write.png?raw=true)
 
-> _All Data modelling samples can be found in the [Katacoda LIbrary](https://www.katacoda.com/datastax/courses/cassandra-data-modeling)_
+Avec une lecture en quorum, au même moment je peux obtenir des confirmations avec des valeurs différentes. La dernière écriture gagne.
+![my-pic](img/cl_read.png?raw=true)
 
-- [Data Modelling methodology](https://www.datastax.com/learn/data-modeling-by-example/sensor-data-model)
+Ici `ECRITURE QUORUM (2) + LECTURE QUORUM(2) > RF(3)`
 
-![image](https://www.datastax.com/sites/default/files/inline-images/%28web%29%20conceptual%20%281%29.png)
+Il y a plusieurs de combinaisons possibles:
 
-- [Katacoda Scenario](https://www.katacoda.com/datastax/courses/cassandra-data-modeling/sensor-data)
+- `CL_READ=*QUORUM avec CL_WRITE=*QUORUM`
+- `CL_READ=ONE avec CL_WRITE=ALL`
+- `CL_READ=ALL avec CL_WRITE=ONE`
+- ...
 
-[🏠 Back to Table of Contents](#-table-of-content)
+## 2.8 - Lightweight Transactions
+
+### 2.8.1 - Linearizable Consistency
+
+L'_`eventual consistency`_ avec son niveau de consistance configurable est suffisante pour bien des cas de la vie quotidienne mais pas tous.
+
+Certaines fois il faut se prémunir de _race condition_, c'est-à-dire la mise à jour de la même valeur par deux acteurs différents. C'est ce que l'on appelle la `Linearizable Consistency`.
+
+### 2.8.2 - Introduction aux LWT
+
+Avec Cassandra, pour assurer la `Linearizable Consistency` on utilise les _lightweight transactions_ (LWT).
+
+```sql
+INSERT INTO ... VALUES ...
+IF NOT EXISTS;
+
+UPDATE ... SET ... WHERE ...
+IF EXISTS | IF predicate [ AND ... ];
+
+DELETE ... FROM ... WHERE ...
+IF EXISTS | IF predicate [ AND ... ];
+```
+
+Avec Cassandra, afin de rendre les requêtes les plus rapides possibles on veut éviter de faire des _lectures_ avant des _écritures_.
+
+Ici on ne peut s'y soustraire, la condition `IF` précède l'écriture. Cette transaction s'appuie sur Paxos et nécessite la synchronization des noeuds. En conséquence il faut s'attendre à un temps de réponse environ 4 fois supérieur.
+
+#### `✅.000`- Création d'une table et dataset
+
+```sql
+CREATE TABLE sample_lwt (
+  username TEXT,
+  email TEXT,
+  name TEXT,
+  password TEXT,
+  reset_token UUID,
+  PRIMARY KEY ((username))
+);
+```
+
+#### `✅.000`- Insertion sous conditions
+
+```sql
+INSERT INTO sample_lwt (username, email, name)
+VALUES ('dragonslayer', 'joe@datastax.com', 'Joe')
+IF NOT EXISTS;
+
+INSERT INTO sample_lwt (username, email, name)
+VALUES ('dragonslayer', 'jen@datastax.com', 'Jen')
+IF NOT EXISTS;
+
+SELECT * FROM sample_lwt
+WHERE username = 'dragonslayer';
+```
+
+### 2.8.3 - `EXEMPLE:` - Reset de mots de passe
+
+Un utilisateur veut mettre à jour son password. À la première demande un jeton qui expire au bout d'une heure est généré. Si une nouvelle demande est formulée durant l'heure, le jeton ne doit pas être mis a jour.
+
+#### `✅.000`- Première demande
+
+```sql
+UPDATE sample_lwt USING TTL 3600
+SET reset_token = 6ef95fd0-9ae0-11ea-a9d2-d777ab7dec9e
+WHERE username = 'devoxx_developer';
+
+SELECT * FROM sample_lwt
+WHERE username = 'devoxx_developer';
+```
+
+#### `✅.000`- Mise à jour du mot de passe
+
+```sql
+UPDATE sample_lwt
+SET reset_token = null, password = 'encrypted password'
+WHERE username = 'devoxx_developer'
+IF reset_token = 6ef95fd0-9ae0-11ea-a9d2-d777ab7dec9e;
+
+UPDATE sample_lwt
+SET reset_token = null, password = 'malicious password'
+WHERE username = 'devoxx_developer'
+IF reset_token = 6ef95fd0-9ae0-11ea-a9d2-d777ab7dec9e;
+```
+
+#### `✅.000`- Affiche des informations de l'utilisateur
+
+```sql
+SELECT * FROM sample_lwt
+WHERE username = 'devoxx_developer';
+```
+
+### 2.8.4 - `EXEMPLE:` - Annulation d'une commande
+
+Dans cet exemple nous voulons changer le statut d'une commande. L'idée est de bloquer l'annulation de la commande lorsque l'envoi est déjà effectué. Il peut donc passer à `cancelled` seulement si le précédent est `awaiting shipment` ou `awaiting payment`. Il peut également passer de `awaiting shipment` à `shipped`.
+
+#### `✅.000`- Création du dataset
+
+```sql
+CREATE TABLE orders_by_user (
+  username TEXT,
+  order_id UUID,
+  status TEXT,
+  PRIMARY KEY ((username), order_id)
+);
+
+INSERT INTO orders_by_user (username, order_id, status)
+VALUES ('devoxx_developer', f1fa2590-2d78-4b77-9710-95bdb45b7fa1, 'awaiting payment');
+INSERT INTO orders_by_user (username, order_id, status)
+VALUES ('devoxx_developer', c420d3a3-cecc-4c25-a7f8-ef28eb532969, 'awaiting shipment');
+SELECT * FROM orders_by_user WHERE username = 'devoxx_developer';
+```
+
+#### `✅.000`- Déclencher les envois
+
+```sql
+UPDATE orders_by_user SET status = 'shipped'
+WHERE username = 'devoxx_developer'
+  AND order_id = f1fa2590-2d78-4b77-9710-95bdb45b7fa1
+IF status = 'awaiting shipment';
+
+UPDATE orders_by_user SET status = 'shipped'
+WHERE username = 'devoxx_developer'
+  AND order_id = c420d3a3-cecc-4c25-a7f8-ef28eb532969
+IF status = 'awaiting shipment';
+
+SELECT * FROM orders_by_user WHERE username = 'devoxx_developer';
+```
+
+#### `✅.000`- Tenter d'annuler les commandes
+
+```sql
+UPDATE orders_by_user
+SET status = 'cancelled'
+WHERE username = 'devoxx_developer'
+  AND order_id = f1fa2590-2d78-4b77-9710-95bdb45b7fa1
+IF status IN ('awaiting payment','awaiting shipment');
+
+UPDATE orders_by_user
+SET status = 'cancelled'
+WHERE username = 'devoxx_developer'
+  AND order_id = c420d3a3-cecc-4c25-a7f8-ef28eb532969
+IF status IN ('awaiting payment','awaiting shipment');
+
+SELECT * FROM orders_by_user WHERE username = 'devoxx_developer';
+```
+
+### 2.8.5 - `EXEMPLE:` - Système d'enchèrews
+
+`Kirsten` et `Ryan`, 2 développeurs javascript, enchérissent sur le framework `JS` du moment qui sera probablement obsolète la semaine prochaine.
+
+#### `✅.000`- Création du schéma
+
+```sql
+CREATE TABLE auction_items (
+  item_id TEXT,
+  starting_bid DECIMAL,
+  highest_bid DECIMAL,
+  highest_bidder TEXT,
+  PRIMARY KEY ((item_id))
+);
+
+INSERT INTO auction_items (item_id, starting_bid, highest_bid)
+VALUES ('Angular_528', 10.00, 0.00);
+SELECT * FROM auction_items WHERE item_id = 'Angular_528';
+```
+
+#### `✅.000`- Kirsten place une enchère
+
+```sql
+UPDATE auction_items
+SET highest_bid = 10.00, highest_bidder = 'Kirsten'
+WHERE item_id = 'Angular_528'
+IF starting_bid <= 10.00 AND highest_bid < 10.00;
+
+SELECT * FROM auction_items WHERE item_id = 'Angular_528';
+```
+
+#### `✅.000`- Ryan place la même enchère, un peu plus tard
+
+```sql
+UPDATE auction_items
+SET highest_bid = 10.00, highest_bidder = 'Ryan'
+WHERE item_id = 'Angular_528'
+IF starting_bid <= 10.00 AND highest_bid < 10.00;
+SELECT * FROM auction_items WHERE item_id = 'Angular_528';
+```
+
+#### `✅.000`- Ryan surenchérit à `10.99`
+
+```
+UPDATE auction_items
+SET highest_bid = 10.99, highest_bidder = 'Ryan'
+WHERE item_id = 'Angular_528'
+IF starting_bid <= 10.99 AND highest_bid < 10.99;
+SELECT * FROM auction_items WHERE item_id = 'Angular_528';
+```
+
+### 2.8.6 - `EXEMPLE:` - Historique des enchères
+
+#### `✅.000`- Création du schéma
+
+```sql
+CREATE TABLE bids_by_item (
+  item_id TEXT,
+  bid_id TIMEUUID,
+  bid DECIMAL,
+  bidder TEXT,
+  starting_bid DECIMAL STATIC,
+  highest_bid DECIMAL STATIC,
+  highest_bidder TEXT STATIC,
+  PRIMARY KEY ((item_id), bid_id)
+) WITH CLUSTERING ORDER BY (bid_id DESC);
+
+INSERT INTO bids_by_item (item_id, bid_id, starting_bid, highest_bid)
+VALUES ('ABC123', NOW(), 10.00, 0.00);
+SELECT * FROM bids_by_item WHERE item_id = 'ABC123';
+```
+
+#### `✅.000`- Première enchère
+
+```sql
+INSERT INTO bids_by_item (item_id, bid_id, bid, bidder)
+VALUES ('ABC123', NOW(), 10.00, 'dragonslayer');
+
+UPDATE bids_by_item
+SET highest_bid = 10.00, highest_bidder = 'dragonslayer'
+WHERE item_id = 'ABC123'
+IF starting_bid <= 10.00 AND highest_bid < 10.00;
+
+SELECT * FROM bids_by_item WHERE item_id = 'ABC123';
+```
+
+#### `✅.000`- Deuxième enchère
+
+```sql
+INSERT INTO bids_by_item (item_id, bid_id, bid, bidder)
+VALUES ('ABC123', NOW(), 10.00, 'delossailor');
+
+UPDATE bids_by_item
+SET highest_bid = 10.00, highest_bidder = 'delossailor'
+WHERE item_id = 'ABC123'
+IF starting_bid <= 10.00 AND highest_bid < 10.00;
+SELECT * FROM bids_by_item WHERE item_id = 'ABC123';
+```
+
+#### `✅.000`- Troisième enchère
+
+```sql
+INSERT INTO bids_by_item (item_id, bid_id, bid, bidder)
+VALUES ('ABC123', NOW(), 10.99, 'delossailor');
+
+UPDATE bids_by_item
+SET highest_bid = 10.99, highest_bidder = 'delossailor'
+WHERE item_id = 'ABC123'
+IF starting_bid <= 10.99 AND highest_bid < 10.99;
+SELECT * FROM bids_by_item WHERE item_id = 'ABC123';
+```
+
+---
+
+---
+
+---
+
+---
+
+---
 
 # LAB5 - Introduction aux drivers
-
-#### 📦 Docker
-
-- Use the [reference documentation](https://www.docker.com/products/docker-desktop) to install **Docker Desktop**
-- Validate your installation with
-
-```bash
-docker -v
-docker run hello-world
-```
-
-#### 📦 Java Development Kit (JDK) 8+
-
-- Use the [reference documentation](https://docs.oracle.com/javase/8/docs/technotes/guides/install/install_overview.html) to install a **Java Development Kit**
-- Validate your installation with
-
-```bash
-java --version
-```
-
-#### 📦 Apache Maven
-
-- Use the [reference documentation](https://maven.apache.org/install.html) to install **Apache Maven**
-- Validate your installation with
-
-```bash
-mvn -version
-```
-
-#### ✅ 10b. Setup your environment
-
-Locate the folder `hands-on` on the repo and import the 4 projects in your favourite IDE and let it download half of internet....
-
-```
-javazone-1-cassandra-drivers
-javazone-2-spring-data
-javazone-3-quarkus
-javazone-4-sdk
-```
-
-> ℹ️ _Full disclosure_: It is NOT a multi module maven (sorry), those are a grouping of multiple projects we have been building. Idea is to give you a lot of code to copy and get inspired. Some samples are standalone classes, others are unit tests.
 
 ## LAB6 - Mapping Objet avec les drivers
 
@@ -1168,47 +1600,6 @@ javazone-4-sdk
 ## LAB12 - Stargate SDK
 
 ## 10. Native Drivers
-
-Let start browsing some JAVA code `\_0_/`.
-
-> ⚠️We expect you to be an experienced JAVA DEVELOPER.
-
-### ✅ 10a. Prerequisite
-
-#### ✅ 10c. Keyspace Manipulations
-
-Astra is a great DBAAS for Cassandra yet, because it creates you everything you need you cannot really show options. As a consequence we will be using a local Cassandra in Docker.
-
-```yaml
-cassandra-seed:
-  image: cassandra:4.0.1
-  ports:
-    - 7000:7000
-    - 7001:7001
-    - 7199:7199
-    - 9042:9042
-    - 9160:9160
-  mem_limit: 2G
-  environment:
-    - HEAP_NEWSIZE=128M
-    - MAX_HEAP_SIZE=1024M
-    - CASSANDRA_SEEDS=cassandra-seed
-    - CASSANDRA_CLUSTER_NAME=javazone
-    - CASSANDRA_DC=dc1
-    - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
-```
-
-- _Start the Container, and **wait 30s** for the node to bootstrap_
-
-```bash
-docker-compose up -d
-```
-
-- _Open CQLSH in interactive mode_
-
-```bash
-docker exec -it `docker ps | grep cassandra:4.0.1 | cut -b 1-12` cqlsh
-```
 
 - _Show MetaData_ :
 
