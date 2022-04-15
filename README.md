@@ -14,9 +14,9 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
 
 🎓 **Niveau** Débutant à intermédiaire
 
-## 📋 Table des matières.
+<img src="img/splash.png?raw=true"  width="400px"/>
 
-<img src="img/splash.png?raw=true" align="right" width="400px"/>
+## 📋 Table des matières.
 
 - [Objectifs](#objectifs)
 - [Foire aux questions](#foire-aux-questions)
