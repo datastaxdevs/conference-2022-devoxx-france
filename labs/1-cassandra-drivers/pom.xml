@@ -4,21 +4,18 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.datastax</groupId>
-	<artifactId>javazone-1-cassandra-drivers</artifactId>
+	<artifactId>lab4-cassandra-drivers</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>javazone-1-cassandra-drivers</name>
+	<name>lab4-cassandra-drivers</name>
 
 	<properties>
-
-		<!-- Libraries versions -->
 		<cassandra.driver.oss.version>4.13.0</cassandra.driver.oss.version>
 		<logback.version>1.2.3</logback.version>
-
-		<!-- Project properties -->
+		<junit.version>5.8.2</junit.version>
+		<junit-platform.version>1.8.2</junit-platform.version>
 		<java.version>11</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
 	</properties>
 
 	<dependencies>
@@ -53,6 +50,28 @@
     		<artifactId>reactor-core</artifactId>
     		<version>3.3.3.RELEASE</version>
 		</dependency>
+		
+		<!-- For Reactive Portion -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-runner</artifactId>
+            <version>${junit-platform.version}</version>
+            <scope>test</scope>
+        </dependency>
+		
+		
 		
 	</dependencies>
 

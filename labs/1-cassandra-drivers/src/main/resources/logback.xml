@@ -9,4 +9,5 @@
     </root>
     <logger name="com.datastax.samples" level="INFO"/>
     <logger name="com.datastax.driver"  level="ERROR"/>
+    <logger name="com.datastax.oss"  level="ERROR"/>
 </configuration>

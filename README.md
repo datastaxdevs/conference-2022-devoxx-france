@@ -25,7 +25,7 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
   - 1.1 - Démarrage de `Gitpod`
   - 1.2 - Apache Cassandra™ dans `Docker`
   - 1.3 - Apache Cassandra™ avec `Astra` (dbaas)
-- [#**LAB 2** - Les Fondamentaux d'Apache Cassandra™](#lab2---tables-et-types-de-données)
+- [#**LAB 2** - Les Fondamentaux d'Apache Cassandra™](#lab2---les-fondamentaux-dapache-cassandra)
   - 2.1 - Tables et types de données simples
   - 2.2 - Opérations Create, Read, Update, Delete
   - 2.3 - Grammaire des requêtes avec CQL
@@ -34,7 +34,7 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
   - 2.6 - Batches
   - 2.7 - Indexes secondaires
   - 2.8 - Niveaux de consistance
-- [#**LAB 3** - La modélisation de données par l'exemple](#lab3--modèle-de-données-petclinic)
+- [#**LAB 3** - La modélisation de données](#lab3--modèle-de-données-petclinic)
   - 3.1 - Méthodologie
   - 3.2 - Modèle de données timeseries
   - 3.2 - De SQL à NoSQL avec Petclinic
@@ -1798,27 +1798,15 @@ IF starting_bid <= 10.99 AND highest_bid < 10.99;
 SELECT * FROM bids_by_item WHERE item_id = 'ABC123';
 ```
 
----
+# LAB 3 - La modélisation de données
 
----
+- 3.1 - Méthodologie
+- 3.2 - Modèle de données timeseries
+- 3.2 - De SQL à NoSQL avec Petclinic
 
-# LAB5 - Introduction aux drivers
+# LAB 4 - Introduction aux drivers
 
-## LAB6 - Mapping Objet avec les drivers
-
-## LAB7 - Programmation reactive
-
-## LAB8 - Spring Data Cassandra
-
-## LAB9 - Cassandra Quarkus extension
-
-## LAB10 - Micronaut Cassandra
-
-## LAB11 - Stargate Apis
-
-## LAB12 - Stargate SDK
-
-## 10. Native Drivers
+## 4.1 - Connectivité
 
 - _Show MetaData_ :
 
@@ -1837,25 +1825,6 @@ mvn exec:java -Dexec.mainClass=com.datastax.samples.E02_CreateKeyspace
 
 ```sql
 describe keyspaces;
-```
-
-or
-
-```bash
-docker exec -it `docker ps | grep cassandra:4.0.1 | cut -b 1-12` cqlsh -e "describe keyspaces"
-```
-
-- _Create the Schema_ :
-
-```bash
-mvn exec:java -Dexec.mainClass=com.datastax.samples.E03_CreateSchema
-```
-
-- _You have now 4 tables_
-
-```sql
-use javazone;
-describe tables;
 ```
 
 - _Connect with configuration File_
@@ -1940,6 +1909,60 @@ datastax-java-driver {
 ```bash
 mvn exec:java -Dexec.mainClass=com.datastax.samples.E09_ConnectToAstraConfFile
 ```
+
+## 4.2 - Création des `Statements`
+
+## 4.3 - Parsing des résultats
+
+## 4.4 - Pagination
+
+## 4.5 - Programmation Asynchrone
+
+## 4.6 - Programmation Réactive
+
+## 4.7 - Object Mapping
+
+# LAB 5 - Spring Data Cassandra
+
+## 5.1 - Configuration
+
+## 5.2 - Les `Repositories`
+
+## 5.3 - CassandraOperations
+
+## 5.4 - Application Spring Boot
+
+# LAB 6 - Cassandra Quarkus Extension
+
+## 6.1 - Configuration
+
+## 6.2 - Application Quarkus
+
+# LAB 7 - Micronaut Cassandra
+
+## 7.1 - Configuration
+
+## 7.2 - Application Micronaut
+
+# LAB 8 - Stargate Apis
+
+## 8.1 - Introduction à Stargate
+
+## 8.2 - Rest Apis
+
+## 8.3 - Document Apis
+
+## 8.4 - GraphQL Apis
+
+## 8.5 - Configuration de SDKs
+
+## 8.6 - Utilisation des SDKs
+
+---
+
+---
+
+---
 
 #### ✅ 10e. Use all Drivers Features
 
