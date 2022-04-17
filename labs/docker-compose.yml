@@ -9,6 +9,8 @@ services:
     networks:
       - cassandra
     mem_limit: 2G
+    #volumes:
+    #  - ~/docker-volumes/dc1_seed/:/var/lib/cassandra/data
     environment:
       - CASSANDRA_DC=dc1
       - CASSANDRA_SEEDS=dc1_seed
@@ -21,6 +23,8 @@ services:
     image: cassandra:4.0.3
     command: /bin/bash -c "echo 'On attend que dc1_seed bootstrap pendant 30s' && sleep 30 && /usr/local/bin/docker-entrypoint.sh cassandra -f"
     mem_limit: 2G
+    #volumes:
+    #  - ~/docker-volumes/dc1_seed/:/var/lib/cassandra/data
     networks:
       - cassandra
     depends_on:
