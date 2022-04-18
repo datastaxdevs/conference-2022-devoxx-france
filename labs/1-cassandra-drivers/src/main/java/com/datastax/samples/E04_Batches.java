@@ -1,7 +1,5 @@
 package com.datastax.samples;
 
-import static com.datastax.samples.schema.SchemaUtils.closeSession;
-import static com.datastax.samples.schema.SchemaUtils.connectAstra;
 import static com.datastax.samples.schema.SchemaUtils.createTableCommentByUser;
 import static com.datastax.samples.schema.SchemaUtils.createTableCommentByVideo;
 import static com.datastax.samples.schema.SchemaUtils.truncateTable;
@@ -21,18 +19,10 @@ import com.datastax.oss.driver.api.core.uuid.Uuids;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import com.datastax.samples.schema.SchemaConstants;
 
-/**
- * Yet Another Class /_0_/ *dub
- * 
- * @author Cedrick LUNVEN (@clunven)
- */
-public class E13_Batches implements SchemaConstants {
+public class E04_Batches implements SchemaConstants {
     
     /** Logger for the class. */
-    private static Logger LOGGER = LoggerFactory.getLogger(E13_Batches.class);
-    
-    // This will be used as singletons for the sample
-    private static CqlSession session;
+    private static Logger LOGGER = LoggerFactory.getLogger(E04_Batches.class);
     
     // Prepare your statements once and execute multiple times 
     private static PreparedStatement insertIntoCommentByVideo;
@@ -42,24 +32,19 @@ public class E13_Batches implements SchemaConstants {
     private static PreparedStatement selectCommentByVideo;
     private static PreparedStatement selectCommentByUser;
     
-    /** StandAlone (vs JUNIT) to help you running. */
     public static void main(String[] args) {
-        
-        try {
-            
-            // Initialize Cluster and Session Objects (connected to keyspace)
-            session = connectAstra();
+        try(CqlSession cqlSession = CqlSessionProvider.getInstance().getSession()) {
    
             // Create working table User (if needed)
-            createTableCommentByUser(session);
-            createTableCommentByVideo(session);
+            createTableCommentByUser(cqlSession);
+            createTableCommentByVideo(cqlSession);
             
             // Comments are used in 2 queries, we need 2 tables to store it
-            truncateTable(session, COMMENT_BY_USER_TABLENAME);
-            truncateTable(session, COMMENT_BY_VIDEO_TABLENAME);
+            truncateTable(cqlSession, COMMENT_BY_USER_TABLENAME);
+            truncateTable(cqlSession, COMMENT_BY_VIDEO_TABLENAME);
 
             // Prepare your statements once and execute multiple times 
-            prepareStatements();
+            prepareStatements(cqlSession);
 
             // Will use this identifiers is all tests
             UUID user_1    = UUID.randomUUID();UUID user_2    = UUID.randomUUID();
@@ -69,18 +54,18 @@ public class E13_Batches implements SchemaConstants {
              * Create comment (in 2 tables with BATCH)
              * ================================================= */
             
-            UUID commentId11 = createComment(user_1, videoid_1, "I am user1 and video1 is good");
-            UUID commentId21 = createComment(user_2, videoid_1, "I am user2 and video2 is bad");
-            createComment(user_1, videoid_2, "Video2 is cool");
-            createComment(user_2, videoid_2, "Video2");
-            retrieveCommentsVideo(videoid_2).stream().forEach(LOGGER::info);
+            UUID commentId11 = createComment(cqlSession, user_1, videoid_1, "I am user1 and video1 is good");
+            UUID commentId21 = createComment(cqlSession, user_2, videoid_1, "I am user2 and video2 is bad");
+            createComment(cqlSession, user_1, videoid_2, "Video2 is cool");
+            createComment(cqlSession, user_2, videoid_2, "Video2");
+            retrieveCommentsVideo(cqlSession, videoid_2).stream().forEach(LOGGER::info);
             
             /* =============== UPDATE ==========================
              * == Update one comment (in 2 tables with BATCH) ==
              * ================================================= */
             
-            updateComment(commentId11, user_1, videoid_1, "This is my new comment");
-            retrieveCommentsVideo(videoid_1).stream().forEach(LOGGER::info);
+            updateComment(cqlSession, commentId11, user_1, videoid_1, "This is my new comment");
+            retrieveCommentsVideo(cqlSession, videoid_1).stream().forEach(LOGGER::info);
             
             /* =============== DELETE ===========================
              * Delete one comment (in 2 tables with BATCH)     ==
@@ -88,8 +73,8 @@ public class E13_Batches implements SchemaConstants {
              * videoid are part of the the primary keys.       ==
              * ==================================================*/
             
-            deleteComment(commentId21, user_2, videoid_1);
-            retrieveCommentsVideo(videoid_1).stream().forEach(LOGGER::info);
+            deleteComment(cqlSession, commentId21, user_2, videoid_1);
+            retrieveCommentsVideo(cqlSession, videoid_1).stream().forEach(LOGGER::info);
             
             /* 
              * ============================ READ ================================
@@ -98,26 +83,22 @@ public class E13_Batches implements SchemaConstants {
              * ==================================================================
              */
             
-            retrieveCommentsUser(user_1).stream().forEach(LOGGER::info);
-            retrieveCommentsVideo(videoid_2).stream().forEach(LOGGER::info);
+            retrieveCommentsUser(cqlSession, user_1).stream().forEach(LOGGER::info);
+            retrieveCommentsVideo(cqlSession, videoid_2).stream().forEach(LOGGER::info);
             
-        } finally {
-            // Close Cluster and Session 
-            closeSession(session);
         }
-        System.exit(0);
     }
     
-    private static void prepareStatements() {
+    private static void prepareStatements(CqlSession cqlSession) {
         
-        insertIntoCommentByVideo = session.prepare(
+        insertIntoCommentByVideo = cqlSession.prepare(
                 QueryBuilder.insertInto(COMMENT_BY_VIDEO_TABLENAME)
                             .value(COMMENT_BY_VIDEO_VIDEOID,   QueryBuilder.bindMarker())
                             .value(COMMENT_BY_VIDEO_USERID,    QueryBuilder.bindMarker())
                             .value(COMMENT_BY_VIDEO_COMMENTID, QueryBuilder.bindMarker())
                             .value(COMMENT_BY_VIDEO_COMMENT,   QueryBuilder.bindMarker())
                             .build());
-        insertIntoCommentByUser = session.prepare(
+        insertIntoCommentByUser = cqlSession.prepare(
                 QueryBuilder.insertInto(COMMENT_BY_USER_TABLENAME)
                             .value(COMMENT_BY_USER_USERID,     QueryBuilder.bindMarker())
                             .value(COMMENT_BY_USER_VIDEOID,    QueryBuilder.bindMarker())
@@ -125,23 +106,23 @@ public class E13_Batches implements SchemaConstants {
                             .value(COMMENT_BY_USER_COMMENT,    QueryBuilder.bindMarker())
                             .build());
         
-        deleteCommentByUser = session.prepare(
+        deleteCommentByUser = cqlSession.prepare(
                 QueryBuilder.deleteFrom(COMMENT_BY_USER_TABLENAME)
                 .whereColumn(COMMENT_BY_USER_USERID).isEqualTo(QueryBuilder.bindMarker())
                 .whereColumn(COMMENT_BY_USER_COMMENTID).isEqualTo(QueryBuilder.bindMarker())
                 .build());
-        deleteCommentByVideo = session.prepare(
+        deleteCommentByVideo = cqlSession.prepare(
                 QueryBuilder.deleteFrom(COMMENT_BY_VIDEO_TABLENAME)
                 .whereColumn(COMMENT_BY_VIDEO_VIDEOID).isEqualTo(QueryBuilder.bindMarker())
                 .whereColumn(COMMENT_BY_VIDEO_COMMENTID).isEqualTo(QueryBuilder.bindMarker())
                 .build());
         
-        selectCommentByVideo = session.prepare(
+        selectCommentByVideo = cqlSession.prepare(
                 QueryBuilder.selectFrom(COMMENT_BY_VIDEO_TABLENAME)
                 .column(COMMENT_BY_VIDEO_COMMENT)
                 .whereColumn(COMMENT_BY_VIDEO_VIDEOID).isEqualTo(QueryBuilder.bindMarker())
                 .build());
-        selectCommentByUser  = session.prepare(
+        selectCommentByUser  = cqlSession.prepare(
                 QueryBuilder.selectFrom(COMMENT_BY_USER_TABLENAME)
                 .column(COMMENT_BY_USER_COMMENT)
                 .whereColumn(COMMENT_BY_USER_USERID).isEqualTo(QueryBuilder.bindMarker())
@@ -149,36 +130,36 @@ public class E13_Batches implements SchemaConstants {
     }
 
     
-    private static UUID createComment(UUID userid, UUID videoid, String comment) {
+    private static UUID createComment(CqlSession cqlSession, UUID userid, UUID videoid, String comment) {
         UUID commentid = Uuids.timeBased();
-        updateComment(commentid, userid, videoid, comment);
+        updateComment(cqlSession, commentid, userid, videoid, comment);
         return commentid;
     }
      
-    private static void updateComment(UUID commentid, UUID userid, UUID videoid, String comment) {
-        session.execute(BatchStatement
+    private static void updateComment(CqlSession cqlSession, UUID commentid, UUID userid, UUID videoid, String comment) {
+        cqlSession.execute(BatchStatement
                 .builder(BatchType.LOGGED)
                 .addStatement(insertIntoCommentByVideo.bind(videoid, userid, commentid, comment))
                 .addStatement(insertIntoCommentByUser.bind(userid, videoid, commentid, comment))
                 .build());
     }
     
-    private static void deleteComment(UUID commentid, UUID userid, UUID videoid) {
-        session.execute(BatchStatement
+    private static void deleteComment(CqlSession cqlSession, UUID commentid, UUID userid, UUID videoid) {
+        cqlSession.execute(BatchStatement
                 .builder(BatchType.LOGGED)
                 .addStatement(deleteCommentByUser.bind(userid, commentid))
                 .addStatement(deleteCommentByVideo.bind(videoid, commentid))
                 .build());
     }
     
-    private static List<String> retrieveCommentsVideo(UUID videoid) {
-        return session.execute(selectCommentByVideo.bind(videoid))
+    private static List<String> retrieveCommentsVideo(CqlSession cqlSession, UUID videoid) {
+        return cqlSession.execute(selectCommentByVideo.bind(videoid))
                .all().stream().map(row -> row.getString(COMMENT_BY_VIDEO_COMMENT))
                .collect(Collectors.toList());
     }
     
-    private static List<String> retrieveCommentsUser(UUID userId) {
-        return session.execute(selectCommentByUser.bind(userId))
+    private static List<String> retrieveCommentsUser(CqlSession cqlSession, UUID userId) {
+        return cqlSession.execute(selectCommentByUser.bind(userId))
                 .all().stream().map(row -> row.getString(COMMENT_BY_USER_COMMENT))
                 .collect(Collectors.toList());
     }

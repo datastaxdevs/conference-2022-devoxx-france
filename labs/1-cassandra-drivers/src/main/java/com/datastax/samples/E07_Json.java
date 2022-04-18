@@ -1,7 +1,5 @@
 package com.datastax.samples;
 
-import static com.datastax.samples.schema.SchemaUtils.closeSession;
-import static com.datastax.samples.schema.SchemaUtils.connectAstra;
 import static com.datastax.samples.schema.SchemaUtils.createTableVideo;
 import static com.datastax.samples.schema.SchemaUtils.createUdtVideoFormat;
 import static com.datastax.samples.schema.SchemaUtils.truncateTable;
@@ -25,31 +23,19 @@ import com.datastax.samples.codec.JsonJacksonTypeCodec;
 import com.datastax.samples.dto.VideoDto;
 import com.datastax.samples.schema.SchemaConstants;
 
-public class E15_Json implements SchemaConstants {
+public class E07_Json implements SchemaConstants {
     
-    /** Logger for the class. */
-    private static Logger LOGGER = LoggerFactory.getLogger(E15_Json.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(E07_Json.class);
     
-    // This will be used as singletons for the sample
-    private static CqlSession session;
-    
-    /** StandAlone (vs JUNIT) to help you running. */
     public static void main(String[] args) {
-        try {
-
-            // Initialize Cluster and Session Objects (connected to keyspace)
-            session = connectAstra();
-            
-            // Create required tables
-            createUdtVideoFormat(session);
-            createTableVideo(session);
-            
-            // Empty tables for tests
-            truncateTable(session, VIDEO_TABLENAME);
+        try(CqlSession cqlSession = CqlSessionProvider.getInstance().getSession()) {
+            createUdtVideoFormat(cqlSession);
+            createTableVideo(cqlSession);
+            truncateTable(cqlSession, VIDEO_TABLENAME);
             
             // Insert as a String - with regular Core CQL
             UUID videoid1 = UUID.randomUUID();
-            session.execute(""
+            cqlSession.execute(""
                     + "INSERT INTO " + VIDEO_TABLENAME + "(videoid, email, title, upload, url, tags, frames, formats) "
                     + "VALUES("+ videoid1.toString() +", "
                     + "  'clu@sample.com', 'sample video',"
@@ -63,7 +49,7 @@ public class E15_Json implements SchemaConstants {
             
             // Insert as a String - with a Column as JSON
             UUID videoid2 = UUID.randomUUID();
-            session.execute(SimpleStatement.builder(
+            cqlSession.execute(SimpleStatement.builder(
                       "INSERT INTO " + VIDEO_TABLENAME + "(videoid, email, title, upload, url, tags, frames, formats) "
                     + "VALUES(?,?,?,?,?,?,?,fromJson(?))")
                     .addPositionalValue(videoid2)
@@ -79,7 +65,7 @@ public class E15_Json implements SchemaConstants {
             
             // Insert as a JSON String
             UUID videoid3 = UUID.randomUUID();
-            session.execute(""
+            cqlSession.execute(""
                     + "INSERT INTO " + VIDEO_TABLENAME + " JSON '{"
                     + "\"videoid\":\""+videoid3.toString()+"\"," 
                     + "\"email\":\"clu@sample.com\"," 
@@ -96,7 +82,7 @@ public class E15_Json implements SchemaConstants {
             
             // Insert as a JSON Param
             UUID videoid4 = UUID.randomUUID();
-            session.execute(SimpleStatement.builder("INSERT INTO " + VIDEO_TABLENAME + " JSON ? ")
+            cqlSession.execute(SimpleStatement.builder("INSERT INTO " + VIDEO_TABLENAME + " JSON ? ")
                     .addPositionalValue("{"
                         + "\"videoid\":\""+ videoid4.toString() + "\"," 
                         + "\"email\":\"clu@sample.com\"," 
@@ -114,7 +100,7 @@ public class E15_Json implements SchemaConstants {
             
             // Insert with QueryBuilder - as a JSON String
             UUID videoid5 = UUID.randomUUID();
-            session.execute(QueryBuilder.insertInto(VIDEO_TABLENAME)
+            cqlSession.execute(QueryBuilder.insertInto(VIDEO_TABLENAME)
                     .json("{"
                         + "\"videoid\":\""+ videoid5.toString() + "\"," 
                         + "\"email\":\"clu@sample.com\"," 
@@ -136,30 +122,25 @@ public class E15_Json implements SchemaConstants {
              * Can also be achieved at session init with 
              * .addTypeCodecs(new JsonJacksonTypeCodec<VideoDto>(VideoDto.class))
              */
-            MutableCodecRegistry registry = (MutableCodecRegistry) session.getContext().getCodecRegistry();
+            MutableCodecRegistry registry = (MutableCodecRegistry) cqlSession.getContext().getCodecRegistry();
             TypeCodec<VideoDto> jsonCodec = new JsonJacksonTypeCodec<VideoDto>(VideoDto.class);
             registry.register(jsonCodec);
             
             // Insert with QueryBuilder - As an object + Jackson Codec
             UUID videoid6 = UUID.randomUUID();
             VideoDto dto  = new VideoDto(videoid6, "sample video", "clu@sample.com", "http://google.fr");
-            session.execute(QueryBuilder
+            cqlSession.execute(QueryBuilder
                     .insertInto(VIDEO_TABLENAME)
                     .json(dto, jsonCodec).build());
             LOGGER.info("+ Video '{}' has been inserted", videoid5);
             
             // Read with QueryBuilder - As an object + Jackson Codec
-            ResultSet rows = session.execute(QueryBuilder.selectFrom(VIDEO_TABLENAME).json().all().build());
+            ResultSet rows = cqlSession.execute(QueryBuilder.selectFrom(VIDEO_TABLENAME).json().all().build());
             for (Row row : rows) {
                 VideoDto myVideo = row.get(0, VideoDto.class);
                 LOGGER.info("+ Video '{}' has been read ", myVideo.getVideoid());
             }
             LOGGER.info("[OK] - All video read");
-            
-        } finally {
-            closeSession(session);
         }
-        System.exit(0);
-        
     }
 }

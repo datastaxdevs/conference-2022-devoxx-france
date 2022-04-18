@@ -1,8 +1,6 @@
 package com.datastax.samples;
 
 import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.literal;
-import static com.datastax.samples.schema.SchemaUtils.closeSession;
-import static com.datastax.samples.schema.SchemaUtils.connectAstra;
 import static com.datastax.samples.schema.SchemaUtils.createTableVideo;
 import static com.datastax.samples.schema.SchemaUtils.createUdtVideoFormat;
 import static com.datastax.samples.schema.SchemaUtils.truncateTable;
@@ -33,74 +31,33 @@ import com.datastax.samples.dto.VideoDto;
 import com.datastax.samples.dto.VideoFormatDto;
 import com.datastax.samples.schema.SchemaConstants;
 
-/**
- * Working on advance types LIST, SET, MAP and UDT.
- * 
- * This is the table we work with:
- *
- * CREATE TABLE IF NOT EXISTS videos (
- *   videoid    uuid,
- *   title      text,
- *   upload    timestamp,
- *   email      text,
- *   url        text,
- *   tags       set <text>,
- *   frames     list<int>,
- *   formats    map <text,frozen<video_format>>,
- *   PRIMARY KEY (videoid)
- * );
- * 
- *  using the simple User Defined Type (UDT) video_format
- *  
- * CREATE TYPE IF NOT EXISTS video_format (
- *   width   int,
- *   height  int
- * );
- * 
- * We want to :
- * - Add a new record with Query Builder
- * - Add a new tag (SET) in existing record
- * - Remove a new tag (SET) in existing record
- * - Add a new tag (SET) in existing record
- * - Remove a new tag (SET) in existing record
-
- */
-public class E14_ListSetMapAndUdt implements SchemaConstants {
+public class E06_ListSetMapAndUdt implements SchemaConstants {
 	
-    /** Logger for the class. */
-	private static Logger LOGGER = 
-	        LoggerFactory.getLogger(E14_ListSetMapAndUdt.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(E06_ListSetMapAndUdt.class);
     
-	// This will be used as singletons for the sample
-    private static CqlSession         session;
-    private static UserDefinedType videoFormatUdt;
+	private static UserDefinedType videoFormatUdt;
     
-    // Prepare your statements once and execute multiple times 
     private static PreparedStatement stmtCreateVideo;
     private static PreparedStatement stmtReadVideoTags;
     
-    /** StandAlone (vs JUNIT) to help you running. */
     public static void main(String[] args) {
-        try {
-            
-            // Initialize Cluster and Session Objects (connected to keyspace)
-            session = connectAstra();
+        try(CqlSession cqlSession = CqlSessionProvider.getInstance().getSession()) {
             
             // Create table
-            createUdtVideoFormat(session);
-            createTableVideo(session);
+            createUdtVideoFormat(cqlSession);
+            createTableVideo(cqlSession);
             
             // Empty tables for tests
-            truncateTable(session, VIDEO_TABLENAME);
+            truncateTable(cqlSession, VIDEO_TABLENAME);
             
             // User define type
-            videoFormatUdt = session.getMetadata()
+            videoFormatUdt = cqlSession.getMetadata()
                 .getKeyspace(KEYSPACE_NAME)
                 .flatMap(ks -> ks.getUserDefinedType(UDT_VIDEO_FORMAT_NAME))
                 .orElseThrow(() -> new IllegalArgumentException("Missing UDT definition"));
             
             // Prepare your statements once and execute multiple times 
-            prepareStatements();
+            prepareStatements(cqlSession);
             
             // ========= CREATE ============
             
@@ -117,40 +74,36 @@ public class E14_ListSetMapAndUdt implements SchemaConstants {
             dto.getTags().add("accelerate");
             dto.getFormats().put("mp4", new VideoFormatDto(640, 480));
             dto.getFormats().put("ogg", new VideoFormatDto(640, 480));
-            createVideo(dto);
+            createVideo(cqlSession, dto);
             
             // Operations on SET (add/remove)
-            LOGGER.info("+ Tags before adding 'OK' {}", listTagsOnVideo(myVideoId));
-            addTagToVideo(myVideoId,  "OK");
-            LOGGER.info("+ Tags after adding 'OK' {}", listTagsOnVideo(myVideoId));
-            removeTagFromVideo(myVideoId,  "accelerate");
-            LOGGER.info("+ Tags after removing 'accelerate' {}", listTagsOnVideo(myVideoId));
+            LOGGER.info("+ Tags before adding 'OK' {}", listTagsOnVideo(cqlSession, myVideoId));
+            addTagToVideo(cqlSession, myVideoId,  "OK");
+            LOGGER.info("+ Tags after adding 'OK' {}", listTagsOnVideo(cqlSession, myVideoId));
+            removeTagFromVideo(cqlSession, myVideoId,  "accelerate");
+            LOGGER.info("+ Tags after removing 'accelerate' {}", listTagsOnVideo(cqlSession, myVideoId));
             
             // Operations on MAP (add/remove)
-            LOGGER.info("+ Formats before {}", listFormatsOnVideo(myVideoId));
-            removeFormatFromVideo(myVideoId, "ogg");
-            LOGGER.info("+ Formats after removing 'ogg' {}", listFormatsOnVideo(myVideoId));
-            LOGGER.info("+ Formats after removing 'ogg' {}", listFormatsOnVideoWithCustomCodec(myVideoId));
+            LOGGER.info("+ Formats before {}", listFormatsOnVideo(cqlSession, myVideoId));
+            removeFormatFromVideo(cqlSession, myVideoId, "ogg");
+            LOGGER.info("+ Formats after removing 'ogg' {}", listFormatsOnVideo(cqlSession, myVideoId));
+            LOGGER.info("+ Formats after removing 'ogg' {}", listFormatsOnVideoWithCustomCodec(cqlSession, myVideoId));
             
             // Operations on LIST (replaceAll, append, replace one
-            LOGGER.info("+ Formats frames before {}", listFramesOnVideo(myVideoId));
-            updateAllFrames(myVideoId, Arrays.asList(1,2,3));
-            LOGGER.info("+ Formats frames after update all {}", listFramesOnVideo(myVideoId));
-            appendFrame(myVideoId, 4);
-            LOGGER.info("+ Formats frames after append 4 {}", listFramesOnVideo(myVideoId));
-        } finally {
-            // Close Cluster and Session 
-            closeSession(session);
+            LOGGER.info("+ Formats frames before {}", listFramesOnVideo(cqlSession, myVideoId));
+            updateAllFrames(cqlSession, myVideoId, Arrays.asList(1,2,3));
+            LOGGER.info("+ Formats frames after update all {}", listFramesOnVideo(cqlSession, myVideoId));
+            appendFrame(cqlSession, myVideoId, 4);
+            LOGGER.info("+ Formats frames after append 4 {}", listFramesOnVideo(cqlSession, myVideoId));
         }
-        System.exit(0);
     }
     
-    private static void createVideo(VideoDto dto) {
+    private static void createVideo(CqlSession cqlSession, VideoDto dto) {
 
-        MutableCodecRegistry registry = (MutableCodecRegistry) session.getContext().getCodecRegistry();
+        MutableCodecRegistry registry = (MutableCodecRegistry) cqlSession.getContext().getCodecRegistry();
         registry.register(new UdtVideoFormatCodec(registry.codecFor(videoFormatUdt), VideoFormatDto.class));
         
-        session.execute(stmtCreateVideo.bind()
+        cqlSession.execute(stmtCreateVideo.bind()
                  .setUuid(VIDEO_VIDEOID, dto.getVideoid())
                  .setString(VIDEO_TITLE, dto.getTitle())
                  .setString(VIDEO_USER_EMAIL, dto.getEmail())
@@ -163,18 +116,18 @@ public class E14_ListSetMapAndUdt implements SchemaConstants {
     
     // SET
     
-    private static void addTagToVideo(UUID videoId, String newTag) {
+    private static void addTagToVideo(CqlSession cqlSession,UUID videoId, String newTag) {
        // Note that this statement is not prepared, not supported for add
-       session.execute(QueryBuilder
+        cqlSession.execute(QueryBuilder
                .update(VIDEO_TABLENAME)
                .appendSetElement(VIDEO_TAGS, literal(newTag))
                .whereColumn(VIDEO_VIDEOID).isEqualTo(literal(videoId))
                .build());
     }
     
-    private static void removeTagFromVideo(UUID videoId, String oldTag) {
+    private static void removeTagFromVideo(CqlSession cqlSession,UUID videoId, String oldTag) {
         // Note that this statement is not prepared, not supported for add
-        session.execute(QueryBuilder
+        cqlSession.execute(QueryBuilder
                 .update(VIDEO_TABLENAME)
                 .removeSetElement(VIDEO_TAGS, literal(oldTag))
                 .whereColumn(VIDEO_VIDEOID).isEqualTo(literal(videoId))
@@ -183,15 +136,15 @@ public class E14_ListSetMapAndUdt implements SchemaConstants {
     
     // LIST
     
-    private static void updateAllFrames(UUID videoId, List<Integer> values) {
-        session.execute(QueryBuilder.update(VIDEO_TABLENAME)
+    private static void updateAllFrames(CqlSession cqlSession, UUID videoId, List<Integer> values) {
+        cqlSession.execute(QueryBuilder.update(VIDEO_TABLENAME)
                 .setColumn(VIDEO_FRAMES, literal(values))
                 .whereColumn(VIDEO_VIDEOID).isEqualTo(literal(videoId))
                 .build());
     }
     
-    private static void appendFrame(UUID videoId, Integer lastItem) {
-        session.execute(QueryBuilder.update(VIDEO_TABLENAME)
+    private static void appendFrame(CqlSession cqlSession, UUID videoId, Integer lastItem) {
+        cqlSession.execute(QueryBuilder.update(VIDEO_TABLENAME)
                 .appendListElement(VIDEO_FRAMES, literal(lastItem))
                 .whereColumn(VIDEO_VIDEOID).isEqualTo(literal(videoId))
                 .build());
@@ -199,26 +152,26 @@ public class E14_ListSetMapAndUdt implements SchemaConstants {
     
     // UDT
     
-    private static void removeFormatFromVideo(UUID videoId, String key) {
-        session.execute(QueryBuilder.update(VIDEO_TABLENAME)
+    private static void removeFormatFromVideo(CqlSession cqlSession,UUID videoId, String key) {
+        cqlSession.execute(QueryBuilder.update(VIDEO_TABLENAME)
                  .remove(VIDEO_FORMAT, literal(Set.of(key)))
                  .whereColumn(VIDEO_VIDEOID).isEqualTo(literal(videoId))
                  .build());
     }
     
-    private static Set < String > listTagsOnVideo(UUID videoid) {
-        Row row = session.execute(stmtReadVideoTags.bind(videoid)).one();
+    private static Set < String > listTagsOnVideo(CqlSession cqlSession, UUID videoid) {
+        Row row = cqlSession.execute(stmtReadVideoTags.bind(videoid)).one();
         return (null == row)  ? new HashSet<>() : row.getSet(VIDEO_TAGS, String.class);
     }
     
-    private static List < Integer > listFramesOnVideo(UUID videoid) {
-        Row row = session.execute(stmtReadVideoTags.bind(videoid)).one();
+    private static List < Integer > listFramesOnVideo(CqlSession cqlSession, UUID videoid) {
+        Row row = cqlSession.execute(stmtReadVideoTags.bind(videoid)).one();
         return (null == row)  ? new ArrayList<>() : row.getList(VIDEO_FRAMES, Integer.class);
     }
     
-    private static Map < String, VideoFormatDto > listFormatsOnVideo(UUID videoId) {
+    private static Map < String, VideoFormatDto > listFormatsOnVideo(CqlSession cqlSession, UUID videoId) {
         Map < String, VideoFormatDto > mapOfFormats = new HashMap<>();
-        Row row = session.execute(stmtReadVideoTags.bind(videoId)).one();
+        Row row = cqlSession.execute(stmtReadVideoTags.bind(videoId)).one();
         if (null != row) {
             Map < String, UdtValue> myMap = row.getMap(VIDEO_FORMAT, String.class, UdtValue.class);
             for (Map.Entry<String, UdtValue> entry : myMap.entrySet()) {
@@ -230,18 +183,17 @@ public class E14_ListSetMapAndUdt implements SchemaConstants {
         return mapOfFormats;
     }
 
-    private static Map < String, VideoFormatDto > listFormatsOnVideoWithCustomCodec(UUID videoId) {
+    private static Map < String, VideoFormatDto > listFormatsOnVideoWithCustomCodec(CqlSession cqlSession, UUID videoId) {
         Map < String, VideoFormatDto > mapOfFormats = new HashMap<>();
-        Row row = session.execute(stmtReadVideoTags.bind(videoId)).one();
+        Row row = cqlSession.execute(stmtReadVideoTags.bind(videoId)).one();
         if (null != row) {
             return row.getMap(VIDEO_FORMAT, String.class, VideoFormatDto.class);
         }
         return mapOfFormats;
     }
     
-    
-    private static void prepareStatements() {
-        stmtCreateVideo = session.prepare(QueryBuilder.insertInto(VIDEO_TABLENAME)
+    private static void prepareStatements(CqlSession cqlSession) {
+        stmtCreateVideo = cqlSession.prepare(QueryBuilder.insertInto(VIDEO_TABLENAME)
                 .value(VIDEO_VIDEOID,    QueryBuilder.bindMarker(VIDEO_VIDEOID))
                 .value(VIDEO_TITLE,      QueryBuilder.bindMarker(VIDEO_TITLE))
                 .value(VIDEO_USER_EMAIL, QueryBuilder.bindMarker(VIDEO_USER_EMAIL))
@@ -251,7 +203,7 @@ public class E14_ListSetMapAndUdt implements SchemaConstants {
                 .value(VIDEO_FRAMES,     QueryBuilder.bindMarker(VIDEO_FRAMES))
                 .value(VIDEO_FORMAT,     QueryBuilder.bindMarker(VIDEO_FORMAT))
                 .build());
-        stmtReadVideoTags = session.prepare(QueryBuilder
+        stmtReadVideoTags = cqlSession.prepare(QueryBuilder
                 .selectFrom(VIDEO_TABLENAME)
                 .column(VIDEO_TAGS).column(VIDEO_FORMAT).column(VIDEO_FRAMES)
                 .whereColumn(VIDEO_VIDEOID).isEqualTo(QueryBuilder.bindMarker())

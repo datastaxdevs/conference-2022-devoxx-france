@@ -1,7 +1,5 @@
 package com.datastax.samples;
 
-import static com.datastax.samples.schema.SchemaUtils.closeSession;
-import static com.datastax.samples.schema.SchemaUtils.connectAstra;
 import static com.datastax.samples.schema.SchemaUtils.createTableCommentByUser;
 import static com.datastax.samples.schema.SchemaUtils.createTableCommentByVideo;
 import static com.datastax.samples.schema.SchemaUtils.truncateTable;
@@ -19,46 +17,24 @@ import com.datastax.samples.objectmapping.CommentDao;
 import com.datastax.samples.objectmapping.CommentDaoMapper;
 import com.datastax.samples.schema.SchemaConstants;
 
-/**
- * Sample codes using Cassandra OSS Driver 3.x
- * 
- * Disclaimers:
- *  - Tests for arguments nullity has been removed for code clarity
- *  - Packaged as a main class for usability
- *  
- * Pre-requisites:
- * - Cassandra running locally (127.0.0.1, port 9042)
- * 
- * @author Cedrick LUNVEN (@clunven)
- * @author Erick  RAMIREZ (@@flightc)
- */
-public class E21_ObjectMapping implements SchemaConstants {
+public class E12_ObjectMapping implements SchemaConstants {
     
-    /** Logger for the class. */
-    private static Logger LOGGER = LoggerFactory.getLogger(E21_ObjectMapping.class);
-    
-    // This will be used as singletons for the sample
-    private static CqlSession session;
+    private static Logger LOGGER = LoggerFactory.getLogger(E12_ObjectMapping.class);
    
-    /** StandAlone (vs JUNIT) to help you running. */
     public static void main(String[] args) {
-        
-        try {
-            
-            // Initialize Cluster and Session Objects (connected to keyspace)
-            session = connectAstra();
+        try(CqlSession cqlSession = CqlSessionProvider.getInstance().getSession()) {
             
             // Create working table User (if needed)
-            createTableCommentByUser(session);
-            createTableCommentByVideo(session);
+            createTableCommentByUser(cqlSession);
+            createTableCommentByVideo(cqlSession);
             
             // Comments are used in 2 queries, we need 2 tables to store it
-            truncateTable(session, COMMENT_BY_USER_TABLENAME);
-            truncateTable(session, COMMENT_BY_VIDEO_TABLENAME);
+            truncateTable(cqlSession, COMMENT_BY_USER_TABLENAME);
+            truncateTable(cqlSession, COMMENT_BY_VIDEO_TABLENAME);
    
             // All logic is defined in Mapper/Dao/Entities in objectmapping package
             // Mapper required the table to exist
-            CommentDao dao = CommentDaoMapper.builder(session)
+            CommentDao dao = CommentDaoMapper.builder(cqlSession)
                     .withDefaultKeyspace(KEYSPACE_NAME)
                     .build().commentDao();
             
@@ -113,11 +89,7 @@ public class E21_ObjectMapping implements SchemaConstants {
                .stream().map(CommentByVideo::getComment)
                .forEach(LOGGER::info);
                         
-        } finally {
-            // Close Cluster and Session 
-            closeSession(session);
         }
-        System.exit(0);
     }
     
 }

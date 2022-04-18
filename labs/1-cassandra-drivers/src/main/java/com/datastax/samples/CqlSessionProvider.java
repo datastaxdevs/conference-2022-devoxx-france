@@ -7,18 +7,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.samples.schema.SchemaConstants;
 
 /**
  * This me
  * You can run the LABS locally, in gitpod with Docker or with Astra.
  * 
  */
-public class CqlSessionProvider {
+public class CqlSessionProvider implements SchemaConstants{
     
     /** Logger for the class. */
     static Logger LOGGER = LoggerFactory.getLogger(CqlSessionProvider.class);
    
-    public static final String KEYSPACE           = "devoxx";
     public static final String LOCAL_DATACENTER   = "dc1";
     public static final String CONTACT_POINT      = "localhost";
     public static final int    CONTACT_POINT_PORT = 9042;
@@ -31,6 +31,9 @@ public class CqlSessionProvider {
     
     /** Singleton we would like to use everywhere. */
     private CqlSession cqlSession;
+    
+    /* Utile pour creer un keysa
+    private CqlSession cqlSessionAdmin;
     
     /**
      * Initialization of CqlSession
@@ -68,7 +71,7 @@ public class CqlSessionProvider {
         return CqlSession.builder()
                 .addContactPoint(new InetSocketAddress(CONTACT_POINT, CONTACT_POINT_PORT))
                 .withLocalDatacenter(LOCAL_DATACENTER)
-                .withKeyspace(KEYSPACE)
+                .withKeyspace(KEYSPACE_NAME)
                 .build();
     }
     
@@ -77,7 +80,7 @@ public class CqlSessionProvider {
         return CqlSession.builder()
                 .withCloudSecureConnectBundle(Paths.get(ASTRA_BUNDLE))
                 .withAuthCredentials(ASTRA_USERNAME, ASTRA_PASSWORD)
-                .withKeyspace(KEYSPACE)
+                .withKeyspace(KEYSPACE_NAME)
                 .build();
     }
     

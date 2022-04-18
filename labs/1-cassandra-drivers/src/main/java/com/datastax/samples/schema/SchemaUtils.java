@@ -1,17 +1,13 @@
 package com.datastax.samples.schema;
 
-import java.io.File;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.datastax.oss.driver.api.core.CqlSession;
-import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
 import com.datastax.oss.driver.api.core.metadata.schema.ClusteringOrder;
 import com.datastax.oss.driver.api.core.type.DataTypes;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import com.datastax.oss.driver.api.querybuilder.SchemaBuilder;
-import com.datastax.samples.E09_ConnectToAstraConfFile;
 
 /**
  * Code reused in multiple samples.
@@ -19,14 +15,6 @@ import com.datastax.samples.E09_ConnectToAstraConfFile;
 public class SchemaUtils implements SchemaConstants {
 
     private static Logger LOGGER = LoggerFactory.getLogger(SchemaUtils.class);
-    
-    public static CqlSession connectAstra() {
-        String configFile = E09_ConnectToAstraConfFile.class.getResource("/custom_astra.conf").getFile();
-        DriverConfigLoader configLoader = DriverConfigLoader.fromFile(new File(configFile));
-        CqlSession cqlSession = CqlSession.builder().withConfigLoader(configLoader).build();
-        LOGGER.info("[OK] Connected to ASTRA with Keyspace '{}'", KEYSPACE_NAME);
-        return cqlSession;
-    }
     
     public static void closeSession(CqlSession session) {
         if (session != null) session.close();

@@ -1,7 +1,5 @@
 package com.datastax.samples;
 
-import static com.datastax.samples.schema.SchemaUtils.closeSession;
-import static com.datastax.samples.schema.SchemaUtils.connectAstra;
 import static com.datastax.samples.schema.SchemaUtils.createTableUser;
 import static com.datastax.samples.schema.SchemaUtils.truncateTable;
 
@@ -22,54 +20,27 @@ import com.datastax.samples.schema.SchemaConstants;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-/**
- * Sample codes using Cassandra OSS Driver 4.x
- * 
- * Disclaimers:
- *  - Tests for arguments nullity has been removed for code clarity
- *  - Packaged as a main class for usability
- *  
- * Pre-requisites:
- * - Cassandra running locally (127.0.0.1, port 9042)
- * 
- * Doc: https://docs.datastax.com/en/developer/java-driver/4.4/manual/core/reactive/
- * @author Cedrick LUNVEN (@clunven)
- * @author Erick  RAMIREZ (@@flightc)
- */
-public class E17_Reactive implements SchemaConstants {
+public class E09_Reactive implements SchemaConstants {
 
-    /** Logger for the class. */
-    private static Logger LOGGER = LoggerFactory.getLogger(E17_Reactive.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(E09_Reactive.class);
 
-    // This will be used as singletons for the sample
-    private static CqlSession session;
-    
-    // Prepare your statements once and execute multiple times 
     private static PreparedStatement stmtUpsertUser;
     private static PreparedStatement stmtExistUser;
     private static PreparedStatement stmtDeleteUser;
     private static PreparedStatement stmtFindUser;
     
-    /** StandAlone (vs JUNIT) to help you running. 
-     * @throws ExecutionException 
-     * @throws InterruptedException */
-    public static void main(String[] args) 
+    public static void main(String[] args)
     throws InterruptedException, ExecutionException {
-        try {
-            
-            // === INITIALIZING ===
-            
-            // Initialize Cluster and Session Objects (connected to keyspace)
-            session = connectAstra();
+        try(CqlSession cqlSession = CqlSessionProvider.getInstance().getSession()) {
             
             // Create working table User (if needed)
-            createTableUser(session);
+            createTableUser(cqlSession);
             
             // Empty tables for tests
-            truncateTable(session, USER_TABLENAME);
+            truncateTable(cqlSession, USER_TABLENAME);
             
             // Prepare your statements once and execute multiple times 
-            prepareStatements();
+            prepareStatements(cqlSession);
             
             // ========== CREATE / UPDATE ===========
             
@@ -77,99 +48,96 @@ public class E17_Reactive implements SchemaConstants {
             String userEmail2 = "ram@sample.com";
             
             // Test existence of user 1 to false and then create user 1
-            existUserReactive(userEmail)
+            existUserReactive(cqlSession, userEmail)
                 .doOnNext(exist -> LOGGER.info("+ '{}' exists ? (expecting false): {}", userEmail, exist))
-                .and(upsertUserReactive(userEmail, "Cedric", "Lunven"))
+                .and(upsertUserReactive(cqlSession, userEmail, "Cedric", "Lunven"))
                 .block();
             
             // User 1 now exist and we log (blocking call)
-            existUserReactive(userEmail)
+            existUserReactive(cqlSession, userEmail)
                 .doOnNext(exist -> LOGGER.info("+ '{}' exists ? (expecting false): {}", userEmail, exist))
                 .block();
             
             // Creating user 2 to be deleted
-            upsertUserReactive(userEmail2,  "Eric", "Ramirez")
+            upsertUserReactive(cqlSession, userEmail2,  "Eric", "Ramirez")
                 .doOnNext(exist -> LOGGER.info("+ '{}' exists ? (expecting false): {}", userEmail2, exist))
                 .block();
             
             // ========= DELETE ============
             
-            deleteUserReactive(userEmail2)
+            deleteUserReactive(cqlSession, userEmail2)
                 .doOnNext(exist -> LOGGER.info("+ '{}' exists ? (expecting false) {}", userEmail2, exist))
                 .block(); // enforce blocking call to have logs.
             
             // ========= READ ==============
             
             // User 2 has been deleted as such will be empty
-            findUserByIdReactive("eram@sample.com")
+            findUserByIdReactive(cqlSession, "eram@sample.com")
                 .doOnNext(erick -> LOGGER.info("+ Retrieved '{}': (expecting Optional.empty) {}", userEmail2, erick))
                 .block(); // enforce blocking call to have logs.
         
             // User 1 is there so we should lie 
-            findUserByIdReactive("clun@sample.com")
+            findUserByIdReactive(cqlSession, "clun@sample.com")
                 .doOnNext(erick -> LOGGER.info("+ Retrieved '{}': (expecting result) {}", userEmail2, erick))
                 .block(); // enforce blocking call to have logs.
            
             // creating user 2 again to have 2 records in the tables
-            upsertUserReactive(userEmail2,  "Eric", "Ramirez")
+            upsertUserReactive(cqlSession, userEmail2,  "Eric", "Ramirez")
                 .doOnNext(exist -> LOGGER.info("+ '{}' exists ? (expecting false): {}", userEmail2, exist))
                 .block();
             // Listing users
-            listAllUserReactive()
+            listAllUserReactive(cqlSession)
                 .map(UserDto::getEmail)
                 .doOnNext(email -> LOGGER.info("+ '{}' email found", email))
                 .blockLast();
             
             Thread.sleep(500);
-        } finally {
-            closeSession(session);
         }
-        System.exit(0);
     }
     
-    private static Mono<Boolean> existUserReactive(String email) {
-        ReactiveResultSet rrs = session.executeReactive(stmtExistUser.bind(email));
+    private static Mono<Boolean> existUserReactive(CqlSession cqlSession, String email) {
+        ReactiveResultSet rrs = cqlSession.executeReactive(stmtExistUser.bind(email));
         return Mono.from(rrs).map(rs -> true).defaultIfEmpty(false);
     }
     
-    private static Mono<Optional<UserDto>> findUserByIdReactive(String email) {
-        return Mono.from(session.executeReactive(stmtFindUser.bind(email)))
+    private static Mono<Optional<UserDto>> findUserByIdReactive(CqlSession cqlSession, String email) {
+        return Mono.from(cqlSession.executeReactive(stmtFindUser.bind(email)))
                    .doOnNext(row -> LOGGER.info("+ Retrieved '{}': (expecting result) {}", row.getString(USER_EMAIL), email))
                    .map(UserDto::new).map(Optional::of)
                    .defaultIfEmpty(Optional.empty());
     }
     
-    private static Mono<Void> upsertUserReactive(String email, String firstname, String lastname) {
-        ReactiveResultSet rrs = session.executeReactive(stmtUpsertUser.bind(email, firstname, lastname));
+    private static Mono<Void> upsertUserReactive(CqlSession cqlSession, String email, String firstname, String lastname) {
+        ReactiveResultSet rrs = cqlSession.executeReactive(stmtUpsertUser.bind(email, firstname, lastname));
         return Mono.from(rrs).then();
     }
     
-    private static Mono<Void> deleteUserReactive(String email) {
-        return Mono.from(session.executeReactive(stmtDeleteUser.bind(email))).then();
+    private static Mono<Void> deleteUserReactive(CqlSession cqlSession, String email) {
+        return Mono.from(cqlSession.executeReactive(stmtDeleteUser.bind(email))).then();
     }
     
-    private static Flux<UserDto> listAllUserReactive() {
+    private static Flux<UserDto> listAllUserReactive(CqlSession cqlSession) {
         SimpleStatement queryAllUser = QueryBuilder.selectFrom(USER_TABLENAME).all().build();
-        return Flux.from(session.executeReactive(queryAllUser)).map(UserDto::new);
+        return Flux.from(cqlSession.executeReactive(queryAllUser)).map(UserDto::new);
     }
     
-    private static void prepareStatements() {
-        stmtUpsertUser = session.prepare(QueryBuilder.insertInto(USER_TABLENAME)
+    private static void prepareStatements(CqlSession cqlSession) {
+        stmtUpsertUser = cqlSession.prepare(QueryBuilder.insertInto(USER_TABLENAME)
                 .value(USER_EMAIL, QueryBuilder.bindMarker())
                 .value(USER_FIRSTNAME, QueryBuilder.bindMarker())
                 .value(USER_LASTNAME, QueryBuilder.bindMarker())
                 .build());
-        stmtExistUser = session.prepare(QueryBuilder
+        stmtExistUser = cqlSession.prepare(QueryBuilder
                 .selectFrom(USER_TABLENAME).column(USER_EMAIL)
                 .whereColumn(USER_EMAIL)
                 .isEqualTo(QueryBuilder.bindMarker())
                 .build());
-        stmtDeleteUser = session.prepare(QueryBuilder
+        stmtDeleteUser = cqlSession.prepare(QueryBuilder
                 .deleteFrom(USER_TABLENAME)
                 .whereColumn(USER_EMAIL)
                 .isEqualTo(QueryBuilder.bindMarker())
                 .build());
-        stmtFindUser = session.prepare(QueryBuilder
+        stmtFindUser = cqlSession.prepare(QueryBuilder
                 .selectFrom(USER_TABLENAME).all()
                 .whereColumn(USER_EMAIL)
                 .isEqualTo(QueryBuilder.bindMarker())

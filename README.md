@@ -2609,7 +2609,7 @@ La connexion est un object `CqlSession` qui devra être un singleton dans votre 
 > CqlSession cqlSession = CqlSession.builder()
 >   .addContactPoint(new InetSocketAddress("localhost", 9042))
 >   .withLocalDatacenter("dc1")
->   .withKeyspace("devoxx")
+>   .withKeyspace("devoxx_drivers")
 >   .build();
 > ```
 
@@ -2619,9 +2619,9 @@ La connexion est un object `CqlSession` qui devra être un singleton dans votre 
 
 > ```java
 > CqlSession cqlSession = CqlSession.builder()
->    .withCloudSecureConnectBundle(Paths.get(secureConnectBundle))
->    .withAuthCredentials(username, password)
->    .withKeyspace("devoxx")
+>   .withCloudSecureConnectBundle(Paths.get(secureConnectBundle))
+>   .withAuthCredentials(username, password)
+>   .withKeyspace("devoxx_drivers")
 >   .build();
 > ```
 
@@ -2656,7 +2656,27 @@ datastax-java-driver {
 }
 ```
 
-#### `✅.115`- Configurer votre connexion à Apache Cassandra™ dans `CqlSessionProvider`
+#### `✅.115`- Création du keyspace `devoxx_drivers`
+
+_Dans Docker:_
+
+```sql
+CREATE KEYSPACE IF NOT EXISTS devoxx_drivers
+WITH REPLICATION = {
+  'class' : 'NetworkTopologyStrategy',
+  'dc1' : 3
+}  AND DURABLE_WRITES = true;
+```
+
+Avec Astra, la manipulation des keyspaces est désactivé, c'est lui qui fixe les facteurs de réplications pour vous (Saas). La procédure est décrite en détail dans [Awesome Astra](https://awesome-astra.github.io/docs/pages/astra/faq/#how-do-i-create-a-namespace-or-a-keyspace) mais voici quelques captures:
+
+_Repérer le bouton `ADD KEYSPACE`_
+![](https://awesome-astra.github.io/docs/img/faq/create-keyspace-button.png)
+
+_Créer le keyspace et valider avec `SAVE`_
+![](https://awesome-astra.github.io/docs/img/faq/create-keyspace.png)
+
+#### `✅.116`- Configurer votre connexion à Apache Cassandra™ dans `CqlSessionProvider`
 
 Nous avons choisi de déléguer la creation de la connexion `CqlSession` dans une classe dédiée `CqlSessionProvider` et cela pour deux raisons:
 
@@ -2672,7 +2692,6 @@ gp open /workspace/conference-2022-devoxx/labs/1-cassandra-drivers/src/main/java
 - Vérifier les informations de connexion. Si vous utilisez `Astra` mettez à jour votre token.
 
 ```java
-public static final String KEYSPACE           = "devoxx";
 public static final String LOCAL_DATACENTER   = "dc1";
 public static final String CONTACT_POINT      = "localhost";
 public static final int    CONTACT_POINT_PORT = 9042;
@@ -2693,210 +2712,144 @@ protected static synchronized CqlSession getCqlSession() {
 }
 ```
 
-#### `✅.116`- Vérifier votre connexion à Cassandra
+#### `✅.117`- Vérifier votre connexion à Cassandra
 
-- Ouvrez un nouveau terminal dans gitpod
+- Repéré le terminal `test-java` avec le texte en bleu
+
+```
+------------------------------------------------------------
+-- Test Java                                             ---
+------------------------------------------------------------
+```
+
+- Lancer le test de connectivité avec `Maven`.
 
 ```bash
 cd /workspace/conference-2022-devoxx/labs/1-cassandra-drivers
-set -a
-source /workspace/conference-2022-devoxx/.env
-set +a
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E00_TestConnectivity
 ```
 
-> Résultats
-> _Local Cluster output_
->
-> ```
-> [INFO] --- exec-maven-plugin:3.0.0:java (default-cli) @ lab4-cassandra-drivers > ---
-> 18:57:58.149 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
-> 18:57:58.151 INFO  com.datastax.samples.CqlSessionProvider       : + Connecting to [LOCAL CASSANDRA]
-> 18:58:04.323 INFO  com.datastax.samples.CqlSessionProvider       : + [OK] Your are connected.
-> 18:58:04.347 INFO  com.datastax.samples.E00_TestConnectivity     : dc1
-> ```
->
-> _Astra output_
->
-> ```
-> [INFO] --- exec-maven-plugin:3.0.0:java (default-cli) @ lab4-cassandra-drivers ---
-> 18:57:24.310 INFO  com.datastax.samples.CqlSessionProvider       : Creating > your Session to Cassandra...
-> 18:57:24.312 INFO  com.datastax.samples.CqlSessionProvider       : + Connecting to [ASTRA]
-> 18:57:26.564 INFO  com.datastax.samples.CqlSessionProvider       : + [OK] Your are connected.
-> 18:57:26.606 INFO  com.datastax.samples.E00_TestConnectivity     : eu-west-1
-> ```
+Vous devez obtenir un `SUCCESS` dans la console.
 
-#### `✅.117`- Création de keyspace `drivers`
+## 4.2 - Création du schéma
 
-Pour isoler les opérations nous allons définir un keyspace dédié `drivers`.
+#### `✅.118`- Création du schéma
 
-- Si vous travaillez dans Docker, vous pouvez créer le keyspace programmatiquement.
+- Exécuter la classe `E01_CreateSchema` pour créer les tables et les types nécessaires.
 
 ```bash
-mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E01_CreateKeyspace
+mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E01_CreateSchema
 ```
 
-On notera que le statement a été défini en utilisant un helper `SchemaBuilder`
+On notera :
 
-> ````java
-> SimpleStatement createKeyspace = SchemaBuilder
->  .createKeyspace(KEYSPACE_NAME)
+- que les requêtes sont construites en utilisant un builder `SchemaBuilder`.
+
+> ```java
+> SchemaBuilder
+> .createTable(USER_TABLENAME)
 >  .ifNotExists()
->  .withNetworkTopologyStrategy(Map.of(CqlSessionProvider.LOCAL_DATACENTER, 3))
->  .withDurableWrites(true)
->  .build();
+>  .withPartitionKey(USER_EMAIL, DataTypes.TEXT)
+>  .withColumn(USER_FIRSTNAME, DataTypes.TEXT)
+>  .withColumn(USER_LASTNAME, DataTypes.TEXT)
+>  .build()
 > ```
-> ````
 
-Avec Astra, la manipulation des keyspaces est désactivé, c'est lui qui fixe les facteurs de réplications pour vous (Saas). La procédure est décrite en détail dans [Awesome Astra](https://awesome-astra.github.io/docs/pages/astra/faq/#how-do-i-create-a-namespace-or-a-keyspace) mais voici quelques captures:
+- que les constantes sont regroupées dans un interface `SchemaConstants`. C'est une bonne pratique. En cas de renommage d'une colonne il ne faut changer qu'un seul fichier.
 
-_Repérer le bouton `ADD KEYSPACE`_
-![](https://awesome-astra.github.io/docs/img/faq/create-keyspace-button.png)
-
-_Créer le keyspace et valider avec `SAVE`_
-![](https://awesome-astra.github.io/docs/img/faq/create-keyspace.png)
-
-- Vérification dans le `CQLSh`
-
+```bash
+00:29:42.886 INFO  com.datastax.samples.E01_CreateSchema         : Starting 'CreateSchema' sample...
+00:29:42.887 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
+00:29:42.888 INFO  com.datastax.samples.CqlSessionProvider       : + Connecting to [LOCAL CASSANDRA]
+00:29:48.882 INFO  com.datastax.samples.CqlSessionProvider       : + [OK] Your are connected.
+00:29:50.004 INFO  com.datastax.samples.schema.SchemaUtils       : + Type 'video_format' has been created (if needed).
+00:29:51.120 INFO  com.datastax.samples.schema.SchemaUtils       : + Table 'users' has been created (if needed).
+00:29:52.250 INFO  com.datastax.samples.schema.SchemaUtils       : + Table 'videos' has been created (if needed).
+00:29:53.359 INFO  com.datastax.samples.schema.SchemaUtils       : + Table 'videos_views' has been created (if needed).
+00:29:54.492 INFO  com.datastax.samples.schema.SchemaUtils       : + Table 'comments_by_video' has been created (if needed).
+00:29:55.630 INFO  com.datastax.samples.schema.SchemaUtils       : + Table 'comments_by_user' has been created (if needed).
+00:29:57.695 INFO  com.datastax.samples.E01_CreateSchema         : [OK] Success
 ```
-describe keyspaces;
-```
-
-#### `✅.118`- Création des tables
 
 ## 4.2 - Création des `Statements`
 
-## 4.3 - Parsing des résultats
-
-## 4.4 - Pagination
-
-## 4.5 - Programmation Asynchrone
-
-## 4.6 - Programmation Réactive
-
-## 4.7 - Object Mapping
-
-# LAB 5 - Spring Data Cassandra
-
-## 5.1 - Configuration
-
-## 5.2 - Les `Repositories`
-
-## 5.3 - CassandraOperations
-
-## 5.4 - Application Spring Boot
-
-# LAB 6 - Cassandra Quarkus Extension
-
-## 6.1 - Configuration
-
-## 6.2 - Application Quarkus
-
-# LAB 7 - Micronaut Cassandra
-
-## 7.1 - Configuration
-
-## 7.2 - Application Micronaut
-
-# LAB 8 - Stargate Apis
-
-## 8.1 - Introduction à Stargate
-
-## 8.2 - Rest Apis
-
-## 8.3 - Document Apis
-
-## 8.4 - GraphQL Apis
-
-## 8.5 - Configuration de SDKs
-
-## 8.6 - Utilisation des SDKs
-
----
-
----
-
----
-
-#### ✅ 10e. Use all Drivers Features
-
-For the following samples the connection remains the same using your configuration file.
-
-- _Execute `E10_GettingStarted` to work with table USERS_
+#### `✅.119`- Executer la classe example
 
 ```bash
-mvn exec:java -Dexec.mainClass=com.datastax.samples.E10_GettingStarted
+mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E02_Statements
 ```
 
-- _In Astra CQL Console you can now_
+## 4.3 - Opération `Create`, `Read`, `Update`, `Delete` (CRUD)
 
-```sql
-select * from javazone.users;
-```
-
-- _Execute `E11_SimpleCrud` to work with table USERS_
+#### `✅.120`- Executer la classe example
 
 ```bash
-mvn exec:java -Dexec.mainClass=com.datastax.samples.E11_SimpleCrud
+mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E03_OperationsCrud
 ```
 
-- _Execute `E12_Paging` to work with table USERS_
+## 4.4 - Batches
 
 ```bash
-mvn exec:java -Dexec.mainClass=com.datastax.samples.E12_Paging
+mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E04_Batches
 ```
 
-- _Execute `E13_Batches` to work with table USERS_
+## 4.5 - Pagination
+
+#### `✅.121`- Executer la classe example
 
 ```bash
-mvn exec:java -Dexec.mainClass=com.datastax.samples.E13_Batches
+mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E05_paging
 ```
 
-- _Execute `E14_ListSetMapAndUdt` to work with nested Structures_
+## 4.6 - Travailler avec `List`, `Set` et `Map`
+
+#### `✅.122`- Executer la classe example
 
 ```bash
-mvn exec:java -Dexec.mainClass=com.datastax.samples.E14_ListSetMapAndUdt
+mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E06_ListSetMapAndUdt
 ```
 
-- _Execute `E15_Json` to work with nested Structures_
+## 4.7 - Requêter avec JSON
+
+#### `✅.123`- Executer la classe example
 
 ```bash
-mvn exec:java -Dexec.mainClass=com.datastax.samples.E15_Json
+mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E07_Json
 ```
 
-- _Execute `E16_Async`_
+## 4.8 - Programmation Asynchrone
+
+#### `✅.124`- Executer la classe example
 
 ```bash
-mvn exec:java -Dexec.mainClass=com.datastax.samples.E16_Async
+mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E08_Async
 ```
 
-- _Execute `E17_Reactive`_
+## 4.9 - Programmation Réactive
+
+#### `✅.125`- Executer la classe example
 
 ```bash
-mvn exec:java -Dexec.mainClass=com.datastax.samples.E17_Reactive
+mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E09_Reactive
 ```
 
-- _Execute `E18_Counters`_
+## 4.10 - Les `counters`
+
+#### `✅.126`- Exécuter la classe example
 
 ```bash
-mvn exec:java -Dexec.mainClass=com.datastax.samples.E18_Counters
+mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E10_Counters
 ```
 
-- _Execute `E19_LightweightTransactions`_
+## 4.10 - Les `Lightweight Transactions`
+
+#### `✅.127`- Exécuter la classe example
 
 ```bash
-mvn exec:java -Dexec.mainClass=com.datastax.samples.E19_LightweightTransactions
+mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E11_LightweightTransactions
 ```
 
-- _Execute `E20_BlobAndCodec`_
-
-```bash
-mvn exec:java -Dexec.mainClass=com.datastax.samples.E20_BlobAndCodec
-```
-
-## 11. Drivers Object Mapping
-
-### ✅ 11a. Browse Code
+## 4.12 - Object Mapping
 
 The mapping from Object to Tables is avaible in the native drivers Ad Hoc, no need for an external framework. Get more information in the [reference documentation](https://docs.datastax.com/en/developer/java-driver/4.13/manual/mapper/)
 
@@ -2975,19 +2928,17 @@ public interface CommentDaoMapper {
 }
 ```
 
-### ✅ 11b. Run the Setp
+#### `✅.128`- Exécuter la classe example
 
 ```bash
-mvn exec:java -Dexec.mainClass=com.datastax.samples.E21_ObjectMapping
+mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E12_ObjectMapping
 ```
 
-[🏠 Back to Table of Contents](#-table-of-content)
+# LAB 5 - Spring Data Cassandra
 
-## 12. Spring Data Cassandra
+## 5.1 - Configuration
 
 To isolate the `Spring Data` work from what we did previous let's create a new keypace.
-
-### ✅ 12a. Create a keyspace
 
 - _Locate the `new keyspace` button on the DB home page_
 
@@ -2997,7 +2948,7 @@ To isolate the `Spring Data` work from what we did previous let's create a new k
 
 ![image](img/new_keyspace2.png?raw=true)
 
-### ✅ 12b. Setup the application
+✅ 12b. Setup the application
 
 - Import the project `2-spring-data` in your IDE.
 
@@ -3019,7 +2970,7 @@ spring.data.cassandra.password=<client_secret>
 datastax.astra.secure-connect-bundle=/tmp/secure-connect-javazone.zip
 ```
 
-### ✅ 12c. Validate configuration and create schema
+✅ 12c. Validate configuration and create schema
 
 - _Check Connectivity_
 
@@ -3034,7 +2985,7 @@ mvn test -Dtest=com.datastax.workshop.E22_SpringDataAstraConnectivity
 mvn test -Dtest=com.datastax.workshop.E23_CreateSchemaInAstraTest
 ```
 
-### ✅ 12d. Browse the code
+✅ 12d. Browse the code
 
 - _Project configuration, notice we are using a dedicated Spring Boot Starter_
 
@@ -3110,7 +3061,7 @@ public class TodoRepositorySimpleCassandra extends SimpleCassandraRepository<Tod
 }
 ```
 
-### ✅ 12e. Start the application
+✅ 12e. Start the application
 
 Start
 
@@ -3136,9 +3087,15 @@ You can work with an external user interface
 
 ```
 
-[🏠 Back to Table of Contents](#-table-of-content)
+## 5.2 - Les `Repositories`
 
-## 13. Cassandra Quarkus extension
+## 5.3 - CassandraOperations
+
+## 5.4 - Application Spring Boot
+
+# LAB 6 - Cassandra Quarkus Extension
+
+## 6.1 - Configuration
 
 To isolate the `Quarkus` work from what we did previous let's create a new keypace.
 
@@ -3255,18 +3212,24 @@ Press [r] to resume testing, [o] Toggle test output, [h] for more options
 
 - \*Press `w` to see the [web UI](http://localhost:8080/)
 
-![image](img/quarkus_ui.png?raw=true)
+## 6.2 - Application Quarkus
 
-[🏠 Back to Table of Contents](#-table-of-content)
+# LAB 7 - Micronaut Cassandra
 
-## 14. Overview of Stargate APis
+## 7.1 - Configuration
 
-lmn
+## 7.2 - Application Micronaut
 
-[🏠 Back to Table of Contents](#-table-of-content)
+# LAB 8 - Stargate Apis
 
-## 15. Astra and Stargate SDK
+## 8.1 - Introduction à Stargate
 
-pqr
+## 8.2 - Rest Apis
 
-[🏠 Back to Table of Contents](#-table-of-content)
+## 8.3 - Document Apis
+
+## 8.4 - GraphQL Apis
+
+## 8.5 - Configuration de SDKs
+
+## 8.6 - Utilisation des SDKs

@@ -1,7 +1,5 @@
 package com.datastax.samples;
 
-import static com.datastax.samples.schema.SchemaUtils.closeSession;
-import static com.datastax.samples.schema.SchemaUtils.connectAstra;
 import static com.datastax.samples.schema.SchemaUtils.createTableUser;
 import static com.datastax.samples.schema.SchemaUtils.truncateTable;
 
@@ -20,19 +18,10 @@ import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import com.datastax.samples.dto.UserDto;
 import com.datastax.samples.schema.SchemaConstants;
 
-/**
- * Yet Another Class /_0_/ *dub
- * 
- * @author Cedrick LUNVEN (@clunven)
- */
-public class E11_SimpleCrud implements SchemaConstants {
+public class E03_OperationsCrud implements SchemaConstants {
 
-    /** Logger for the class. */
-    private static Logger LOGGER = LoggerFactory.getLogger(E11_SimpleCrud.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(E03_OperationsCrud.class);
 
-    // This will be used as singletons for the sample
-    private static CqlSession session;
-    
     // Prepare your statements once and execute multiple times 
     private static PreparedStatement stmtCreateUser;
     private static PreparedStatement stmtUpsertUser;
@@ -42,31 +31,28 @@ public class E11_SimpleCrud implements SchemaConstants {
     
     /** StandAlone (vs JUNIT) to help you running. */
     public static void main(String[] args) {
-        try {
-            
-            // Initialize Cluster and Session Objects (connected to keyspace)
-            session = connectAstra();
+        try(CqlSession cqlSession = CqlSessionProvider.getInstance().getSession()) {
             
             // Create working table User (if needed)
-            createTableUser(session);
+            createTableUser(cqlSession);
             
             // Empty tables for tests
-            truncateTable(session, USER_TABLENAME);
+            truncateTable(cqlSession, USER_TABLENAME);
             
             // Prepare your statements once and execute multiple times 
-            prepareStatements();
+            prepareStatements(cqlSession);
             
             // ========== CREATE ===========
             
             String userEmail = "clun@sample.com";
             
-            if (!existUser(userEmail)) {
+            if (!existUser(cqlSession, userEmail)) {
                 LOGGER.info("+ {} does not exists in table 'user'", userEmail);
             }
             
-            createUser(userEmail, "Cedric", "Lunven");
+            createUser(cqlSession, userEmail, "Cedric", "Lunven");
             
-            if (existUser(userEmail)) {
+            if (existUser(cqlSession, userEmail)) {
                 LOGGER.info("+ {}  now exists in table 'user'", userEmail);
             }
             
@@ -74,101 +60,97 @@ public class E11_SimpleCrud implements SchemaConstants {
             
             String userEmail2 = "eram@sample.com";
 
-            if (!existUser(userEmail2)) {
+            if (!existUser(cqlSession, userEmail2)) {
                 LOGGER.info("+ {} does not exists in table 'user'", userEmail2);
             } 
             
-            updateUser(userEmail2, "Eric", "Ramirez");
+            updateUser(cqlSession, userEmail2, "Eric", "Ramirez");
             
-            if (existUser(userEmail2)) {
+            if (existUser(cqlSession, userEmail2)) {
                 LOGGER.info("+ {}  now exists in table 'user'", userEmail2);
             }
             
             // ========= DELETE ============
             
             // Delete an existing user by its email (if email does not exist, no error)
-            deleteUser(userEmail2);
-            if (!existUser(userEmail2)) {
+            deleteUser(cqlSession, userEmail2);
+            if (!existUser(cqlSession, userEmail2)) {
                 LOGGER.info("+ {} does not exists in table 'user'", userEmail2);
             } 
             
             // ========= READ ==============
             
             // Will be empty as we have deleted it
-            Optional<UserDto> erick = findUserById(userEmail2);
+            Optional<UserDto> erick = findUserById(cqlSession, userEmail2);
             LOGGER.info("+ Retrieved {}: {}", userEmail2,erick); // Expected Optiona.empty()
             
             // Not null
-            Optional<UserDto> cedrick = findUserById(userEmail);
+            Optional<UserDto> cedrick = findUserById(cqlSession, userEmail);
             LOGGER.info("+ Retrieved {}: {}", userEmail, cedrick.get().getEmail()); 
             
             // Read all (first upserts)
-            updateUser(userEmail2, "Eric", "Ramirez");
-            updateUser(userEmail, "Cedrick", "Lunven");
-            List<UserDto > allUsers = session
+            updateUser(cqlSession, userEmail2, "Eric", "Ramirez");
+            updateUser(cqlSession, userEmail, "Cedrick", "Lunven");
+            List<UserDto > allUsers = cqlSession
                     .execute(QueryBuilder.selectFrom(USER_TABLENAME).all().build())
                     .all().stream().map(UserDto::new)
                     .collect(Collectors.toList());
             LOGGER.info("+ Retrieved users count {}", allUsers.size());
-            
-        } finally {
-            closeSession(session);
         }
-        System.exit(0);
     }
     
-    private static boolean existUser(String email) {
-        return session.execute(stmtExistUser.bind(email)).getAvailableWithoutFetching() > 0;
+    private static boolean existUser(CqlSession cqlSession, String email) {
+        return cqlSession.execute(stmtExistUser.bind(email)).getAvailableWithoutFetching() > 0;
     }
     
-    private static void createUser(String email, String firstname, String lastname) {
-        ResultSet rs = session.execute(stmtCreateUser.bind(email, firstname, lastname));
+    private static void createUser(CqlSession cqlSession, String email, String firstname, String lastname) {
+        ResultSet rs = cqlSession.execute(stmtCreateUser.bind(email, firstname, lastname));
         if (!rs.wasApplied()) {
             throw new IllegalArgumentException("Email '" + email + "' already exist in Database. Cannot create new user");
         }
         LOGGER.info("+ User {} has been created", email);
     }
     
-    private static void updateUser(String email, String firstname, String lastname) {
-        session.execute(stmtUpsertUser.bind(email, firstname, lastname));
+    private static void updateUser(CqlSession cqlSession, String email, String firstname, String lastname) {
+        cqlSession.execute(stmtUpsertUser.bind(email, firstname, lastname));
         LOGGER.info("+ User {} has been updated", email);
     }
     
-    private static void deleteUser(String email) {
-        session.execute(stmtDeleteUser.bind(email));
+    private static void deleteUser(CqlSession cqlSession, String email) {
+        cqlSession.execute(stmtDeleteUser.bind(email));
         LOGGER.info("+ User {} has been deleted", email);
     }
     
-    private static Optional < UserDto > findUserById(String email) {
-        ResultSet rs = session.execute(stmtFindUser.bind(email));
+    private static Optional < UserDto > findUserById(CqlSession cqlSession, String email) {
+        ResultSet rs = cqlSession.execute(stmtFindUser.bind(email));
         // We query by the primary key ensuring unicity
         Row record = rs.one();
         return (null != record) ? Optional.of(new UserDto(record)) :Optional.empty();
     }
     
-    private static void prepareStatements() {
-        stmtCreateUser = session.prepare(QueryBuilder.insertInto(USER_TABLENAME)
+    private static void prepareStatements(CqlSession cqlSession) {
+        stmtCreateUser = cqlSession.prepare(QueryBuilder.insertInto(USER_TABLENAME)
                 .value(USER_EMAIL, QueryBuilder.bindMarker())
                 .value(USER_FIRSTNAME, QueryBuilder.bindMarker())
                 .value(USER_LASTNAME, QueryBuilder.bindMarker())
                 .ifNotExists().build());
         // Using a - SLOW - lightweight transaction to check user existence
-        stmtUpsertUser = session.prepare(QueryBuilder.insertInto(USER_TABLENAME)
+        stmtUpsertUser = cqlSession.prepare(QueryBuilder.insertInto(USER_TABLENAME)
                 .value(USER_EMAIL, QueryBuilder.bindMarker())
                 .value(USER_FIRSTNAME, QueryBuilder.bindMarker())
                 .value(USER_LASTNAME, QueryBuilder.bindMarker())
                 .build());
-        stmtExistUser = session.prepare(QueryBuilder
+        stmtExistUser = cqlSession.prepare(QueryBuilder
                 .selectFrom(USER_TABLENAME).column(USER_EMAIL)
                 .whereColumn(USER_EMAIL)
                 .isEqualTo(QueryBuilder.bindMarker())
                 .build());
-        stmtDeleteUser = session.prepare(QueryBuilder
+        stmtDeleteUser = cqlSession.prepare(QueryBuilder
                 .deleteFrom(USER_TABLENAME)
                 .whereColumn(USER_EMAIL)
                 .isEqualTo(QueryBuilder.bindMarker())
                 .build());
-        stmtFindUser = session.prepare(QueryBuilder
+        stmtFindUser = cqlSession.prepare(QueryBuilder
                 .selectFrom(USER_TABLENAME).all()
                 .whereColumn(USER_EMAIL)
                 .isEqualTo(QueryBuilder.bindMarker())

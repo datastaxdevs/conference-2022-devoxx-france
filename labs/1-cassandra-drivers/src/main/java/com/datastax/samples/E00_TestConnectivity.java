@@ -11,7 +11,7 @@ public class E00_TestConnectivity {
     
     public static void main(String[] args) {
         try(CqlSession cqlSession = CqlSessionProvider.getInstance().getSession()) {
-            LOGGER.info("Connected to keyspace [{}]", cqlSession.getKeyspace().get());
+            LOGGER.info("[SUCCESS]");
         }   
     }
     

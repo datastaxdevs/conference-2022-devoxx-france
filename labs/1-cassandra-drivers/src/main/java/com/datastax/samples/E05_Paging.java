@@ -1,7 +1,5 @@
 package com.datastax.samples;
 
-import static com.datastax.samples.schema.SchemaUtils.closeSession;
-import static com.datastax.samples.schema.SchemaUtils.connectAstra;
 import static com.datastax.samples.schema.SchemaUtils.createTableUser;
 import static com.datastax.samples.schema.SchemaUtils.truncateTable;
 
@@ -25,33 +23,19 @@ import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import com.datastax.oss.protocol.internal.util.Bytes;
 import com.datastax.samples.schema.SchemaConstants;
 
-/**
- * Yet Another Class /_0_/ *dub
- * 
- * @author Cedrick LUNVEN (@clunven)
- */
-public class E12_Paging implements SchemaConstants {
+public class E05_Paging implements SchemaConstants {
 
-    /** Logger for the class. */
-    private static Logger LOGGER = LoggerFactory.getLogger(E12_Paging.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(E05_Paging.class);
 
-    /** StandAlone (vs JUNIT) to help you running. */
     public static void main(String[] args) {
-        
-        CqlSession session = null;
-        try {
-
-            // Initialize Cluster and Session Objects (connected to keyspace)
-            session = connectAstra();
+        try(CqlSession cqlSession = CqlSessionProvider.getInstance().getSession()) {
             
-            // Create working table User (if needed)
-            createTableUser(session);
+            createTableUser(cqlSession);
             
-            // Empty tables for tests
-            truncateTable(session, USER_TABLENAME);
+            truncateTable(cqlSession, USER_TABLENAME);
             
             PreparedStatement stmtCreateUser = 
-                    session.prepare(QueryBuilder.insertInto(USER_TABLENAME)
+                    cqlSession.prepare(QueryBuilder.insertInto(USER_TABLENAME)
                     .value(USER_EMAIL, QueryBuilder.bindMarker())
                     .value(USER_FIRSTNAME, QueryBuilder.bindMarker())
                     .value(USER_LASTNAME, QueryBuilder.bindMarker())
@@ -62,7 +46,7 @@ public class E12_Paging implements SchemaConstants {
             for (int i = 0; i < 50; i++) {
                 bb.addStatement(stmtCreateUser.bind("user_" + i + "@sample.com", "user_" + i, "lastname"));
 			}
-            session.execute(bb.build());
+            cqlSession.execute(bb.build());
             LOGGER.info("+ {} users have been created", 50);
             
             // Paged query
@@ -70,7 +54,7 @@ public class E12_Paging implements SchemaConstants {
                 .setPageSize(10)                    // 10 per pages
                 .setTimeout(Duration.ofSeconds(1))  // 1s timeout
                 .setConsistencyLevel(ConsistencyLevel.ONE);
-            ResultSet page1 = session.execute(statement);
+            ResultSet page1 = cqlSession.execute(statement);
             
             // Checking
             LOGGER.info("+ Page 1 has {} items", page1.getAvailableWithoutFetching());
@@ -90,13 +74,9 @@ public class E12_Paging implements SchemaConstants {
             // ByteBuffer pagingStateAsBytesBack = Bytes.fromHexString(pageStateAsString);
             
             statement.setPagingState(pagingStateAsBytes);
-            ResultSet page2 = session.execute(statement);
+            ResultSet page2 = cqlSession.execute(statement);
             LOGGER.info("+ Page 2 has {} items", page2.getAvailableWithoutFetching());
-            
-        } finally {
-            closeSession(session);
         }
-        System.exit(0);
     }
    
 }
