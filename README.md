@@ -2656,38 +2656,44 @@ datastax-java-driver {
 }
 ```
 
-#### `✅.115`- Configurer votre connexion à Apache Cassandra™ dans `CqlSessionLabsProvider`
+#### `✅.115`- Configurer votre connexion à Apache Cassandra™ dans `CqlSessionProvider`
 
-Nous avons choisi de déléguer la creation de la connexion `CqlSession` dans une classe dédiée `CqlSessionLabsProvider` et cela pour deux raisons:
+Nous avons choisi de déléguer la creation de la connexion `CqlSession` dans une classe dédiée `CqlSessionProvider` et cela pour deux raisons:
 
 - Mutualisation du code: La connexion à la base Cassandra est nécessaire dans tous les exemples
 - Certains utilisent Astra pour les exercices et d'autres `Docker`.
 
-- Ouvrir la classe `CqlSessionLabsProvider`
+- Ouvrir la classe `CqlSessionProvider`
 
 ```bash
-gp open /workspace/conference-2022-devoxx/labs/1-cassandra-drivers/src/main/java/com/datastax/samples/CqlSessionLabsProvider.java
+gp open /workspace/conference-2022-devoxx/labs/1-cassandra-drivers/src/main/java/com/datastax/samples/CqlSessionProvider.java
 ```
 
-- Décommenter la connexion qui vous correspond (local ou Astra).
+- Vérifier les informations de connexion. Si vous utilisez `Astra` mettez à jour votre token.
+
+```java
+public static final String KEYSPACE           = "devoxx";
+public static final String LOCAL_DATACENTER   = "dc1";
+public static final String CONTACT_POINT      = "localhost";
+public static final int    CONTACT_POINT_PORT = 9042;
+public static final String ASTRA_USERNAME     = "token";
+public static final String ASTRA_PASSWORD     = "AstraCS:<votre jeton>";
+public static final String ASTRA_BUNDLE       = "/home/gitpod/.cassandra/bootstrap.zip";
+```
+
+- Décommenter la connexion qui vous correspond. La ligne 40 (`connectToLocalCassandra()`) permet d'utilise le cluster local alors que la ligne `41` tentera de se connecter au cluster sur Astra. (`connectoToAstra()`)
 
 ```java
 protected static synchronized CqlSession getCqlSession() {
   if (cqlSession == null) {
     //cqlSession = connectToLocalCassandra();
-    cqlSession = connectoToAstraCassandra();
+    cqlSession = connectoToAstra();
   }
   return cqlSession;
 }
 ```
 
-- Configurer proprement le password avec votre jeton si vous utilisez `Astra` (AstraCS:...)
-
-```java
-final String password = "AstraCS:....";
-```
-
-#### `✅.116`- Vérifier votre connexion á Cassandra
+#### `✅.116`- Vérifier votre connexion à Cassandra
 
 - Ouvrez un nouveau terminal dans gitpod
 
@@ -2696,7 +2702,7 @@ cd /workspace/conference-2022-devoxx/labs/1-cassandra-drivers
 set -a
 source /workspace/conference-2022-devoxx/.env
 set +a
-mvn clean compile exec:java -Dtoken=$ASTRA_DB_ADMIN_TOKEN -Dexec.mainClass=com.datastax.samples.E00_TestConnectivity
+mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E00_TestConnectivity
 ```
 
 > Résultats

@@ -1,14 +1,12 @@
 package com.datastax.samples.schema;
 
 import java.io.File;
-import java.net.InetSocketAddress;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
-import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import com.datastax.oss.driver.api.core.metadata.schema.ClusteringOrder;
 import com.datastax.oss.driver.api.core.type.DataTypes;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
@@ -45,30 +43,6 @@ public class SchemaUtils implements SchemaConstants {
     
     public static void dropTypeIffExists(CqlSession session, String typeName) {
         session.execute(SchemaBuilder.dropType(typeName).ifExists().build());
-    }
-    
-    /**
-     * CREATE KEYSPACE killrvideo 
-     * WITH replication = 
-     *      {'class': 'SimpleStrategy', 'replication_factor': '1'}  
-     * AND durable_writes = true;
-     */
-    public static SimpleStatement createKeyspaceSimpleStrategy(String keyspaceName, int replicationFactor) {
-        return SchemaBuilder.createKeyspace(keyspaceName)
-                    .ifNotExists()
-                    .withSimpleStrategy(replicationFactor)
-                    .withDurableWrites(true)
-                    .build();
-    }
-    
-    public static void createKeyspace() {
-        try (CqlSession cqlSession = CqlSession.builder()
-                .addContactPoint(new InetSocketAddress("127.0.0.1", 9042))
-                .withLocalDatacenter("dc1")
-                .build()) {
-            cqlSession.execute(createKeyspaceSimpleStrategy(KEYSPACE_NAME, KEYSPACE_REPLICATION_FACTOR));
-            LOGGER.info("+ Keyspace '{}' created (if needed).", KEYSPACE_NAME);
-        }
     }
     
     /**

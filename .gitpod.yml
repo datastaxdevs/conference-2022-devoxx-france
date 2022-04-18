@@ -20,6 +20,11 @@ tasks:
       docker pull cassandra:4.0.3
     command: |
       ./scripts/cassandra-start 2>/dev/null
+  - name: test-java
+    before: |
+      chmod 700 /workspace/conference-2022-devoxx/scripts/java-start
+    command: |
+      ./scripts/java-start
 ports:
   # Access Cassandra node
   - port: 9042

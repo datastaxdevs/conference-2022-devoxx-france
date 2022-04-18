@@ -23,7 +23,7 @@ public class CqlSessionProvider {
     public static final String CONTACT_POINT      = "localhost";
     public static final int    CONTACT_POINT_PORT = 9042;
     public static final String ASTRA_USERNAME     = "token";
-    public static final String ASTRA_PASSWORD     = System.getProperty("token");
+    public static final String ASTRA_PASSWORD     = "AstraCS:gdZaqzmFZszaBTOlLgeecuPs:edd25600df1c01506f5388340f138f277cece2c93cb70f4b5fa386490daa5d44";
     //public static final String ASTRA_BUNDLE       = "/home/gitpod/.cassandra/bootstrap.zip";
     public static final String ASTRA_BUNDLE       = "/Users/cedricklunven/Downloads/secure-connect-workshops.zip";
     
