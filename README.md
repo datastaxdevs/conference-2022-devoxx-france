@@ -22,24 +22,24 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
 - [Foire aux questions](#foire-aux-questions)
 - [Supports de Formation](#supports-de-formation)
 - [#**LAB 1** - Initialisation des environnements](#lab1---création-de-la-base-de-donnée)
-  - 1.1 - Démarrage de `Gitpod`
-  - 1.2 - Apache Cassandra™ dans `Docker`
-  - 1.3 - Apache Cassandra™ avec `Astra` (dbaas)
+  - [1.1 - Démarrage de `Gitpod`](#11---démarrage-de-gitpod)
+  - [1.2 - Apache Cassandra™ dans `Docker`](#12---apache-cassandra-dans-docker)
+  - [1.3 - Apache Cassandra™ avec `Astra` (dbaas)](#13---apache-cassandra-avec-astra-dbaas)
 - [#**LAB 2** - Les Fondamentaux d'Apache Cassandra™](#lab2---les-fondamentaux-dapache-cassandra)
-  - 2.1 - Tables et types de données simples
-  - 2.2 - Opérations Unitaires CRUD
-  - 2.3 - Grammaire des requêtes avec CQL
-  - 2.4 - Types de données avancés
-  - 2.5 - Lightweight Transactions
-  - 2.6 - Batches
-  - 2.7 - Indexes secondaires
-  - 2.8 - Niveaux de consistance
-- [#**LAB 3** - La modélisation de données](#lab3--modèle-de-données-petclinic)
-  - 3.1 - Méthodologie
-  - 3.2 - Modèle de données timeseries
-  - 3.2 - Exemple de migration de Sql à NoSQL
-- [#**LAB 4** - Introduction aux drivers](#lab4---introduction-aux-drivers)
-  - 4.1 - Connectivité
+  - [2.1 - Tables et types de données simples](#21---tables-et-types-de-données-simples)
+  - [2.2 - Opérations Unitaires CRUD](#22---opérations-create-read-update-delete)
+  - [2.3 - Grammaire des requêtes avec CQL](#23---grammaire-des-requêtes-avec-cql)
+  - [2.4 - Types de données avancés](#24---types-de-données-avancés)
+  - [2.5 - Batches](#25---batches)
+  - [2.6 - Indexes secondaires](#26---index-secondaires)
+  - [2.7 - Niveaux de consistance](#27---niveau-de-consistence)
+  - [2.8 - Lightweight Transactions](#28---lightweight-transactions)
+- [#**LAB 3** - La modélisation de données](#lab-3---modélisation-de-données)
+  - [3.1 - Méthodologie](#31---méthodologie)
+  - [3.2 - Modèle de données timeseries](#32---modèle-de-données-pour-les-timeseries)
+  - [3.3 - Exemple de migration de Sql à NoSQL](#33---de-sql-à-nosql-avec-petclinic)
+- [#**LAB 4** - Introduction aux drivers](#lab-4---introduction-aux-drivers)
+  - [4.1 - Connectivité](#41---connectivité)
   - 4.2 - Création et exécution de requêtes
   - 4.3 - Parsing des résultats
   - 4.4 - Pagination
@@ -2220,7 +2220,7 @@ Ce processus est décrit dans la figure ci-dessous:
 
 Nous allons appliquer la méthodologie pour quelques cas concret, un apprentissage par l'exemple.
 
-## 3.2 - Modèle de données proche des `timeseries`
+## 3.2 - Modèle de données pour des `timeseries`
 
 _Une **série temporelle** ou **timeseries** correspond à l'enregistrement de l'évolution de valeurs au cours du temps._
 
@@ -2399,7 +2399,7 @@ WHERE network    = 'forest-net'
   AND date_hour  < '2020-07-07';
 ```
 
-## 3.2 - De SQL à NoSQL avec Petclinic
+## 3.3 - De SQL à NoSQL avec Petclinic
 
 #### `✅.110`- Introuction à l'application `petclinic`
 
