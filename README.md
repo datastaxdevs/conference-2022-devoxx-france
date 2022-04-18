@@ -345,7 +345,7 @@ WITH REPLICATION = {
 } AND DURABLE_WRITES = true;
 ```
 
-`DURABLE_WRITES` ? Dans le chemin d'écriture Cassandra écrit en mémoire (`memtable`) avant de fluser sur disque (SSTABLE) soit par vacation soit lorsque'un seuil est atteint en mémoire. Utiliser `durable writes` true permet d'ecrire dans le `commit log` avant même l'écriture en mémoire.
+`DURABLE_WRITES` ? Dans le chemin d'écriture Cassandra écrit en mémoire (`memtable`) avant de _flusher_ les valeurs sur disque (SSTABLE) soit par vacation soit lorsque'un seuil est atteint en mémoire. Utiliser `DURABLE_WRITES = true` permet d'ecrire dans le `commit log` avant même l'écriture en mémoire cela permet de ne pas perdre la donnée, il faut tout le temps le faire mais c'est la valeur par défaut.
 
 #### `✅.014`- Lister les keyspaces
 
@@ -522,7 +522,7 @@ DESCRIBE KEYSPACES;
 
 Dans ce LAB nous travaillerons dans l'outil `CQLSH`. Vous pouvez utiliser celui en local (dans docker) ou celui d'Astra à votre convenance.
 
-## ✅ 2.1 - Tables et types de données simples
+## 2.1 - Tables et types de données simples
 
 #### `✅.025`- Lister les keyspaces
 
@@ -697,7 +697,7 @@ Exécuter la requête sans fournir de filtre.
 select * from city_by_country;
 ```
 
-## ✅ 2.2 - Opérations Create, Read, Update, Delete
+## 2.2 - Opérations Create, Read, Update, Delete
 
 #### `✅.031`- Lister les villes de France
 
@@ -2278,12 +2278,16 @@ Voici le modèle physique dans notre cas et les modifications apportées (en ver
 
 ![my-pic](img/sensor-04.png?raw=true)
 
-#### `✅.104`- Créer un nouveau keyspace `sensors`
+#### `✅.104`- Créer un nouveau keyspace `sensor_data`
 
-Dans Docker
+_Dans Docker:_
 
 ```sql
-
+CREATE KEYSPACE IF NOT EXISTS sensor_data
+WITH REPLICATION = {
+  'class' : 'NetworkTopologyStrategy',
+  'dc1' : 3
+}  AND DURABLE_WRITES = true;
 ```
 
 Avec Astra, la manipulation des keyspaces est désactivé, c'est lui qui fixe les facteurs de réplications pour vous (Saas). La procédure est décrite en détail dans [Awesome Astra](https://awesome-astra.github.io/docs/pages/astra/faq/#how-do-i-create-a-namespace-or-a-keyspace) mais voici quelques captures:
@@ -2296,7 +2300,105 @@ _Créer le keyspace et valider avec `SAVE`_
 
 #### `✅.105`- Importer le modèle données
 
-#### `✅.106`- Utilisation du modèle données
+```sql
+use sensor_data;
+
+CREATE TABLE networks (
+  bucket TEXT,
+  name TEXT,
+  description TEXT,
+  region TEXT,
+  num_sensors INT,
+  PRIMARY KEY ((bucket),name)
+);
+
+CREATE TABLE temperatures_by_network (
+  network TEXT,
+  week DATE,
+  date_hour TIMESTAMP,
+  sensor TEXT,
+  avg_temperature FLOAT,
+  latitude DECIMAL,
+  longitude DECIMAL,
+  PRIMARY KEY ((network,week),date_hour,sensor)
+) WITH CLUSTERING ORDER BY (date_hour DESC, sensor ASC);
+
+
+CREATE TABLE sensors_by_network (
+  network TEXT,
+  sensor TEXT,
+  latitude DECIMAL,
+  longitude DECIMAL,
+  characteristics MAP<TEXT,TEXT>,
+  PRIMARY KEY ((network),sensor)
+);
+
+CREATE TABLE temperatures_by_sensor (
+  sensor TEXT,
+  date DATE,
+  timestamp TIMESTAMP,
+  value FLOAT,
+  PRIMARY KEY ((sensor,date),timestamp)
+) WITH CLUSTERING ORDER BY (timestamp DESC);
+```
+
+#### `✅.106`- Chargement des données avec la commande `SOURCE`
+
+_Pour Docker:_ Le fichier `sensor_data.cql` a été monté comme un volume.
+
+```sql
+SOURCE '/tmp/data_modelling/sensor_data.cql'
+```
+
+_Pour Astra:_ fournissez le chemin complet du fichier
+
+```sql
+SOURCE '/workspace/conference-2022-devoxx/labs/data_modelling/sensor_data.cql'
+```
+
+#### `✅.107`- Utilisation du modèle, lister les données
+
+```sql
+SELECT * FROM networks;
+SELECT network, week, date_hour, sensor, avg_temperature FROM temperatures_by_network;
+SELECT * FROM sensors_by_network;
+SELECT * FROM temperatures_by_sensor;
+```
+
+#### `✅.108`- Utilisation du modèle: `Q1` Lister les `networks`
+
+- Afficher tous les `networks`
+
+```sql
+SELECT name, description, region, num_sensors
+FROM networks
+WHERE bucket = 'all';
+```
+
+#### `✅.109`- Utilisation du modèle: `Q2:` Moyenne horaire par capteur
+
+- Avec notre jeu de données, nous utilisons le network `forest-net` et l'intervalle de dates [`2020-07-05`,`2020-07-06`] pour la semaine `2020-07-05`
+
+```sql
+SELECT date_hour, avg_temperature, latitude, longitude, sensor
+FROM temperatures_by_network
+WHERE network    = 'forest-net'
+  AND week       = '2020-07-05'
+  AND date_hour >= '2020-07-05'
+  AND date_hour  < '2020-07-07';
+```
+
+- Avec notre jeu de données si nous voulons maintenant retrouver pour les 2 semaines `2020-06-28` and `2020-07-05`:
+
+```sql
+SELECT date_hour, avg_temperature,
+       latitude, longitude, sensor
+FROM temperatures_by_network
+WHERE network    = 'forest-net'
+  AND week      IN ('2020-07-05','2020-06-28')
+  AND date_hour >= '2020-07-04'
+  AND date_hour  < '2020-07-07';
+```
 
 ## 3.2 - De SQL à NoSQL avec Petclinic
 
