@@ -11,7 +11,7 @@ public class E00_TestConnectivity {
     private static Logger LOGGER = LoggerFactory.getLogger(E00_TestConnectivity.class);
     
     public static void main(String[] args) {
-        try(CqlSession cqlSession = CqlSessionLabsProvider.getCqlSession()) {
+        try(CqlSession cqlSession = CqlSessionLabsProvider.getInstance().getSession()) {
             LOGGER.info(cqlSession.execute("select data_center from system.local")
                       .one()
                       .getString("data_center"));
