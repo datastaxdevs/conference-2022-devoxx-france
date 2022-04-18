@@ -2057,11 +2057,13 @@ IF status IN ('awaiting payment','awaiting shipment');
 SELECT * FROM orders_by_user WHERE username = 'devoxx_developer';
 ```
 
-### 2.8.5 - `EXEMPLE LWT 3` - Système d'enchèrews
+### 2.8.5 - `EXEMPLE LWT 3` - Système d'enchères
 
-`Kirsten` et `Ryan`, 2 développeurs javascript, enchérissent sur le framework `JS` du moment qui sera probablement obsolète la semaine prochaine.
+Dans cet exemple nous allons simuler une vente aux enchères. L'enjeu est de ne pas permettre de surenchérir avec la même proposition et de gérer les accès concurrents.
 
-#### `✅.099`- Création du schéma
+#### `✅.099`- Création du schéma et import du jeu de données
+
+- Création de la table. On notera l'enchère de départ `starting_bid`, l'enchère la plus haute `highest_bid` et le meilleur enchérisseur `highest_bidder`. Nous voulons retrouver toutes les enchères pour un objet en particulier, l'identifiant de l'objet sera notre partition key.
 
 ```sql
 CREATE TABLE auction_items (
@@ -2071,46 +2073,60 @@ CREATE TABLE auction_items (
   highest_bidder TEXT,
   PRIMARY KEY ((item_id))
 );
+```
 
+- Mise à prix de ma Wii 50 euros.
+
+```sql
 INSERT INTO auction_items (item_id, starting_bid, highest_bid)
-VALUES ('Angular_528', 10.00, 0.00);
-SELECT * FROM auction_items WHERE item_id = 'Angular_528';
+VALUES ('Wii_a_cedrick', 50.00, 0.00);
+
+SELECT * FROM auction_items WHERE item_id = 'Wii_a_cedrick';
 ```
 
-#### `✅.100`- Kirsten place une enchère
+#### `✅.100`- Un client place une enchère
+
+- Emmanuel place une enchère à `50` qui equivaut à la mise de départ. Le `highest_bid` est toujours à 0.
 
 ```sql
 UPDATE auction_items
-SET highest_bid = 10.00, highest_bidder = 'Kirsten'
-WHERE item_id = 'Angular_528'
-IF starting_bid <= 10.00 AND highest_bid < 10.00;
+SET highest_bid = 50.00, highest_bidder = 'Emmanuel'
+WHERE item_id = 'Wii_a_cedrick'
+IF starting_bid <= 50.00 AND highest_bid < 10.00;
 
-SELECT * FROM auction_items WHERE item_id = 'Angular_528';
+SELECT * FROM auction_items WHERE item_id = 'Wii_a_cedrick';
 ```
 
-#### `✅.101`- Ryan place la même enchère, un peu plus tard
+#### `✅.101`- Un client place une enchère
+
+- Marine veut également placer une enchère à `50` mais cette fois la condition n'est plus remplie. (was_applied=false)
 
 ```sql
 UPDATE auction_items
-SET highest_bid = 10.00, highest_bidder = 'Ryan'
-WHERE item_id = 'Angular_528'
-IF starting_bid <= 10.00 AND highest_bid < 10.00;
-SELECT * FROM auction_items WHERE item_id = 'Angular_528';
+SET highest_bid = 50.00, highest_bidder = 'Marine'
+WHERE item_id = 'Wii_a_cedrick'
+IF starting_bid <= 50.00 AND highest_bid < 50.00;
+
+SELECT * FROM auction_items WHERE item_id = 'Wii_a_cedrick';
 ```
 
-#### `✅.102`- Ryan surenchérit à `10.99`
+#### `✅.102`- Le deuxième client place une second enchère plus important
 
-```
+```sql
 UPDATE auction_items
-SET highest_bid = 10.99, highest_bidder = 'Ryan'
-WHERE item_id = 'Angular_528'
-IF starting_bid <= 10.99 AND highest_bid < 10.99;
-SELECT * FROM auction_items WHERE item_id = 'Angular_528';
+SET highest_bid = 51.00, highest_bidder = 'Marine'
+WHERE item_id = 'Wii_a_cedrick'
+IF starting_bid <= 51.00 AND highest_bid < 51.00;
+SELECT * FROM auction_items WHERE item_id = 'Wii_a_cedrick';
 ```
 
-### 2.8.6 - `EXEMPLE:` - Historique des enchères
+### 2.8.6 - `EXEMPLE LWT 4:` - Historique des enchères
 
 #### `✅.103`- Création du schéma
+
+- Créeons une table pour les enchères mais cette ajoutong le `bid_id` comme un `timeuuid` pour conserver tous les records (plus d'upserts).
+
+- L'ordre des enchères est `DESC`, les derniers seront en haut de la liste.
 
 ```sql
 CREATE TABLE bids_by_item (
@@ -2123,68 +2139,176 @@ CREATE TABLE bids_by_item (
   highest_bidder TEXT STATIC,
   PRIMARY KEY ((item_id), bid_id)
 ) WITH CLUSTERING ORDER BY (bid_id DESC);
+```
 
+- À nouveau la mise à prix est de 50.
+
+```sql
 INSERT INTO bids_by_item (item_id, bid_id, starting_bid, highest_bid)
-VALUES ('ABC123', NOW(), 10.00, 0.00);
-SELECT * FROM bids_by_item WHERE item_id = 'ABC123';
+VALUES ('Wii_a_cedrick', NOW(), 50.00, 0.00);
+
+SELECT * FROM bids_by_item WHERE item_id = 'Wii_a_cedrick';
 ```
 
 #### `✅.104`- Première enchère
 
+- Emmanuel place son enchère à 50 à nouveau.
+
 ```sql
 INSERT INTO bids_by_item (item_id, bid_id, bid, bidder)
-VALUES ('ABC123', NOW(), 10.00, 'dragonslayer');
+VALUES ('Wii_a_cedrick', NOW(), 50.00, 'Emmanuel');
+```
 
+- Cette enchère place t'elle Emmanuel comme meilleur enchérisseur (ici oui)
+
+```sql
 UPDATE bids_by_item
-SET highest_bid = 10.00, highest_bidder = 'dragonslayer'
-WHERE item_id = 'ABC123'
-IF starting_bid <= 10.00 AND highest_bid < 10.00;
+SET highest_bid = 50.00, highest_bidder = 'Emmanuel'
+WHERE item_id = 'Wii_a_cedrick'
+IF starting_bid <= 50.00 AND highest_bid < 50.00;
 
-SELECT * FROM bids_by_item WHERE item_id = 'ABC123';
+SELECT * FROM bids_by_item WHERE item_id = 'Wii_a_cedrick';
 ```
 
 #### `✅.105`- Deuxième enchère
 
+- Marine place une enchère
+
 ```sql
 INSERT INTO bids_by_item (item_id, bid_id, bid, bidder)
-VALUES ('ABC123', NOW(), 10.00, 'delossailor');
+VALUES ('Wii_a_cedrick', NOW(), 50.00, 'Marine');
+```
 
+- Comme dans l'exemple précédent le montant est trop faible `highest_bid < 50.00;`, (was_applied=false)
+
+```sql
 UPDATE bids_by_item
-SET highest_bid = 10.00, highest_bidder = 'delossailor'
-WHERE item_id = 'ABC123'
-IF starting_bid <= 10.00 AND highest_bid < 10.00;
-SELECT * FROM bids_by_item WHERE item_id = 'ABC123';
+SET highest_bid = 50.00, highest_bidder = 'Marine'
+WHERE item_id = 'Wii_a_cedrick'
+IF starting_bid <= 50.00 AND highest_bid < 50.00;
+SELECT * FROM bids_by_item WHERE item_id = 'Wii_a_cedrick';
 ```
 
 #### `✅.106`- Troisième enchère
 
+- Avec un montant plus important Marine devient la meilleure enchérisseuse.
+
 ```sql
 INSERT INTO bids_by_item (item_id, bid_id, bid, bidder)
-VALUES ('ABC123', NOW(), 10.99, 'delossailor');
+VALUES ('Wii_a_cedrick', NOW(), 51.00, 'Marine');
 
 UPDATE bids_by_item
-SET highest_bid = 10.99, highest_bidder = 'delossailor'
-WHERE item_id = 'ABC123'
-IF starting_bid <= 10.99 AND highest_bid < 10.99;
-SELECT * FROM bids_by_item WHERE item_id = 'ABC123';
+SET highest_bid =  51.00, highest_bidder = 'Marine'
+WHERE item_id = 'Wii_a_cedrick'
+IF starting_bid <=  51.00 AND highest_bid <  51.00;
+SELECT * FROM bids_by_item WHERE item_id = 'Wii_a_cedrick';
 ```
 
-# LAB 3 - La modélisation de données
+Ce type de modèle de données est appelé ledger. Il conserve à la fois le dernier état du système mais tous les états précédents.
 
-- 3.1 - Méthodologie
-- 3.2 - Modèle de données timeseries
-- 3.2 - De SQL à NoSQL avec Petclinic
+# LAB 3 - Modélisation de données
+
+## 3.1 - Méthodologie
+
+Pour construire un modèle données avec Cassandra les entités ne sont pas suffisantes. Il faut également disposer de la liste des requêtes, aussi appelée `Application Workflow`.
+
+Par des règles de mapping on peut alors retrouver le design des différentes tables (`modèle logique de données`).
+
+La dernière étape est une optimisation où au travers des différents types de données et des opérations de batch on réduit le nombre de table.
+
+![my-pic](img/modelisation-workflow.png?raw=true)
+
+## 3.2 - Modèle de données pour timeseries
+
+### 3.2.1 - Modèle conceptuel de données
+
+A conceptual data model is designed with the goal of understanding data in a particular domain. In this example, the model is captured using an Entity-Relationship Diagram (ERD) that documents entity types, relationship types, attribute types, and cardinality and key constraints.
+
+![my-pic](img/sensor-01.png?raw=true)
+
+The conceptual data model for sensor data features sensor networks, sensors, and temperature measurements. Each network has a unique name, description, region, and number of sensors. A sensor is described by a unique id, location, which is composed of a latitude and longitude, and multiple sensor characteristics. A temperature measurement has a timestamp and value, and is uniquely identified by a sensor id and a measurement timestamp. While a network can have many sensors, each sensor can only belong to one network. Similarly, a sensor can record many temperature measurements at different timestamps and every temperature measurement is reported by exactly one sensor.
+
+### 3.2.2 - Workflow Applicatif
+
+![my-pic](img/sensor-02.png?raw=true)
+
+An application workflow is designed with the goal of understanding data access patterns for a data-driven application. Its visual representation consists of application tasks, dependencies among tasks, and data access patterns. Ideally, each data access pattern should specify what attributes to search for, search on, order by, or do aggregation on.
+
+The application workflow has an entry-point task that shows all sensor networks. This task requires querying a database to find information about all networks and arrange the results in ascending order of network names, which is documented as Q1 on the diagram. Next, an application can either display a heatmap for a selected network, which requires data access pattern Q2, or display all sensors in a selected network, which requires data access pattern Q3. Finally, the latter can lead to the task of showing raw temperature values for a given sensor based on data access pattern Q4. All in all, there are four data access patterns for a database to support.
+
+### 3.2.3 - Modèle logique de données
+
+![my-pic](img/sensor-03.png?raw=true)
+
+A logical data model results from a conceptual data model by organizing data into Cassandra-specific data structures based on data access patterns identified by an application workflow. Logical data models can be conveniently captured and visualized using Chebotko Diagrams that can feature tables, materialized views, indexes and so forth.
+
+The logical data model for sensor data is represented by the shown Chebotko Diagram. There are four tables, namely networks, temperatures_by_network, sensors_by_network and temperatures_by_sensor, that are designed to specifically support data access patterns Q1, Q2, Q3 and Q4, respectively. For example, table temperatures_by_network has seven columns, of which network is designated as a partition key column, and date, hour and sensor are clustering key columns with descending or ascending order being represented by a downward or upward arrow. To support Q2, it should be straightforward to see that a query over this table needs to restrict column network to some value and column date to a range of values, while the result ordering based on date and hour is automatically supported by how data is organized in the table.
+
+### 3.2.3 - Modèle physique de données
+
+![my-pic](img/sensor-04.png?raw=true)
+
+A physical data model is directly derived from a logical data model by analyzing and optimizing for performance. The most common type of analysis is identifying potentially large partitions. Some common optimization techniques include splitting and merging partitions, data indexing, data aggregation and concurrent data access optimizations.
+
+The physical data model for sensor data is visualized using the Chebotko Diagram. This time, all table columns have associated data types. In addition, two tables have changes in their primary keys. Table networks used to be partitioned based on column name and is now partitioned based on column bucket. The old design had single-row partitions and required retrieving rows from multiple partitions to satisfy Q1. The new design essentially merges old single-row partitions into one multi-row partition and results in much more efficient Q1. With respect to table temperatures_by_network, there are two optimizations. The minor optimization is to merge columns date and hour into one column date_hour, which is supported by the TIMESTAMP data type. The major optimization is to split potentially large partitions by introducing column week, which represents the first day of a week, as a partition key column. Consider that a network with 100 sensors generates 100 rows per hour in table temperatures_by_network. The old design allows partitions to grow over time: 100 rows in an hour, 2400 rows in a day, 16800 rows in a week, …, 876000 rows in a year, and so forth. The new design restricts each partition to only contain at most 16800 rows that can be generated in one week. Our final blueprint is ready to be instantiated in Cassandra.
+
+## 3.2 - De SQL à NoSQL avec Petclinic
+
+#### `✅.103`- Imaginer les tables pour les pets par clients
+
+#### `✅.103`- Imaginer les tables pour les pets par clients
 
 # LAB 4 - Introduction aux drivers
 
 ## 4.1 - Connectivité
 
-Pour se connecter à Cassandra vous avez besoin d'un `contact point` (ip:port) ainsi qu'éventuellement d'un identifiant et mot de passe. Lors de la connexion vous indiquez également
+Pour se connecter à Cassandra vous avez besoin:
+
+- d'un `contact point` (ip:port)
+- du `datacenter` avec lequel vous voulez travailler (`local datacenter`)
+- Éventuellement du nom du keyspace pour ne pas avoir à prefixer toutes les requêtes.
+- Éventuellement d'un identifiant et mot de passe. Lors de la connexion vous indiquez également
+
+La connexion est un object `CqlSession` qui devra être un singleton dans votre application.
+
+> ```java
+> CqlSession cqlSession = CqlSession.builder()
+>   .addContactPoint(new InetSocketAddress("localhost", 9042))
+>   .withLocalDatacenter("dc1")
+>   .withKeyspace("devoxx")
+>   .build();
+> ```
+
+Dans le cas de `Astra` le zip `secureConnecBundle est aussi attendu.
+
+> ```java
+> CqlSession cqlSession = CqlSession.builder()
+>    .withCloudSecureConnectBundle(Paths.get(secureConnectBundle))
+>     .withAuthCredentials(username, password)
+>     .withKeyspace("devoxx")
+>   .build();
+> ```
+
+#### `✅.100`- Open `CqlSessionLabsProvider` and edit the connectivity parameters
+
+```java
+protected static synchronized CqlSession getCqlSession() {
+  if (cqlSession == null) {
+    //cqlSession = connectToLocalCassandra();
+    cqlSession = connectoToAstraCassandra();
+  }
+  return cqlSession;
+}
+```
+
+#### `✅.100`- Open `CqlSessionLabsProvider` and edit the connectivity parameters
 
 ```bash
 cd 1-cassandra-drivers
 mvn exec:java -Dexec.mainClass=com.datastax.samples.E01_ClusterShowMetaData
 ```
+
+#### `✅.100`- Execute the java code to show cluster informations
 
 - _Create the Keyspace_ :
 
