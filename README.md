@@ -2559,6 +2559,8 @@ INSERT INTO petclinic_reference_lists(list_name, values)
 VALUES ('vet_specialty', {'radiology', 'dentistry', 'surgery'});
 ```
 
+Vous avez désormais l'ensemble des bases pour bien démarrer avec Apache Cassandra™ et construire des modèles de données performants.
+
 # LAB 4 - Introduction aux drivers
 
 ## 4.1 - Connectivité
