@@ -345,6 +345,8 @@ WITH REPLICATION = {
 } AND DURABLE_WRITES = true;
 ```
 
+`DURABLE_WRITES` ? Dans le chemin d'écriture Cassandra écrit en mémoire (`memtable`) avant de fluser sur disque (SSTABLE) soit par vacation soit lorsque'un seuil est atteint en mémoire. Utiliser `durable writes` true permet d'ecrire dans le `commit log` avant même l'écriture en mémoire.
+
 #### `✅.014`- Lister les keyspaces
 
 ```sql
@@ -1798,9 +1800,7 @@ Les indexes secondaires ne sont pas une garantie de performance. L'index est un 
 - Pour une table donnée, demande à tous les noeuds N (stockant un partie de l'index) de lister les partitions contenant la valeur (P)
 - Pour chaque partition (P), scan pour répérer les enregistrements.
 
-La cardinatlité est donc (P \* E) on ne multiplie pas par N car tous les noeuds travaillent mais le réseau peut également ralentir la requête. Plus d'information sur les indexes secondaires est disponibles [ici](DEEP DOVE)
-
----- TODO ARTICLE DUY ----
+La cardinatlité est donc (P \* E) on ne multiplie pas par N car tous les noeuds travaillent mais le réseau peut également ralentir la requête. Plus d'informations sur les indexes secondaires sont disponibles [ici](https://www.doanduyhai.com/blog/?p=13191)
 
 ## 2.7 - Niveau de consistence
 
@@ -2210,47 +2210,93 @@ Ce type de modèle de données est appelé ledger. Il conserve à la fois le der
 
 ## 3.1 - Méthodologie
 
-Pour construire un modèle données avec Cassandra les entités ne sont pas suffisantes. Il faut également disposer de la liste des requêtes, aussi appelée `Application Workflow`.
+Pour construire un modèle données avec Apache Cassandra™ les entités ne sont pas suffisantes. Il faut également disposer de la liste des requêtes aussi appelée `Application Workflow`.
 
-Par des règles de mapping on peut alors retrouver le design des différentes tables (`modèle logique de données`).
+Par des règles de mapping on peut alors retrouver le design des différentes tables (`modèle logique de données`). La dernière étape est une optimisation où au travers des différents types de données et des opérations de batch on réduit le nombre de table.
 
-La dernière étape est une optimisation où au travers des différents types de données et des opérations de batch on réduit le nombre de table.
+Ce processus est décrit dans la figure ci-dessous:
 
 ![my-pic](img/modelisation-workflow.png?raw=true)
 
-## 3.2 - Modèle de données pour timeseries
+Nous allons appliquer la méthodologie pour quelques cas concret, un apprentissage par l'exemple.
+
+## 3.2 - Modèle de données proche des `timeseries`
+
+_Une **série temporelle** ou **timeseries** correspond à l'enregistrement de l'évolution de valeurs au cours du temps._
 
 ### 3.2.1 - Modèle conceptuel de données
 
-A conceptual data model is designed with the goal of understanding data in a particular domain. In this example, the model is captured using an Entity-Relationship Diagram (ERD) that documents entity types, relationship types, attribute types, and cardinality and key constraints.
+**Définition:** Un modèle conceptuel de données permet de représenter les objets et leurs intéractions pour un domain fonctionnel en particulier. Le modèle permet la visualisation des différentes entités et les relations qui les caractérisent avec leur cardinalité et leur contraintes.
 
+Dans premier exemple nous nous intéressons à l'enregistrement de mesure pour des capteurs. Les entités sont `Network` (réseau), `Sensor` (capteur), `Temperature` (mesure).
+
+Le diagramme entité relation peut être décrit comme suit:
+re
 ![my-pic](img/sensor-01.png?raw=true)
-
-The conceptual data model for sensor data features sensor networks, sensors, and temperature measurements. Each network has a unique name, description, region, and number of sensors. A sensor is described by a unique id, location, which is composed of a latitude and longitude, and multiple sensor characteristics. A temperature measurement has a timestamp and value, and is uniquely identified by a sensor id and a measurement timestamp. While a network can have many sensors, each sensor can only belong to one network. Similarly, a sensor can record many temperature measurements at different timestamps and every temperature measurement is reported by exactly one sensor.
 
 ### 3.2.2 - Workflow Applicatif
 
+**Définition:** Un workflow applicatif _(application workflow)_ permet de comprendre les patterns d'accès à la données ainsi que leur enchainement. Pour chaque requête il faut préciser quels sont les attributs recherchés, dans quel ordre et avec quelle aggrégation doivent ils être retournés.
+
+Dans notre exemple:
+
+- `Q1`: Le point d'entrée de notre application liste les différents réseaux disponibles.
+
+- `Q3`: Affiche les différents capteurs (`Sensor`) pour un réseau (`Network`) en particulier.
+
+- `Q2`: Pour un réseau donné, pour une plage horaire spécifiée (date/heure), afficher une moyenne horaire de la température pour chaque capteur.
+
+- `Q4`: Pour un réseau donné, pour un capteur donné, pour une plage horaire spécifiée (date/heure) afficher l'ensemble des mesures sans filtres mais avec un affichage par ordre décroissant par rapport au temps. (les dernières entrées seront les premiers éléments retournés.)
+
 ![my-pic](img/sensor-02.png?raw=true)
-
-An application workflow is designed with the goal of understanding data access patterns for a data-driven application. Its visual representation consists of application tasks, dependencies among tasks, and data access patterns. Ideally, each data access pattern should specify what attributes to search for, search on, order by, or do aggregation on.
-
-The application workflow has an entry-point task that shows all sensor networks. This task requires querying a database to find information about all networks and arrange the results in ascending order of network names, which is documented as Q1 on the diagram. Next, an application can either display a heatmap for a selected network, which requires data access pattern Q2, or display all sensors in a selected network, which requires data access pattern Q3. Finally, the latter can lead to the task of showing raw temperature values for a given sensor based on data access pattern Q4. All in all, there are four data access patterns for a database to support.
 
 ### 3.2.3 - Modèle logique de données
 
+**Définition:** : Le modéle logique de données reprend les patterns d'accès à la donnée (`Q1..Q4`) que l'on enrichit avec les différents attributs provenant du diagramme entité relation. En utilisant les critères de recherche on définit les clés primaires des tables en utilisant la notation de `Chebotko`:
+
+- `K` : partition KEY. C'est le plus important. Elle peut porter sur une **ou plusieurs ** colonne. C'est la clé de découpage, l'élément indispensable dans la clause where. On enregistre ensemble ce que l'on souhaite retrouver ensemble plus tard. C'est comme si on faisait la jointure à l'écriture et non à la lecture.
+
+- `C` : Clusting Column with order `ASC` (`↑`) or `DESC` (`↓`). Elles sont utilisés comme critère de filtre secondaire (attention l'ordre est important) et pour assurer l'unicité d'un enregistrement.
+
+- `S` : Static column. C'est une colonne qui prend la même valeur pour tous les enregistrements d'une même partition.
+
 ![my-pic](img/sensor-03.png?raw=true)
 
-A logical data model results from a conceptual data model by organizing data into Cassandra-specific data structures based on data access patterns identified by an application workflow. Logical data models can be conveniently captured and visualized using Chebotko Diagrams that can feature tables, materialized views, indexes and so forth.
+### 3.2.4 - Modèle physique de données
 
-The logical data model for sensor data is represented by the shown Chebotko Diagram. There are four tables, namely networks, temperatures_by_network, sensors_by_network and temperatures_by_sensor, that are designed to specifically support data access patterns Q1, Q2, Q3 and Q4, respectively. For example, table temperatures_by_network has seven columns, of which network is designated as a partition key column, and date, hour and sensor are clustering key columns with descending or ascending order being represented by a downward or upward arrow. To support Q2, it should be straightforward to see that a query over this table needs to restrict column network to some value and column date to a range of values, while the result ordering based on date and hour is automatically supported by how data is organized in the table.
+**Définition:** : Le modèle physique de donnée est obtenu par extension du modèle logique en ajoutant les types propres à Cassandra et en cherchant les optimisations possibles (TIMEUUID, Index secondaires..).
 
-### 3.2.3 - Modèle physique de données
+Il faut être vigilant à la taille des partitions les limites recommandées sont `100.000` enregistrements maximum et `100` Mo maximum. Les autres optimisations peuvent concerner des aggrégations ou de l'indexation.
+
+Voici le modèle physique dans notre cas et les modifications apportées (en vert)
+
+- La table `networks` ne peut être partitionnée uniquement sur le nom car la requête reviendrai à faire un _full-scan._ En définissant un `bucket` on explore moins de partitions et la requête `Q1` est dramatiquement plus rapide.
+
+- Sur la table `temperatures_by_network` 2 optimisations ont été apportées. Les colonnes `date` et `hour` peuvent être mergées en une seule de type `TIMESTAMP`. La seconde est une nouvelle fois d'éviter les partitions larges et d'introduire une colonne `week` pour diviser:
+  - **Ancien design:** 100 capteurs, génèrent 100 lignes en une heure dans `temperatures_by_network` => 2400/jour, 16800/semaine, 876000/année....
+  - **Nouveau design:** 16800 enregistrements par partition et toutes les partitions équivalentes.
 
 ![my-pic](img/sensor-04.png?raw=true)
 
-A physical data model is directly derived from a logical data model by analyzing and optimizing for performance. The most common type of analysis is identifying potentially large partitions. Some common optimization techniques include splitting and merging partitions, data indexing, data aggregation and concurrent data access optimizations.
+#### `✅.104`- Créer un nouveau keyspace `sensors`
 
-The physical data model for sensor data is visualized using the Chebotko Diagram. This time, all table columns have associated data types. In addition, two tables have changes in their primary keys. Table networks used to be partitioned based on column name and is now partitioned based on column bucket. The old design had single-row partitions and required retrieving rows from multiple partitions to satisfy Q1. The new design essentially merges old single-row partitions into one multi-row partition and results in much more efficient Q1. With respect to table temperatures_by_network, there are two optimizations. The minor optimization is to merge columns date and hour into one column date_hour, which is supported by the TIMESTAMP data type. The major optimization is to split potentially large partitions by introducing column week, which represents the first day of a week, as a partition key column. Consider that a network with 100 sensors generates 100 rows per hour in table temperatures_by_network. The old design allows partitions to grow over time: 100 rows in an hour, 2400 rows in a day, 16800 rows in a week, …, 876000 rows in a year, and so forth. The new design restricts each partition to only contain at most 16800 rows that can be generated in one week. Our final blueprint is ready to be instantiated in Cassandra.
+Dans Docker
+
+```sql
+
+```
+
+Avec Astra, la manipulation des keyspaces est désactivé, c'est lui qui fixe les facteurs de réplications pour vous (Saas). La procédure est décrite en détail dans [Awesome Astra](https://awesome-astra.github.io/docs/pages/astra/faq/#how-do-i-create-a-namespace-or-a-keyspace) mais voici quelques captures:
+
+_Repérer le bouton `ADD KEYSPACE`_
+![](https://awesome-astra.github.io/docs/img/faq/create-keyspace-button.png)
+
+_Créer le keyspace et valider avec `SAVE`_
+![](https://awesome-astra.github.io/docs/img/faq/create-keyspace.png)
+
+#### `✅.105`- Importer le modèle données
+
+#### `✅.106`- Utilisation du modèle données
 
 ## 3.2 - De SQL à NoSQL avec Petclinic
 
