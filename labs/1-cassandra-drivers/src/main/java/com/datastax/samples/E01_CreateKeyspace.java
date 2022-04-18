@@ -25,10 +25,10 @@ import com.datastax.samples.schema.SchemaUtils;
  * 
  * Need Help ? Join us on community.datastax.com to ask your questions for free.
  */
-public class E02_CreateKeyspace implements SchemaConstants {
+public class E01_CreateKeyspace implements SchemaConstants {
     
     /** Logger for the class. */
-    private static Logger LOGGER = LoggerFactory.getLogger(E02_CreateKeyspace.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(E01_CreateKeyspace.class);
     
     /** 
      * StandAlone program relying on main method to easy copy/paste.

@@ -13,12 +13,21 @@ import com.datastax.oss.driver.api.core.CqlSession;
  * You can run the LABS locally, in gitpod with Docker or with Astra.
  * 
  */
-public class CqlSessionLabsProvider {
+public class CqlSessionProvider {
     
     /** Logger for the class. */
-    static Logger LOGGER = LoggerFactory.getLogger(CqlSessionLabsProvider.class);
+    static Logger LOGGER = LoggerFactory.getLogger(CqlSessionProvider.class);
    
-    private static CqlSessionLabsProvider _instance;
+    public static final String KEYSPACE           = "devoxx";
+    public static final String LOCAL_DATACENTER   = "dc1";
+    public static final String CONTACT_POINT      = "localhost";
+    public static final int CONTACT_POINT_PORT    = 9042;
+    public static final String ASTRA_USERNAME     = "token";
+    public static final String ASTRA_PASSWORD     = System.getProperty("token");
+    /* /home/gitpod/.cassandra/bootstrap.zip */
+    public static final String ASTRA_BUNDLE       = "/Users/cedricklunven/Downloads/secure-connect-workshops.zip";
+    
+    private static CqlSessionProvider _instance;
     
     /** Singleton we would like to use everywhere. */
     private CqlSession cqlSession;
@@ -26,10 +35,10 @@ public class CqlSessionLabsProvider {
     /**
      * Initialization of CqlSession
      */
-    private CqlSessionLabsProvider() {
+    private CqlSessionProvider() {
         LOGGER.info("Creating your CqlSession to Cassandra...");
-        cqlSession = connectToLocalCassandra();
-        //cqlSession = connectoToAstra();
+        //cqlSession = connectToLocalCassandra();
+        cqlSession = connectoToAstra();
         LOGGER.info("+ [OK] Your are connected.");
     }
     
@@ -47,9 +56,9 @@ public class CqlSessionLabsProvider {
      *
      * @return
      */
-    protected static synchronized CqlSessionLabsProvider getInstance() {
+    protected static synchronized CqlSessionProvider getInstance() {
         if (_instance == null) {
-            _instance = new CqlSessionLabsProvider();
+            _instance = new CqlSessionProvider();
         }
         return _instance;
     }
@@ -58,23 +67,17 @@ public class CqlSessionLabsProvider {
         LOGGER.info("+ Connecting to [LOCAL CASSANDRA]");
         return CqlSession.builder()
                 .addContactPoint(new InetSocketAddress("localhost", 9042))
-                .withLocalDatacenter("dc1")
+                .withLocalDatacenter(LOCAL_DATACENTER)
+                .withKeyspace(KEYSPACE)
                 .build();
     }
     
     protected static CqlSession connectoToAstra() {
         LOGGER.info("+ Connecting to [ASTRA]");
-        final String keyspace            = "devoxx";
-        final String username            = "token";
-        //final String secureConnectBundle = "/home/gitpod/.cassandra/bootstrap.zip";
-        //final String password            = System.getenv("ASTRA_DB_APPLICATION_TOKEN");
-        // Values for my machine
-        final String secureConnectBundle = "/Users/cedricklunven/Downloads/secure-connect-workshops.zip";
-        final String password            = "AstraCS:gdZaqzmFZszaBTOlLgeecuPs:edd25600df1c01506f5388340f138f277cece2c93cb70f4b5fa386490daa5d44";
         return CqlSession.builder()
-                .withCloudSecureConnectBundle(Paths.get(secureConnectBundle))
-                .withAuthCredentials(username, password)
-                .withKeyspace(keyspace)
+                .withCloudSecureConnectBundle(Paths.get(ASTRA_BUNDLE))
+                .withAuthCredentials(ASTRA_USERNAME, ASTRA_PASSWORD)
+                .withKeyspace(KEYSPACE)
                 .build();
     }
     

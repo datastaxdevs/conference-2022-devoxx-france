@@ -16,7 +16,7 @@ import com.datastax.samples.schema.SchemaConstants;
  * 
  * Pre-requisites:
  * - Cassandra running locally (127.0.0.1, port 9042)
- * - Keyspace killrvideo created {@link E02_CreateKeyspace}
+ * - Keyspace killrvideo created {@link E01_CreateKeyspace}
  * 
  * Doc : https://docs.datastax.com/en/developer/java-driver/4.5/manual/core/configuration/
  */

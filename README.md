@@ -2681,14 +2681,43 @@ protected static synchronized CqlSession getCqlSession() {
 }
 ```
 
-#### `✅.100`- Open `CqlSessionLabsProvider` and edit the connectivity parameters
+- Configurer proprement le password avec votre jeton si vous utilisez `Astra` (AstraCS:...)
 
-```bash
-cd 1-cassandra-drivers
-mvn exec:java -Dexec.mainClass=com.datastax.samples.E01_ClusterShowMetaData
+```java
+final String password = "AstraCS:....";
 ```
 
-#### `✅.100`- Execute the java code to show cluster informations
+#### `✅.116`- Vérifier votre connexion á Cassandra
+
+```bash
+cd /workspace/conference-2022-devoxx/labs/1-cassandra-drivers
+set -a
+source /workspace/conference-2022-devoxx/.env
+set +a
+mvn exec:java -Dtoken=$ASTRA_DB_ADMIN_TOKEN -Dexec.mainClass=com.datastax.samples.E00_TestConnectivity
+```
+
+_Local Cluster output_
+
+```
+[INFO] --- exec-maven-plugin:3.0.0:java (default-cli) @ lab4-cassandra-drivers ---
+18:57:58.149 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
+18:57:58.151 INFO  com.datastax.samples.CqlSessionProvider       : + Connecting to [LOCAL CASSANDRA]
+18:58:04.323 INFO  com.datastax.samples.CqlSessionProvider       : + [OK] Your are connected.
+18:58:04.347 INFO  com.datastax.samples.E00_TestConnectivity     : dc1
+```
+
+_Astra output_
+
+```
+[INFO] --- exec-maven-plugin:3.0.0:java (default-cli) @ lab4-cassandra-drivers ---
+18:57:24.310 INFO  com.datastax.samples.CqlSessionProvider       : Creating your Session to Cassandra...
+18:57:24.312 INFO  com.datastax.samples.CqlSessionProvider       : + Connecting to [ASTRA]
+18:57:26.564 INFO  com.datastax.samples.CqlSessionProvider       : + [OK] Your are connected.
+18:57:26.606 INFO  com.datastax.samples.E00_TestConnectivity     : eu-west-1
+```
+
+#### `✅.117`- Création de keyspace
 
 - _Create the Keyspace_ :
 
