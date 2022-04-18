@@ -2391,8 +2391,7 @@ WHERE network    = 'forest-net'
 - Avec notre jeu de données si nous voulons maintenant retrouver pour les 2 semaines `2020-06-28` and `2020-07-05`:
 
 ```sql
-SELECT date_hour, avg_temperature,
-       latitude, longitude, sensor
+SELECT date_hour, avg_temperature, latitude, longitude, sensor
 FROM temperatures_by_network
 WHERE network    = 'forest-net'
   AND week      IN ('2020-07-05','2020-06-28')
@@ -2402,9 +2401,163 @@ WHERE network    = 'forest-net'
 
 ## 3.2 - De SQL à NoSQL avec Petclinic
 
-#### `✅.103`- Imaginer les tables pour les pets par clients
+#### `✅.110`- Introuction à l'application `petclinic`
 
-#### `✅.103`- Imaginer les tables pour les pets par clients
+PetClinic est une application de démonstration utilisée par les équipes Spring pour présenter les différentes fonctionnalités du framework. Une description exhaustive est diponible [ici](https://projects.spring.io/spring-petclinic/).
+
+Il existe même une communauté dédiée [Spring Clinic](https://spring-petclinic.github.io/) qui a étendu le principe en proposant de nouvelles implémentations. Il est possible de tester une démo live sur [Heroku](https://spring-petclinic-community.herokuapp.com/). _(Mais vous allez faire mieux et la lancer sur votre machine durant cette session)_.
+
+![](img/petclinic_00.png?raw=true)
+
+#### `✅.111`- Migration de SQL vers Apache Cassandra™
+
+C'est une question qui revient fréquemment alors regardons comme faire avec un exemple.
+
+Nous partons du modèle relationnel de l'application (elle existe déjà, il suffisait de faire un peu de retro engineering.)
+
+![](img/petclinic_01.png?raw=true)
+
+Dans ce modèle nous identifions différents type de relations `one-to-many` et `many-to-many` qui peuvent sembler difficiles à implémenter dans Cassandra qui ne propose ni transaction, ni intégrité référentielle ni relations ou jointures d'aucune sorte.
+
+![](img/petclinic_02.png?raw=true)
+
+C'est en réalité assez facile, il faut appliquer la méthodologie présentée plus haut. Nous avons besoin des entités mais aussi de l'application workflow des différentes requêtes nécessaires:
+
+#### PetClinic - Liste des Owners
+
+_`Q1`: Pas de critère de filtres nous voulons les lister tous_
+
+![](img/petclinic_03.png?raw=true)
+
+- Voici donc le modèle logique de données associé\*
+
+![](img/petclinic_04.png?raw=true)
+
+#### PetClinic - Détails d'un Owner et liste des Vets
+
+- `Q2`: \_Pour un propriétaire, liste moi les différents animaux qu'il possède
+
+_Sélection par l'identifiant_
+![](img/petclinic_05.png?raw=true)
+
+_Affichage du détail_
+![](img/petclinic_06.png?raw=true)
+
+- Voici donc le modèle logique de données associé à cette requête.
+
+![](img/petclinic_07.png?raw=true)
+
+La logique est identique pour lister les Vétérinaires ou afficher la liste des visites pour un animal (`one-to-many`). Cela nous donne le modèle logique de données suivant:
+
+![](img/petclinic_08.png?raw=true)
+
+#### PetClinic - Spécialité des vétérinaire `Many to Many`
+
+Un vétrinaire peut avoir plusieurs spécialit
+![](img/petclinic_09.png?raw=true)
+
+![](img/petclinic_10.png?raw=true)
+
+#### `✅.112`- Création du keyspace `spring_petclinic`
+
+_Dans Docker:_
+
+```sql
+CREATE KEYSPACE IF NOT EXISTS spring_petclinic
+WITH REPLICATION = {
+  'class' : 'NetworkTopologyStrategy',
+  'dc1' : 3
+}  AND DURABLE_WRITES = true;
+```
+
+Avec Astra, la manipulation des keyspaces est désactivé, c'est lui qui fixe les facteurs de réplications pour vous (Saas). La procédure est décrite en détail dans [Awesome Astra](https://awesome-astra.github.io/docs/pages/astra/faq/#how-do-i-create-a-namespace-or-a-keyspace) mais voici quelques captures:
+
+_Repérer le bouton `ADD KEYSPACE`_
+![](https://awesome-astra.github.io/docs/img/faq/create-keyspace-button.png)
+
+_Créer le keyspace et valider avec `SAVE`_
+![](https://awesome-astra.github.io/docs/img/faq/create-keyspace.png)
+
+#### `✅.113`- Création du schéma
+
+```sql
+use spring_petclinic;
+
+DROP INDEX IF EXISTS petclinic_idx_vetname;
+DROP INDEX IF EXISTS petclinic_idx_ownername;
+DROP TABLE IF EXISTS petclinic_vet;
+DROP TABLE IF EXISTS petclinic_vet_by_specialty;
+DROP TABLE IF EXISTS petclinic_reference_lists;
+DROP TABLE IF EXISTS petclinic_owner;
+DROP TABLE IF EXISTS petclinic_pet_by_owner;
+DROP TABLE IF EXISTS petclinic_visit_by_pet;
+
+CREATE TABLE IF NOT EXISTS petclinic_vet (
+  id          uuid,
+  first_name  text,
+  last_name   text,
+  specialties set<text>,
+  PRIMARY KEY ((id))
+);
+
+CREATE TABLE IF NOT EXISTS petclinic_vet_by_specialty (
+ specialty   text,
+ vet_id      uuid,
+ first_name  text,
+ last_name   text,
+ PRIMARY KEY ((specialty), vet_id)
+);
+
+CREATE TABLE IF NOT EXISTS petclinic_owner (
+  id         uuid,
+  first_name text,
+  last_name  text,
+  address    text,
+  city       text,
+  telephone  text,
+  PRIMARY KEY ((id))
+);
+
+CREATE TABLE IF NOT EXISTS petclinic_pet_by_owner (
+  owner_id   uuid,
+  pet_id     uuid,
+  pet_type   text,
+  name       text,
+  birth_date date,
+  PRIMARY KEY ((owner_id), pet_id)
+);
+
+CREATE TABLE IF NOT EXISTS petclinic_visit_by_pet (
+   pet_id      uuid,
+   visit_id    uuid,
+   visit_date  date,
+   description text,
+   PRIMARY KEY ((pet_id), visit_id)
+);
+
+CREATE TABLE IF NOT EXISTS petclinic_reference_lists (
+  list_name text,
+  values set<text>,
+  PRIMARY KEY ((list_name))
+);
+
+/** We could search veterinarians by their names. */
+CREATE INDEX IF NOT EXISTS petclinic_idx_ownername ON petclinic_owner(last_name);
+/** We could search vet by their names. */
+CREATE INDEX IF NOT EXISTS petclinic_idx_vetname ON petclinic_vet(last_name);
+```
+
+Cette fois des index secondaires ont été placé sur les noms. Nous avons considéré que la cardinalité était faible.
+
+#### `✅.114`- Insertion des données de références
+
+```sql
+INSERT INTO petclinic_reference_lists(list_name, values)
+VALUES ('pet_type ', {'bird', 'cat', 'dog', 'lizard','hamster','snake'});
+
+INSERT INTO petclinic_reference_lists(list_name, values)
+VALUES ('vet_specialty', {'radiology', 'dentistry', 'surgery'});
+```
 
 # LAB 4 - Introduction aux drivers
 
