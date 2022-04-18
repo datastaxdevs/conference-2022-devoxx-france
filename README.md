@@ -2731,7 +2731,61 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E00_TestConnec
 
 Vous devez obtenir un `SUCCESS` dans la console.
 
+```bash
+01:25:36.397 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
+01:25:36.398 INFO  com.datastax.samples.CqlSessionProvider       : + Connecting to [LOCAL CASSANDRA]
+01:25:42.584 INFO  com.datastax.samples.CqlSessionProvider       : + [OK] Your are connected.
+01:25:42.584 INFO  com.datastax.samples.E00_TestConnectivity     : [SUCCESS]
+```
+
 ## 4.2 - Création du schéma
+
+Afin d'illustrer une grand nombre de cas d'usages et non se limiter au _Hello World_ nous allons travailler avec les objets listés ci-dessous. La première étape sera de définir les objets en utilisant du code.
+
+```sql
+CREATE TYPE devoxx_drivers.video_format (
+    width int,
+    height int
+);
+
+CREATE TABLE devoxx_drivers.comments_by_user (
+    userid uuid,
+    commentid timeuuid,
+    comment text,
+    videoid uuid,
+    PRIMARY KEY (userid, commentid)
+) WITH CLUSTERING ORDER BY (commentid DESC);
+
+CREATE TABLE devoxx_drivers.comments_by_video (
+    videoid uuid,
+    commentid timeuuid,
+    comment text,
+    userid uuid,
+    PRIMARY KEY (videoid, commentid)
+) WITH CLUSTERING ORDER BY (commentid DESC);
+
+CREATE TABLE devoxx_drivers.users (
+    email text PRIMARY KEY,
+    firstname text,
+    lastname text
+);
+
+CREATE TABLE devoxx_drivers.videos (
+    videoid uuid PRIMARY KEY,
+    email text,
+    title text,
+    upload timestamp,
+    url text,
+    formats map<text, frozen<video_format>>,
+    frames list<int>,
+    tags set<text>
+);
+
+CREATE TABLE devoxx_drivers.videos_views (
+    videoid uuid PRIMARY KEY,
+    views counter
+);
+```
 
 #### `✅.118`- Création du schéma
 
@@ -2771,15 +2825,30 @@ On notera :
 00:29:57.695 INFO  com.datastax.samples.E01_CreateSchema         : [OK] Success
 ```
 
-## 4.2 - Création des `Statements`
+## 4.3 - Création des `Statements`
 
-#### `✅.119`- Executer la classe example
+#### `✅.119`- Exécuter la classe example
 
 ```bash
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E02_Statements
 ```
 
-## 4.3 - Opération `Create`, `Read`, `Update`, `Delete` (CRUD)
+```bash
+01:26:43.034 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
+01:26:43.035 INFO  com.datastax.samples.CqlSessionProvider       : + Connecting to [LOCAL CASSANDRA]
+01:26:49.079 INFO  com.datastax.samples.CqlSessionProvider       : + [OK] Your are connected.
+01:26:49.101 INFO  com.datastax.samples.E01_CreateSchema         : + Insert as a String
+01:26:49.105 INFO  com.datastax.samples.E01_CreateSchema         : + Insert as a Statement
+01:26:49.112 INFO  com.datastax.samples.E01_CreateSchema         : + Insert and externalize var with ?, option1
+01:26:49.117 INFO  com.datastax.samples.E01_CreateSchema         : + Insert and externalize var with ?, option2
+01:26:49.124 INFO  com.datastax.samples.E01_CreateSchema         : + Insert and externalize var with :labels, option1
+01:26:49.131 INFO  com.datastax.samples.E01_CreateSchema         : + Insert and externalize var with :labels, option2
+01:26:49.142 INFO  com.datastax.samples.E01_CreateSchema         : + Insert with QueryBuilder
+01:26:49.193 INFO  com.datastax.samples.E01_CreateSchema         : + Insert with PrepareStatements
+01:26:49.209 INFO  com.datastax.samples.E01_CreateSchema         : + Insert with PrepareStatements + QueryBuilder
+```
+
+## 4.4 - Opération `Create`, `Read`, `Update`, `Delete` (CRUD)
 
 #### `✅.120`- Executer la classe example
 
@@ -2787,83 +2856,238 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E02_Statements
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E03_OperationsCrud
 ```
 
-## 4.4 - Batches
+```bash
+01:27:16.760 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
+01:27:16.761 INFO  com.datastax.samples.CqlSessionProvider       : + Connecting to [LOCAL CASSANDRA]
+01:27:23.086 INFO  com.datastax.samples.CqlSessionProvider       : + [OK] Your are connected.
+01:27:23.106 INFO  com.datastax.samples.schema.SchemaUtils       : + Table 'users' has been created (if needed).
+01:27:23.293 INFO  com.datastax.samples.E03_OperationsCrud       : + clun@sample.com does not exists in table 'user'
+01:27:23.341 INFO  com.datastax.samples.E03_OperationsCrud       : + User clun@sample.com has been created
+01:27:23.347 INFO  com.datastax.samples.E03_OperationsCrud       : + clun@sample.com  now exists in table 'user'
+01:27:23.352 INFO  com.datastax.samples.E03_OperationsCrud       : + eram@sample.com does not exists in table 'user'
+01:27:23.358 INFO  com.datastax.samples.E03_OperationsCrud       : + User eram@sample.com has been updated
+01:27:23.362 INFO  com.datastax.samples.E03_OperationsCrud       : + eram@sample.com  now exists in table 'user'
+01:27:23.367 INFO  com.datastax.samples.E03_OperationsCrud       : + User eram@sample.com has been deleted
+01:27:23.373 INFO  com.datastax.samples.E03_OperationsCrud       : + eram@sample.com does not exists in table 'user'
+01:27:23.377 INFO  com.datastax.samples.E03_OperationsCrud       : + Retrieved eram@sample.com: Optional.empty
+01:27:23.382 INFO  com.datastax.samples.E03_OperationsCrud       : + Retrieved clun@sample.com: clun@sample.com
+01:27:23.388 INFO  com.datastax.samples.E03_OperationsCrud       : + User eram@sample.com has been updated
+01:27:23.392 INFO  com.datastax.samples.E03_OperationsCrud       : + User clun@sample.com has been updated
+01:27:23.400 INFO  com.datastax.samples.E03_OperationsCrud       : + Retrieved users count 2
+```
+
+## 4.5 - Batches
+
+#### `✅.121`- Executer la classe example
 
 ```bash
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E04_Batches
 ```
 
-## 4.5 - Pagination
-
-#### `✅.121`- Executer la classe example
-
 ```bash
-mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E05_paging
+01:27:49.909 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
+01:27:49.911 INFO  com.datastax.samples.CqlSessionProvider       : + Connecting to [LOCAL CASSANDRA]
+01:27:55.991 INFO  com.datastax.samples.CqlSessionProvider       : + [OK] Your are connected.
+01:27:56.008 INFO  com.datastax.samples.schema.SchemaUtils       : + Table 'comments_by_user' has been created (if needed).
+01:27:56.012 INFO  com.datastax.samples.schema.SchemaUtils       : + Table 'comments_by_video' has been created (if needed).
+01:27:56.263 INFO  com.datastax.samples.E04_Batches              : Video2
+01:27:56.263 INFO  com.datastax.samples.E04_Batches              : Video2 is cool
+01:27:56.276 INFO  com.datastax.samples.E04_Batches              : I am user2 and video2 is bad
+01:27:56.276 INFO  com.datastax.samples.E04_Batches              : This is my new comment
+01:27:56.288 INFO  com.datastax.samples.E04_Batches              : This is my new comment
+01:27:56.293 INFO  com.datastax.samples.E04_Batches              : Video2 is cool
+01:27:56.293 INFO  com.datastax.samples.E04_Batches              : This is my new comment
+01:27:56.297 INFO  com.datastax.samples.E04_Batches              : Video2
+01:27:56.297 INFO  com.datastax.samples.E04_Batches              : Video2 is cool
 ```
 
-## 4.6 - Travailler avec `List`, `Set` et `Map`
+## 4.6 - Pagination
 
 #### `✅.122`- Executer la classe example
+
+```bash
+mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E05_Paging
+```
+
+```bash
+01:30:21.231 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
+01:30:21.233 INFO  com.datastax.samples.CqlSessionProvider       : + Connecting to [LOCAL CASSANDRA]
+01:30:27.489 INFO  com.datastax.samples.CqlSessionProvider       : + [OK] Your are connected.
+01:30:27.508 INFO  com.datastax.samples.schema.SchemaUtils       : + Table 'users' has been created (if needed).
+01:30:27.650 INFO  com.datastax.samples.E05_Paging               : + 50 users have been created
+01:30:27.668 INFO  com.datastax.samples.E05_Paging               : + Page 1 has 10 items
+01:30:27.670 INFO  com.datastax.samples.E05_Paging               : Page1: user_45@sample.com
+01:30:27.670 INFO  com.datastax.samples.E05_Paging               : Page1: user_3@sample.com
+01:30:27.670 INFO  com.datastax.samples.E05_Paging               : Page1: user_41@sample.com
+01:30:27.670 INFO  com.datastax.samples.E05_Paging               : Page1: user_17@sample.com
+01:30:27.671 INFO  com.datastax.samples.E05_Paging               : Page1: user_33@sample.com
+01:30:27.671 INFO  com.datastax.samples.E05_Paging               : Page1: user_0@sample.com
+01:30:27.671 INFO  com.datastax.samples.E05_Paging               : Page1: user_16@sample.com
+01:30:27.671 INFO  com.datastax.samples.E05_Paging               : Page1: user_43@sample.com
+01:30:27.671 INFO  com.datastax.samples.E05_Paging               : Page1: user_48@sample.com
+01:30:27.671 INFO  com.datastax.samples.E05_Paging               : Page1: user_9@sample.com
+01:30:27.680 INFO  com.datastax.samples.E05_Paging               : + Page 2 has 10 items
+```
+
+## 4.7 - Travailler avec `List`, `Set` et `Map`
+
+#### `✅.123`- Executer la classe example
 
 ```bash
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E06_ListSetMapAndUdt
 ```
 
-## 4.7 - Requêter avec JSON
+```bash
+01:31:02.667 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
+01:31:02.669 INFO  com.datastax.samples.CqlSessionProvider       : + Connecting to [LOCAL CASSANDRA]
+01:31:10.578 INFO  com.datastax.samples.CqlSessionProvider       : + [OK] Your are connected.
+01:31:10.595 INFO  com.datastax.samples.schema.SchemaUtils       : + Type 'video_format' has been created (if needed).
+01:31:10.602 INFO  com.datastax.samples.schema.SchemaUtils       : + Table 'videos' has been created (if needed).
+01:31:10.702 INFO  com.datastax.samples.E06_ListSetMapAndUdt     : + Tags before adding 'OK' [accelerate, cassandra]
+01:31:10.717 INFO  com.datastax.samples.E06_ListSetMapAndUdt     : + Tags after adding 'OK' [OK, accelerate, cassandra]
+01:31:10.728 INFO  com.datastax.samples.E06_ListSetMapAndUdt     : + Tags after removing 'accelerate' [OK, cassandra]
+01:31:10.734 INFO  com.datastax.samples.E06_ListSetMapAndUdt     : + Formats before {mp4=VideoFormatDto [width=640, height=480, ogg=VideoFormatDto [width=640, height=480}
+01:31:10.748 INFO  com.datastax.samples.E06_ListSetMapAndUdt     : + Formats after removing 'ogg' {mp4=VideoFormatDto [width=640, height=480}
+01:31:10.753 INFO  com.datastax.samples.E06_ListSetMapAndUdt     : + Formats after removing 'ogg' {mp4=VideoFormatDto [width=640, height=480}
+01:31:10.757 INFO  com.datastax.samples.E06_ListSetMapAndUdt     : + Formats frames before [2, 3, 5, 8, 13, 21]
+01:31:10.769 INFO  com.datastax.samples.E06_ListSetMapAndUdt     : + Formats frames after update all [1, 2, 3]
+01:31:10.781 INFO  com.datastax.samples.E06_ListSetMapAndUdt     : + Formats frames after append 4 [1, 2, 3, 4]
+```
 
-#### `✅.123`- Executer la classe example
+## 4.8 - Requêter avec JSON
+
+#### `✅.124`- Executer la classe example
 
 ```bash
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E07_Json
 ```
 
-## 4.8 - Programmation Asynchrone
+```bash
+01:32:48.700 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
+01:32:48.701 INFO  com.datastax.samples.CqlSessionProvider       : + Connecting to [LOCAL CASSANDRA]
+01:32:54.760 INFO  com.datastax.samples.CqlSessionProvider       : + [OK] Your are connected.
+01:32:54.778 INFO  com.datastax.samples.schema.SchemaUtils       : + Type 'video_format' has been created (if needed).
+01:32:54.785 INFO  com.datastax.samples.schema.SchemaUtils       : + Table 'videos' has been created (if needed).
+01:32:54.910 INFO  com.datastax.samples.E07_Json                 : + Video 'e7ae5cf3-d358-4d99-b900-85902fda9bb0' has been inserted
+01:32:54.973 INFO  com.datastax.samples.E07_Json                 : + Video '8b8417b9-1772-4e6c-9060-6bb66a5ea8bd' has been inserted
+01:32:54.985 INFO  com.datastax.samples.E07_Json                 : + Video '1c33bb64-a442-4923-b2a1-3b7412e8cc5f' has been inserted
+01:32:54.996 INFO  com.datastax.samples.E07_Json                 : + Video '13bed42f-833e-49fd-9caa-fab86f8ec780' has been inserted
+01:32:55.004 INFO  com.datastax.samples.E07_Json                 : + Video '08499c4c-3e55-49e0-aa0e-e975f529a746' has been inserted
+01:32:55.004 INFO  com.datastax.samples.E07_Json                 : [OK] - All video Inserted
+01:32:55.046 INFO  com.datastax.samples.E07_Json                 : + Video '08499c4c-3e55-49e0-aa0e-e975f529a746' has been inserted
+01:32:55.087 INFO  com.datastax.samples.E07_Json                 : + Video '1c33bb64-a442-4923-b2a1-3b7412e8cc5f' has been read
+01:32:55.088 INFO  com.datastax.samples.E07_Json                 : + Video '08499c4c-3e55-49e0-aa0e-e975f529a746' has been read
+01:32:55.088 INFO  com.datastax.samples.E07_Json                 : + Video 'f169a4b0-6df9-4065-b5c5-ef468d0fbb25' has been read
+01:32:55.088 INFO  com.datastax.samples.E07_Json                 : + Video '8b8417b9-1772-4e6c-9060-6bb66a5ea8bd' has been read
+01:32:55.088 INFO  com.datastax.samples.E07_Json                 : + Video '1da246b5-8923-4479-9ebd-f757fbe4f644' has been read
+01:32:55.088 INFO  com.datastax.samples.E07_Json                 : + Video '13bed42f-833e-49fd-9caa-fab86f8ec780' has been read
+01:32:55.088 INFO  com.datastax.samples.E07_Json                 : [OK] - All video read
+```
 
-#### `✅.124`- Executer la classe example
+## 4.9 - Programmation Asynchrone
+
+#### `✅.125`- Executer la classe example
 
 ```bash
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E08_Async
 ```
 
-## 4.9 - Programmation Réactive
+```bash
+01:36:37.177 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
+01:36:37.178 INFO  com.datastax.samples.CqlSessionProvider       : + Connecting to [LOCAL CASSANDRA]
+01:36:43.331 INFO  com.datastax.samples.CqlSessionProvider       : + [OK] Your are connected.
+01:36:43.348 INFO  com.datastax.samples.schema.SchemaUtils       : + Table 'users' has been created (if needed).
+01:36:43.498 INFO  com.datastax.samples.E08_Async                : + 'clun@sample.com' exists ? (expecting false): false
+01:36:43.518 INFO  com.datastax.samples.E08_Async                : + User clun@sample.com has been created
+01:36:43.524 INFO  com.datastax.samples.E08_Async                : + 'clun@sample.com' exists ? (expecting true): false
+01:36:43.530 INFO  com.datastax.samples.E08_Async                : + 'eram@sample.com' exists ? (expecting false): false
+01:36:43.534 INFO  com.datastax.samples.E08_Async                : + User eram@sample.com has been updated
+01:36:43.541 INFO  com.datastax.samples.E08_Async                : + 'eram@sample.com' exists ? (expecting true): true
+01:36:43.545 INFO  com.datastax.samples.E08_Async                : + User eram@sample.com has been deleted
+01:36:43.552 INFO  com.datastax.samples.E08_Async                : + 'eram@sample.com' exists ? (expecting false) false
+01:36:43.558 INFO  com.datastax.samples.E08_Async                : + Retrieved 'eram@sample.com': (expecting Optional.empty) Optional.empty
+01:36:43.564 INFO  com.datastax.samples.E08_Async                : + Retrieved 'eram@sample.com': (expecting result) Optional[com.datastax.samples.dto.UserDto@57bd8fea]
+01:36:43.569 INFO  com.datastax.samples.E08_Async                : + User eram@sample.com has been updated
+01:36:43.571 INFO  com.datastax.samples.E08_Async                : + User clun@sample.com has been updated
+01:36:43.572 INFO  com.datastax.samples.E08_Async                : + Retrieved users count 2
+[INFO] ------------------------------------------------------------------------
+```
 
-#### `✅.125`- Executer la classe example
+## 4.10 - Programmation Réactive
+
+#### `✅.126`- Executer la classe example
 
 ```bash
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E09_Reactive
 ```
 
-## 4.10 - Les `counters`
+```bash
+01:37:12.174 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
+01:37:12.175 INFO  com.datastax.samples.CqlSessionProvider       : + Connecting to [LOCAL CASSANDRA]
+01:37:18.216 INFO  com.datastax.samples.CqlSessionProvider       : + [OK] Your are connected.
+01:37:18.236 INFO  com.datastax.samples.schema.SchemaUtils       : + Table 'users' has been created (if needed).
+01:37:18.421 INFO  com.datastax.samples.E09_Reactive             : + 'clun@sample.com' exists ? (expecting false): false
+01:37:18.426 INFO  com.datastax.samples.E09_Reactive             : + 'clun@sample.com' exists ? (expecting false): true
+01:37:18.437 INFO  com.datastax.samples.E09_Reactive             : + Retrieved 'ram@sample.com': (expecting Optional.empty) Optional.empty
+01:37:18.441 INFO  com.datastax.samples.E09_Reactive             : + Retrieved 'clun@sample.com': (expecting result) clun@sample.com
+01:37:18.441 INFO  com.datastax.samples.E09_Reactive             : + Retrieved 'ram@sample.com': (expecting result) Optional[com.datastax.samples.dto.UserDto@709d926a]
+01:37:18.493 INFO  com.datastax.samples.E09_Reactive             : + 'ram@sample.com' email found
+01:37:18.493 INFO  com.datastax.samples.E09_Reactive             : + 'clun@sample.com' email found
+```
 
-#### `✅.126`- Exécuter la classe example
+## 4.11 - Les `counters`
+
+#### `✅.127`- Exécuter la classe example
 
 ```bash
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E10_Counters
 ```
 
-## 4.10 - Les `Lightweight Transactions`
+```bash
+01:37:47.296 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
+01:37:47.298 INFO  com.datastax.samples.CqlSessionProvider       : + Connecting to [LOCAL CASSANDRA]
+01:37:53.434 INFO  com.datastax.samples.CqlSessionProvider       : + [OK] Your are connected.
+01:37:53.453 INFO  com.datastax.samples.schema.SchemaUtils       : + Table 'videos_views' has been created (if needed).
+01:37:53.560 INFO  com.datastax.samples.E10_Counters             : + Video views Optional.empty
+01:37:53.607 INFO  com.datastax.samples.E10_Counters             : + Video views : 10
+01:37:53.621 INFO  com.datastax.samples.E10_Counters             : + Video views : 2
+01:37:53.633 INFO  com.datastax.samples.E10_Counters             : + Video views Optional.empty
+```
 
-#### `✅.127`- Exécuter la classe example
+## 4.12 - Les `Lightweight Transactions`
+
+#### `✅.128`- Exécuter la classe example
 
 ```bash
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E11_LightweightTransactions
 ```
 
-## 4.12 - Object Mapping
+```bash
+01:38:30.073 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
+01:38:30.074 INFO  com.datastax.samples.CqlSessionProvider       : + Connecting to [LOCAL CASSANDRA]
+01:38:36.161 INFO  com.datastax.samples.CqlSessionProvider       : + [OK] Your are connected.
+01:38:36.215 INFO  com.datastax.samples.schema.SchemaUtils       : + Table 'users' has been created (if needed).
+01:38:36.361 INFO  com.datastax.samples.E11_LightweightTransactions : + Created first time ? true and second time false
+01:38:36.392 INFO  com.datastax.samples.E11_LightweightTransactions : + Applied when correct value ? true and invalid value false
+```
 
-The mapping from Object to Tables is avaible in the native drivers Ad Hoc, no need for an external framework. Get more information in the [reference documentation](https://docs.datastax.com/en/developer/java-driver/4.13/manual/mapper/)
+## 4.13 - Object Mapping
 
-- _We imported the following library_
+Le mapping object est une technique qui consiste à associer les tables de la base de données avec les objets d'une application. Le but est de ne pas avoir à écrire soit même les requêtes CQL. Cette approche est toutefois limitée car elle réduit les possibilités offertes par la base.
+
+Pour effectuer un mapping objet il n'est pas nécessaire de recourir à un framework externe type Spring, la fonctionnalité est proposée directement au niveau des drivers. Pour une documentation exhaustive référez-vous à la [documentation officielle](https://docs.datastax.com/en/developer/java-driver/4.13/manual/mapper/)
+
+- Il est nécessaire d'importer la librairie `java-driver-mapper-runtime` dans le projet.
 
 ```xml
 <dependency>
   <groupId>com.datastax.oss</groupId>
   <artifactId>java-driver-mapper-runtime</artifactId>
-  <version>${cassandra.driver.oss.version}</version>
+  <version>${derniere-version}</version>
 </dependency>
 ```
 
-- _And enable the annotation processor_. Sometimes you need to explicitely invoke a `mvn package` to generate the expected classes.
+- La librairie d'object mapping va venir générer les classes nécessaires à la compilation sur la base d'annotations dans le code. (`Annotation Processor`). Pour l'activer avec le build `Maven` il est nécessaire de le déclarer dans le bloc XML `annotationProcessorPaths`.
 
 ```xml
 <plugins>
@@ -2885,12 +3109,13 @@ The mapping from Object to Tables is avaible in the native drivers Ad Hoc, no ne
 </plugins>
 ```
 
-- _Create a Bean mapped from the table_
+- Dans le principe on crée un objet sur la base du schéma de table (et non l'inverse - avec Cassandra c'et bien le modèle de données que l'on défini en premier)
 
 ```java
 @Entity
 @CqlName("myTable")
 public class CommentByUser {
+
     @PartitionKey
     UUID userid;
 
@@ -2903,18 +3128,18 @@ public class CommentByUser {
 }
 ```
 
-- _Look at the DAO_
+- On crée ensuite une interface annotée avec `@Dao`. Il est à noter qu'en tant qu'interface elle ne contient pas d'implémentation. Les méthodes de `Create` (save), `Read` (findById), `Update` et `delete` (deleteById) sont disponibles mais l'on peut déclarer d'autres méthodes comme ci-dessous.
 
 ```java
 @Dao
 public interface CommentDao extends CassandraSchemaConstants {
 
-    @Query("SELECT * FROM ${keyspaceId}.${tableId} "
+  @Query("SELECT * FROM ${keyspaceId}.${tableId} "
          + "WHERE " + COMMENT_BY_USER_USERID + " = :userid ")
-    PagingIterable<CommentByUser> retrieveUserComments(UUID userid);
+  PagingIterable<CommentByUser> retrieveUserComments(UUID userid);
 ```
 
-- _Look at the Mapper_
+- Enfin le mapper, annoté avec `@Mapper` permet d'associer la `CqlSession` aux différents `@Dao`. Un seul est nécessaire dans votre application.
 
 ```java
 @Mapper
@@ -2934,9 +3159,46 @@ public interface CommentDaoMapper {
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E12_ObjectMapping
 ```
 
+```bash
+01:51:17.581 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
+01:51:17.582 INFO  com.datastax.samples.CqlSessionProvider       : + Connecting to [LOCAL CASSANDRA]
+01:51:23.750 INFO  com.datastax.samples.CqlSessionProvider       : + [OK] Your are connected.
+01:51:23.767 INFO  com.datastax.samples.schema.SchemaUtils       : + Table 'comments_by_user' has been created (if needed).
+01:51:23.771 INFO  com.datastax.samples.schema.SchemaUtils       : + Table 'comments_by_video' has been created (if needed).
+01:51:24.072 INFO  com.datastax.samples.E12_ObjectMapping        : Video2
+01:51:24.072 INFO  com.datastax.samples.E12_ObjectMapping        : Video2 is cool
+01:51:24.087 INFO  com.datastax.samples.E12_ObjectMapping        : I am user2 and video1 is bad
+01:51:24.087 INFO  com.datastax.samples.E12_ObjectMapping        : This is my new comment
+01:51:24.106 INFO  com.datastax.samples.E12_ObjectMapping        : I am user2 and video1 is bad
+01:51:24.116 INFO  com.datastax.samples.E12_ObjectMapping        : Video2
+01:51:24.116 INFO  com.datastax.samples.E12_ObjectMapping        : Video2 is cool
+```
+
+Les drivers sont très puissants et fournissent l'ensemble des opérations permises par la base Apache Cassandra™. Ils sont au coeur de simplifications ou d'abstraction des autres frameworks tels que Spring, Micronaut ou Quarkus aussi est'il important de bien les maîtriser. Dans les parties suivantes nous nous interesserons à ces surcouches.
+
 # LAB 5 - Spring Data Cassandra
 
 ## 5.1 - Configuration
+
+#### `✅.129`- Création du keyspace `devoxx_spring`
+
+_Dans Docker:_
+
+```sql
+CREATE KEYSPACE IF NOT EXISTS devoxx_spring
+WITH REPLICATION = {
+  'class' : 'NetworkTopologyStrategy',
+  'dc1' : 3
+}  AND DURABLE_WRITES = true;
+```
+
+Avec Astra, la manipulation des keyspaces est désactivé, c'est lui qui fixe les facteurs de réplications pour vous (Saas). La procédure est décrite en détail dans [Awesome Astra](https://awesome-astra.github.io/docs/pages/astra/faq/#how-do-i-create-a-namespace-or-a-keyspace) mais voici quelques captures:
+
+_Repérer le bouton `ADD KEYSPACE`_
+![](https://awesome-astra.github.io/docs/img/faq/create-keyspace-button.png)
+
+_Créer le keyspace et valider avec `SAVE`_
+![](https://awesome-astra.github.io/docs/img/faq/create-keyspace.png)
 
 To isolate the `Spring Data` work from what we did previous let's create a new keypace.
 
@@ -2948,7 +3210,7 @@ To isolate the `Spring Data` work from what we did previous let's create a new k
 
 ![image](img/new_keyspace2.png?raw=true)
 
-✅ 12b. Setup the application
+#### `✅.129`- Placer vous dans le bon répertoire `2-spring-data`
 
 - Import the project `2-spring-data` in your IDE.
 
@@ -2963,10 +3225,9 @@ spring.data.cassandra.connection.connect-timeout=10s
 spring.data.cassandra.connection.init-query-timeout=10s
 
 # -- Keys to be filled
-spring.data.cassandra.keyspace-name=spring_data
-spring.data.cassandra.username=<client_id>
-spring.data.cassandra.password=<client_secret>
-
+spring.data.cassandra.keyspace-name=devoxx_spring
+spring.data.cassandra.username=token
+spring.data.cassandra.password=AstraCS:<your_token>
 datastax.astra.secure-connect-bundle=/tmp/secure-connect-javazone.zip
 ```
 
