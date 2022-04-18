@@ -21,11 +21,11 @@ public class CqlSessionProvider {
     public static final String KEYSPACE           = "devoxx";
     public static final String LOCAL_DATACENTER   = "dc1";
     public static final String CONTACT_POINT      = "localhost";
-    public static final int CONTACT_POINT_PORT    = 9042;
+    public static final int    CONTACT_POINT_PORT = 9042;
     public static final String ASTRA_USERNAME     = "token";
     public static final String ASTRA_PASSWORD     = System.getProperty("token");
-    public static final String ASTRA_BUNDLE       = "/home/gitpod/.cassandra/bootstrap.zip";
-    //public static final String ASTRA_BUNDLE       = "/Users/cedricklunven/Downloads/secure-connect-workshops.zip";
+    //public static final String ASTRA_BUNDLE       = "/home/gitpod/.cassandra/bootstrap.zip";
+    public static final String ASTRA_BUNDLE       = "/Users/cedricklunven/Downloads/secure-connect-workshops.zip";
     
     private static CqlSessionProvider _instance;
     
@@ -37,8 +37,8 @@ public class CqlSessionProvider {
      */
     private CqlSessionProvider() {
         LOGGER.info("Creating your CqlSession to Cassandra...");
-        //cqlSession = connectToLocalCassandra();
-        cqlSession = connectoToAstra();
+        cqlSession = connectToLocalCassandra();
+        //cqlSession = connectoToAstra();
         LOGGER.info("+ [OK] Your are connected.");
     }
     
@@ -66,7 +66,7 @@ public class CqlSessionProvider {
     protected static CqlSession connectToLocalCassandra() {
         LOGGER.info("+ Connecting to [LOCAL CASSANDRA]");
         return CqlSession.builder()
-                .addContactPoint(new InetSocketAddress("localhost", 9042))
+                .addContactPoint(new InetSocketAddress(CONTACT_POINT, CONTACT_POINT_PORT))
                 .withLocalDatacenter(LOCAL_DATACENTER)
                 .withKeyspace(KEYSPACE)
                 .build();

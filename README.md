@@ -2689,100 +2689,74 @@ final String password = "AstraCS:....";
 
 #### `✅.116`- Vérifier votre connexion á Cassandra
 
+- Ouvrez un nouveau terminal dans gitpod
+
 ```bash
 cd /workspace/conference-2022-devoxx/labs/1-cassandra-drivers
 set -a
 source /workspace/conference-2022-devoxx/.env
 set +a
-mvn exec:java -Dtoken=$ASTRA_DB_ADMIN_TOKEN -Dexec.mainClass=com.datastax.samples.E00_TestConnectivity
+mvn clean compile exec:java -Dtoken=$ASTRA_DB_ADMIN_TOKEN -Dexec.mainClass=com.datastax.samples.E00_TestConnectivity
 ```
 
-_Local Cluster output_
+> Résultats
+> _Local Cluster output_
+>
+> ```
+> [INFO] --- exec-maven-plugin:3.0.0:java (default-cli) @ lab4-cassandra-drivers > ---
+> 18:57:58.149 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
+> 18:57:58.151 INFO  com.datastax.samples.CqlSessionProvider       : + Connecting to [LOCAL CASSANDRA]
+> 18:58:04.323 INFO  com.datastax.samples.CqlSessionProvider       : + [OK] Your are connected.
+> 18:58:04.347 INFO  com.datastax.samples.E00_TestConnectivity     : dc1
+> ```
+>
+> _Astra output_
+>
+> ```
+> [INFO] --- exec-maven-plugin:3.0.0:java (default-cli) @ lab4-cassandra-drivers ---
+> 18:57:24.310 INFO  com.datastax.samples.CqlSessionProvider       : Creating > your Session to Cassandra...
+> 18:57:24.312 INFO  com.datastax.samples.CqlSessionProvider       : + Connecting to [ASTRA]
+> 18:57:26.564 INFO  com.datastax.samples.CqlSessionProvider       : + [OK] Your are connected.
+> 18:57:26.606 INFO  com.datastax.samples.E00_TestConnectivity     : eu-west-1
+> ```
 
-```
-[INFO] --- exec-maven-plugin:3.0.0:java (default-cli) @ lab4-cassandra-drivers ---
-18:57:58.149 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
-18:57:58.151 INFO  com.datastax.samples.CqlSessionProvider       : + Connecting to [LOCAL CASSANDRA]
-18:58:04.323 INFO  com.datastax.samples.CqlSessionProvider       : + [OK] Your are connected.
-18:58:04.347 INFO  com.datastax.samples.E00_TestConnectivity     : dc1
-```
+#### `✅.117`- Création de keyspace `drivers`
 
-_Astra output_
+Pour isoler les opérations nous allons définir un keyspace dédié `drivers`.
 
-```
-[INFO] --- exec-maven-plugin:3.0.0:java (default-cli) @ lab4-cassandra-drivers ---
-18:57:24.310 INFO  com.datastax.samples.CqlSessionProvider       : Creating your Session to Cassandra...
-18:57:24.312 INFO  com.datastax.samples.CqlSessionProvider       : + Connecting to [ASTRA]
-18:57:26.564 INFO  com.datastax.samples.CqlSessionProvider       : + [OK] Your are connected.
-18:57:26.606 INFO  com.datastax.samples.E00_TestConnectivity     : eu-west-1
-```
-
-#### `✅.117`- Création de keyspace
-
-- _Create the Keyspace_ :
+- Si vous travaillez dans Docker, vous pouvez créer le keyspace programmatiquement.
 
 ```bash
-mvn exec:java -Dexec.mainClass=com.datastax.samples.E02_CreateKeyspace
+mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E01_CreateKeyspace
 ```
 
-- _You have now a new keyspace 'javazone'_
+On notera que le statement a été défini en utilisant un helper `SchemaBuilder`
 
-```sql
+> ````java
+> SimpleStatement createKeyspace = SchemaBuilder
+>  .createKeyspace(KEYSPACE_NAME)
+>  .ifNotExists()
+>  .withNetworkTopologyStrategy(Map.of(CqlSessionProvider.LOCAL_DATACENTER, 3))
+>  .withDurableWrites(true)
+>  .build();
+> ```
+> ````
+
+Avec Astra, la manipulation des keyspaces est désactivé, c'est lui qui fixe les facteurs de réplications pour vous (Saas). La procédure est décrite en détail dans [Awesome Astra](https://awesome-astra.github.io/docs/pages/astra/faq/#how-do-i-create-a-namespace-or-a-keyspace) mais voici quelques captures:
+
+_Repérer le bouton `ADD KEYSPACE`_
+![](https://awesome-astra.github.io/docs/img/faq/create-keyspace-button.png)
+
+_Créer le keyspace et valider avec `SAVE`_
+![](https://awesome-astra.github.io/docs/img/faq/create-keyspace.png)
+
+- Vérification dans le `CQLSh`
+
+```
 describe keyspaces;
 ```
 
-- _Connect with configuration File_
-
-```bash
-mvn exec:java -Dexec.mainClass=com.datastax.samples.E04_ConfigurationFile
-```
-
-- _Connect with Explicit Configuration_
-
-```bash
-mvn exec:java -Dexec.mainClass=com.datastax.samples.E05_ProgrammaticConfiguration
-```
-
-- _Drop Schema_
-
-```bash
-mvn exec:java -Dexec.mainClass=com.datastax.samples.E06_DropSchema
-```
-
-- _Drop Keyspace_
-
-```bash
-mvn exec:java -Dexec.mainClass=com.datastax.samples.E07_DropKeyspace
-```
-
-#### ✅ 10d. Connect to Astra
-
-- _Download the secure-connect-bundle.zip_
-
-![my-pic](img/scb.png?raw=true)
-
-- _Edit `E08_ConnectToAstraProgrammatic` to override the settings_
-
-```java
-final String ASTRA_ZIP_FILE     = "/tmp/secure-connect-javazone.zip";
-final String ASTRA_KEYSPACE     = "javazone";
-final String ASTRA_CLIENTID     = "<change_me>";
-final String ASTRA_CLIENTSECRET = "<change_me>";
-```
-
-- _Execute `E08_ConnectToAstraProgrammatic` to override the settings_
-
-```bash
-mvn exec:java -Dexec.mainClass=com.datastax.samples.E08_ConnectToAstraProgrammatic
-```
-
-- _Report same edits in the Configuration file `custom_astra.conf`_
-
-- _Execute `E09_ConnectToAstraConfFile` to validate your settings_
-
-```bash
-mvn exec:java -Dexec.mainClass=com.datastax.samples.E09_ConnectToAstraConfFile
-```
+#### `✅.118`- Création des tables
 
 ## 4.2 - Création des `Statements`
 

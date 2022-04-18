@@ -7,16 +7,12 @@ import com.datastax.oss.driver.api.core.CqlSession;
 
 public class E00_TestConnectivity {
     
-    /** Logger for the class. */
     private static Logger LOGGER = LoggerFactory.getLogger(E00_TestConnectivity.class);
     
     public static void main(String[] args) {
         try(CqlSession cqlSession = CqlSessionProvider.getInstance().getSession()) {
-            LOGGER.info(cqlSession.execute("select data_center from system.local")
-                      .one()
-                      .getString("data_center"));
-        }
-            
+            LOGGER.info("Connected to keyspace [{}]", cqlSession.getKeyspace().get());
+        }   
     }
     
 

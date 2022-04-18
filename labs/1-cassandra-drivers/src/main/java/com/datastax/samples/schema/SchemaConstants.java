@@ -5,8 +5,7 @@ package com.datastax.samples.schema;
  */
 public interface SchemaConstants {
     
-	String KEYSPACE_NAME                    = "javazone";
-    int    KEYSPACE_REPLICATION_FACTOR      = 1;
+	String KEYSPACE_NAME = "drivers";
     
     /**
      * Will be used for this table:
