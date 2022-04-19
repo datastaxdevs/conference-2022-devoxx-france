@@ -1129,51 +1129,6 @@ WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 SELECT id, name, searches FROM users;
 ```
 
-#### `✅.053`- Ajouter ou supprimer des éléments d'une liste
-
-- Supprimer le premier élément de `searches` pour l'utilisateur `7902a572-e7dc-4428-b056-0571af415df3` dans la table `users`
-
-```sql
-DELETE searches[0] FROM users
-WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
-```
-
-- Ajouter à la fin de la liste `New releases` pour l'utilisateur `7902a572-e7dc-4428-b056-0571af415df3` dans la table `users`.
-
-```sql
-UPDATE users
-SET searches = searches + [ 'New releases' ]
-WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
-```
-
-- Vérification:
-
-```sql
-SELECT id, name, searches FROM users;
-```
-
-#### `✅.054`- Modifier un élément d'une liste
-
-```sql
-UPDATE USERS SET searches[2]='cedrick' WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
-```
-
-#### `✅.055`- Exercice LIST
-
-- Ajouter une colonne `emails` de type `LIST<TEXT>` à la table `users`
-- Ajouter 2 emails pour l'utilisateur `7902a572-e7dc-4428-b056-0571af415df3`
-
-<p/>
-<details>
-<summary>Cliquer pour afficher la solution</summary>
-<pre>
-ALTER TABLE users ADD emails LIST<TEXT>;
-UPDATE users SET emails = [ 'cedrick@datastax.com', 'duy@datastax.com' ]
-WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;</pre>
-Vérification:<pre>SELECT id, name, emails FROM users;</pre>
-</details>
-<p/>
-
 ### 2.4.4 - Les `MAP`
 
 Les maps sont une collection de clé/valeur. Dans un map, chaque clé est unique. La clé et la valeur sont toute deux typées, on peut écrire une map sous la forme `MAP<TEXT, TEXT>`.
