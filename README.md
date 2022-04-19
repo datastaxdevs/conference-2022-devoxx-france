@@ -1351,8 +1351,8 @@ zipcode: 12224 } ]
 WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 ```
 
-```sql
 Vérification:
+```sql
 SELECT name, address, previous_addresses
 FROM users
 WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
@@ -1413,7 +1413,8 @@ SELECT * FROM movie_stats;
 <p/>
 <details>
 <summary>Cliquer pour afficher la solution</summary>
-<pre>
+
+```sql
 ALTER TABLE movie_stats ADD num_views COUNTER;
 
 UPDATE movie_stats
@@ -1426,7 +1427,13 @@ WHERE id = 5069cc15-4300-4595-ae77-381c3af5dc5e;
 
 UPDATE movie_stats
 SET num_views = num_views + 1
-WHERE id = 5069cc15-4300-4595-ae77-381c3af5dc5e;</pre>Vérification:<pre>SSELECT \* FROM movie_stats;</pre>
+WHERE id = 5069cc15-4300-4595-ae77-381c3af5dc5e;
+```
+
+Vérification:
+```sql
+SELECT \* FROM movie_stats;
+```
 
 </details>
 <p/>
