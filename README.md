@@ -1330,8 +1330,8 @@ WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 <details>
 <summary>Cliquer pour afficher la solution</summary>
 
-```sql 
-ALTER TABLE users 
+```sql
+ALTER TABLE users
 ADD previous_addresses LIST<FROZEN<ADDRESS>>;
 
 UPDATE users
@@ -1352,6 +1352,7 @@ WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 ```
 
 Vérification:
+
 ```sql
 SELECT name, address, previous_addresses
 FROM users
@@ -1431,6 +1432,7 @@ WHERE id = 5069cc15-4300-4595-ae77-381c3af5dc5e;
 ```
 
 Vérification:
+
 ```sql
 SELECT * FROM movie_stats;
 ```
@@ -1620,7 +1622,7 @@ APPLY BATCH;
 Vérification:
 
 ```sql
-SELECT total, price, title, year 
+SELECT total, price, title, year
 FROM shopping_cart
 WHERE cart_id = b7255608-4a42-4829-9b84-a355e0e5100d;
 ```
@@ -4288,27 +4290,47 @@ cp /workspace/conference-2022-devoxx/labs/4-micronaut/src/main/resources/applica
 
 - Dans le cas de Astra changer la clef `cassandra.default.advanced.auth-provider.password` pour correspondre à votre base. On remarquera que Micronaut on fait le choix d'utiliser les mêmes clefs que le fichier de configuration du drivers et de ne pas réinventer la roue (merci à eux).
 
-#### `✅.140` - Validation de la configuration
+#### `✅.147` - Validation de la configuration
 
 ```
 cd /workspace/conference-2022-devoxx/labs/4-micronaut
 mvn test -Dtest=com.datastax.workshop.E01_MicronautInit
 ```
 
-#### `✅.147`- Validation de la configuration
+#### 🖥️ Logs
 
-## 7.3 - Annotation Processor
+![](img/micronaut_test_01.png?raw=true)
 
-#### 📘 Ce qu'il faut retenir:
+#### `✅.148` - Utilisation de `CqlSession` avec `Micronaut`
 
-#### `✅.148`- Validation de la configuration
+```
+cd /workspace/conference-2022-devoxx/labs/4-micronaut
+mvn test -Dtest=com.datastax.workshop.E02_MicronautCql
+```
 
-## 7.2 - Application Micronaut
+#### 🖥️ Logs
 
-#### `✅.149`- Démarrer l'application micronaut
+![](img/micronaut_test_02.png?raw=true)
+
+## 7.3 - Object Mapping
+
+#### `✅.149` - Utilisation de l'`object mapping` avec `Micronaut`
 
 ```bash
-cd /workspace/conference-2022-devoxx/labs/3-quarkus
+cd /workspace/conference-2022-devoxx/labs/4-micronaut
+mvn test -Dtest=com.datastax.workshop.E04_MicronautObjectMapping
+```
+
+#### 🖥️ Logs
+
+![](img/micronaut_test_02.png?raw=true)
+
+## 7.4 - Application Micronaut
+
+#### `✅.150`- Démarrer l'application `micronaut`
+
+```bash
+cd /workspace/conference-2022-devoxx/labs/4-micronaut
 mvn clean compile exec:java
 ```
 
@@ -4334,4 +4356,15 @@ mvn clean compile exec:java
 gp preview "$(gp url 8082)/api/v1/clun/todos/"
 ```
 
-#### `✅.150`- Test d'intégrations
+#### `✅.151` - Test d'intégration avec `Micronaut`
+
+Arrêter l'application en utilisant la touche `CTRL+C`. Nous pouvons terminer par un test d'intégration
+
+```bash
+cd /workspace/conference-2022-devoxx/labs/4-micronaut
+mvn test -Dtest=com.datastax.workshop.E04_MicronautController
+```
+
+#### 🖥️ Logs
+
+![](img/micronaut_test_04.png?raw=true)
