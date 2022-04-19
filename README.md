@@ -3935,7 +3935,7 @@ Une [extension Quarkus](https://quarkus.io/guides/writing-extensions) permet de 
 - Déclarer les `Mapper` (object mapping) dans `Arc`, le système d'injection de dpendance de Quarkus.
 - Fournir des hints pour la création d'une native image _aux petits oignons._
 
-- La librairie à utiliser est `cassandra-quarkus-client` et la version est [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.datastax.oss.quarkus/cassandra-quarkus-client/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.datastax.oss.quarkus/cassandra-quarkus-client)
+La librairie à utiliser est `cassandra-quarkus-client` et la version est [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.datastax.oss.quarkus/cassandra-quarkus-client/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.datastax.oss.quarkus/cassandra-quarkus-client)
 
 ```xml
 <dependency>
@@ -3944,6 +3944,8 @@ Une [extension Quarkus](https://quarkus.io/guides/writing-extensions) permet de 
   <version>${latest}</version>
 </dependency>
 ```
+
+Quarkus propose également un guide très bien fait sur le support de Cassandra [ici](https://quarkus.io/guides/cassandra)
 
 #### `✅.138`- Création du keyspace `devoxx_quarkus`
 
@@ -3974,58 +3976,40 @@ cd /workspace/conference-2022-devoxx/labs/3-quarkus
 mvn clean compile
 ```
 
-- Localiser le fichier de configuration `application.propertoes`dans le répertoire `src/main/resources`. C'est le fichier de configuration principal de Quarkus. Noter le nombre de clés de configuration `quarkus.cassandra`
+- Localiser le fichier de configuration `application.properties` dans le répertoire `src/main/resources`. C'est le fichier de configuration principal de Quarkus. Noter le nombre de clés de configuration `quarkus.cassandra`
 
 ```bash
 gp open /workspace/conference-2022-devoxx/labs/3-quarkus/src/main/resources/application.properties
 ```
 
-- Suivant la cible (Cassandra dans Docker ou Cassandra dans Astra) la configuration de `quarkus` changera légèrement c'est pourquoi nous avons proposé 2 exemple `application-astra.properties` et `application-astra.properties`
+- Suivant la cible (Cassandra dans Docker ou Cassandra dans Astra) la configuration de `quarkus` changera légèrement c'est pourquoi nous avons proposé 2 exemples `application-astra.properties` et `application-local.properties`
 
 - Copier le fichier qui vous correspond vers `application.properties`
 
 ```bash
-cp /workspace/conference-2022-devoxx/labs/3-quarkus/src/main/resources/application-astra.properties /workspace/conference-2022-devoxx/labs/2-spring-data/src/main/resources/application.yml
+cp /workspace/conference-2022-devoxx/labs/3-quarkus/src/main/resources/application-astra.properties /workspace/conference-2022-devoxx/labs/3-quarkus/src/main/resources/application.properties
 ```
 
 ou
 
 ```bash
-cp /workspace/conference-2022-devoxx/labs/3-quarkus/src/main/resources/application-local.properties /workspace/conference-2022-devoxx/labs/2-spring-data/src/main/resources/application.yml
+cp /workspace/conference-2022-devoxx/labs/3-quarkus/src/main/resources/application-local.properties /workspace/conference-2022-devoxx/labs/3-quarkus/src/main/resources/application.propertoes
 ```
 
-- Import the project `3-quarkus` in your IDE.
-
-- Locate the configuration file `application.properties` in the folder `src/main/resources` (sounds familiar ?)
-
-- Edit the Quarkusconfiguration file updating `username`, `password` and `secure-connect-bundle` properties as shown below
+- Dans le cas de Astra changer la clef `quarkus.cassandra.auth.password` pour correspondre à votre base.
 
 ```ini
-quarkus.cassandra.keyspace=quarkus
-quarkus.cassandra.cloud.secure-connect-bundle=/tmp/secure-connect-javazone.zip
+quarkus.cassandra.keyspace=devoxx_quarkus
+quarkus.cassandra.cloud.secure-connect-bundle=/home/gitpod/.cassandra/bootstrap.zip
 quarkus.cassandra.auth.username=<client_id>
 quarkus.cassandra.auth.password=<client_secret>
 ```
 
-### ✅ 13c. Validate configuration
+#### `✅.140` - Validation de la configuration
 
-- _Check Connectivity_
-
-```bash
-cd ../3-quarkus
-mvn test -Dtest=com.datastaxdev.E24_QuarkusAstraConnectivity
 ```
-
-### ✅ 13d. Browse the code
-
-- _Project configuration, notice we are not using the same set of drivers_
-
-```xml
-<dependency>
-  <groupId>com.datastax.oss.quarkus</groupId>
-  <artifactId>cassandra-quarkus-client</artifactId>
-  <version>1.1.1</version>
-</dependency>
+cd /workspace/conference-2022-devoxx/labs/3-quarkus
+mvn test -Dtest=com.datastax.workshop.E01_QuarkusInit
 ```
 
 - _Define a Pojo_
