@@ -1107,11 +1107,11 @@ SET searches = [ 'Alice au pays des merveilles' ]
 WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 ```
 
-- Ajouter la recherche `Comédies` pour l'utilisateur `7902a572-e7dc-4428-b056-0571af415df3` dans la table `users`.
+- Ajouter la recherche `Comedies` pour l'utilisateur `7902a572-e7dc-4428-b056-0571af415df3` dans la table `users`.
 
 ```sql
 UPDATE users
-SET searches = searches + [ 'Comédies' ]
+SET searches = searches + [ 'Comedies' ]
 WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 ```
 
