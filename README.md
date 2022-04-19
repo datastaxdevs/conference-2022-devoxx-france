@@ -2801,9 +2801,9 @@ CREATE TABLE devoxx_drivers.videos_views (
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E01_CreateSchema
 ```
 
-On notera :
+#### 📘 On notera que
 
-- que les requêtes sont construites en utilisant un builder `SchemaBuilder`.
+- Les requêtes sont construites en utilisant un builder `SchemaBuilder`.
 
 > ```java
 > SchemaBuilder
@@ -2815,7 +2815,9 @@ On notera :
 >  .build()
 > ```
 
-- que les constantes sont regroupées dans un interface `SchemaConstants`. C'est une bonne pratique. En cas de renommage d'une colonne il ne faut changer qu'un seul fichier.
+- Les constantes sont regroupées dans un interface `SchemaConstants`. C'est une bonne pratique. En cas de renommage d'une colonne il ne faut changer qu'un seul fichier.
+
+#### 🖥️ Logs
 
 ```bash
 00:29:42.886 INFO  com.datastax.samples.E01_CreateSchema         : Starting 'CreateSchema' sample...
@@ -2833,11 +2835,33 @@ On notera :
 
 ## 4.3 - Création des `Statements`
 
+#### 📘 On notera que
+
+- Les requêtes peuvent être éxécutées en tant que chaînes de caractères
+
+> ```java
+> cqlSession.execute("" +
+>  "INSERT INTO users (email, firstname, lastname) " +
+>  "VALUES ('clun@sample.com', 'Cedrick', 'Lunven')");
+> ```
+
+- Toute requête est convertie en `Statement`
+
+> ```java
+> cqlSession.execute(SimpleStatement.newInstance(
+>   "INSERT INTO users (email, firstname, lastname) " +
+>   "VALUES ('clun2@sample.com', 'Cedrick', 'Lunven')"));
+> ```
+
+-
+
 #### `✅.119`- Exécuter la classe example
 
 ```bash
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E02_Statements
 ```
+
+#### 🖥️ Logs
 
 ```bash
 01:26:43.034 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
