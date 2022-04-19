@@ -2835,7 +2835,9 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E01_CreateSche
 
 ## 4.3 - Création des `Statements`
 
-#### 📘 On notera que
+#### 📘 Ce qu'il faut retenir:
+
+- Pour exécuter une requête on travaille avec l'object `CqlSession` et la méthode `execute()`.
 
 - Les requêtes peuvent être éxécutées en tant que chaînes de caractères
 
@@ -2853,7 +2855,34 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E01_CreateSche
 >   "VALUES ('clun2@sample.com', 'Cedrick', 'Lunven')"));
 > ```
 
--
+- Les paramètres doivent être externalisés (injection de CQL) soit en avec la position `?` soit avec leur nom `:label`
+
+> ```java
+> cqlSession.execute(SimpleStatement
+>  .builder("INSERT INTO users (email, firstname, lastname) VALUES (?,?,?)")
+>  .addPositionalValue("clun3@gmail.com")
+>  .addPositionalValue("Cedrick")
+>  .addPositionalValue("Lunven").build());
+>
+> cqlSession.execute(SimpleStatement
+>   .builder("INSERT INTO users (email, firstname, lastname) VALUES (:e,:f,:l)")
+>   .addNamedValue("e", "clun5@gmail.com")
+>   .addNamedValue("f", "Cedrick")
+>   .addNamedValue("l", "Lunven").build());
+> ```
+
+- Pour accélérer leur exécution il faut les `prepare()` au chargement de l'application. On les utilise alors avec un `bind()` des paramètres. Dans ce dernier exemple nous avons aussi démontré l'utilisation du `QueryBuilder` pour constuire la requête.
+
+> ```java
+> PreparedStatement ps2 = cqlSession.prepare(QueryBuilder
+>  .insertInto(USER_TABLENAME)
+>  .value(USER_EMAIL, QueryBuilder.bindMarker())
+>  .value(USER_FIRSTNAME, QueryBuilder.bindMarker())
+>  .value(USER_LASTNAME, QueryBuilder.bindMarker())
+>  .build());
+>
+> cqlSession.execute(ps2.bind("clun7@gmail.com", "Cedrick", "Lunven"));
+> ```
 
 #### `✅.119`- Exécuter la classe example
 
