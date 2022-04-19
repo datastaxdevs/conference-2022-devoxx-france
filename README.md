@@ -1062,15 +1062,21 @@ SELECT title, year, production FROM movies;
 <p/>
 <details>
 <summary>Cliquer pour afficher la solution</summary>
-<pre>
+
+```sql
 ALTER TABLE movies ADD genres SET<TEXT>;
 
 UPDATE movies
 SET genres = { 'Adventure', 'Family', 'Fantasy' }
 WHERE id = 5069cc15-4300-4595-ae77-381c3af5dc5e;
+```
 
-</pre>
-Vérification:<pre>SELECT title, year, genres FROM movies;</pre>
+Vérification:
+
+```sql
+SELECT title, year, genres FROM movies;
+```
+
 </details>
 <p/>
 
