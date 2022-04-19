@@ -2875,6 +2875,12 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E01_CreateSche
 
 - Pour accélérer leur exécution il faut les `prepare()` au chargement de l'application. On les utilise alors avec un `bind()` des paramètres. Dans ce dernier exemple nous avons aussi démontré l'utilisation du `QueryBuilder` pour constuire la requête.
 
+_Prepare_
+![](img/query-connect.png?raw=true)
+
+_Requête_
+![](img/query-sync.png?raw=true)
+
 > ```java
 > PreparedStatement ps2 = cqlSession.prepare(QueryBuilder
 >  .insertInto(USER_TABLENAME)
@@ -3101,11 +3107,67 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E05_Paging
 
 ## 4.7 - Travailler avec `List`, `Set` et `Map`
 
+#### 📘 Ce qu'il faut retenir:
+
+- Il est possible de `binder` directement des `Set`, `List` et `Map`
+
+> ```java
+> cqlSession.execute(stmtCreateVideo.bind()
+>   .setUuid(VIDEO_VIDEOID, dto.getVideoid())
+>   .setString(VIDEO_TITLE, dto.getTitle())
+>   .setString(VIDEO_USER_EMAIL, dto.getEmail())
+>   .setInstant(VIDEO_UPLOAD, Instant.ofEpochMilli(dto.getUpload()))
+>   .setString(VIDEO_URL, dto.getUrl())
+>   .setSet(VIDEO_TAGS, dto.getTags(), String.class)
+>   .setList(VIDEO_FRAMES, dto.getFrames(), Integer.class)
+>   .setMap(VIDEO_FORMAT, dto.getFormats(), String.class, VideoFormatDto.class));
+> ```
+
+- Les opérations sur les collection `appendXXX` et `removeXXX`sur les listes sont disponibles.
+
+> ```java
+> cqlSession.execute(QueryBuilder
+>   .update(VIDEO_TABLENAME)
+>   .appendSetElement(VIDEO_TAGS, literal(newTag))
+>   .whereColumn(VIDEO_VIDEOID).isEqualTo(literal(videoId))
+>   .build());
+> ```
+
+- Pour travailler avec les `UDT` est les mapper il faut définir un custom codec
+
+> ```java
+> // Exemple de Bean
+> public class VideoFormatDto {
+>    private int width = 0;
+>    private int height = 0;
+> }
+>
+> // Définition du codec
+> public class UdtVideoFormatCodec implements TypeCodec<VideoFormatDto> {
+>  String format(VideoFormatDto value) {}
+>  VideoFormatDto parse(String value)  {}
+>  ByteBuffer encode(VideoFormatDto value, ProtocolVersion protocolVersion) {}
+>  VideoFormatDto decode(ByteBuffer bytes, ProtocolVersion protocolVersion) {}
+> ...
+> }
+>
+> // Enregistrement
+> // [...]
+> cqlSession.getContext()
+>  .getCodecRegistry()
+>  .register(new UdtVideoFormatCodec(
+>    registry.codecFor(videoFormatUdt),
+>    VideoFormatDto.class)
+>  );
+> ```
+
 #### `✅.123`- Executer la classe example
 
 ```bash
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E06_ListSetMapAndUdt
 ```
+
+#### 🖥️ Logs
 
 ```bash
 01:31:02.667 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
@@ -3126,11 +3188,36 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E06_ListSetMap
 
 ## 4.8 - Requêter avec JSON
 
+#### 📘 Ce qu'il faut retenir:
+
+- Pour les syntaxes `INSERT INTO ... JSON` le paramètre que l'on externalise c'est toute la requête json.
+
+> ```java
+> cqlSession
+>   .execute(SimpleStatement.builder(
+>     "INSERT INTO " + VIDEO_TABLENAME + " JSON ? ")
+>   .addPositionalValue("{"
+>     + "\"videoid\":\""+ videoid4.toString() + "\","
+>     + "\"email\":\"clu@sample.com\","
+>     + "\"title\":\"sample video\","
+>     + "\"upload\":\"2020-02-26 15:09:22 +00:00\","
+>     + "\"url\":\"http://google.fr\","
+>     + "\"frames\": [1,2,3,4],"
+>     + "\"tags\": [\"cassandra\",\"accelerate\", \"2020\"],"
+>     + "\"formats\": {"
+>     + "   \"mp4\":{\"width\":1,\"height\":1},"
+>     + "   \"ogg\":{\"width\":1,\"height\":1}"
+>     + "}}")
+>   .build());
+> ```
+
 #### `✅.124`- Executer la classe example
 
 ```bash
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E07_Json
 ```
+
+#### 🖥️ Logs
 
 ```bash
 01:32:48.700 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
@@ -3156,11 +3243,19 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E07_Json
 
 ## 4.9 - Programmation Asynchrone
 
+![](img/query-async.png?raw=true)
+
+#### 📘 Ce qu'il faut retenir:
+
+- Pour exécuter une requête asynchrone il faut utiliser la méthode `executeAsync()` de la classe `CqlSession`
+
 #### `✅.125`- Executer la classe example
 
 ```bash
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E08_Async
 ```
+
+#### 🖥️ Logs
 
 ```bash
 01:36:37.177 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
@@ -3185,11 +3280,17 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E08_Async
 
 ## 4.10 - Programmation Réactive
 
+#### 📘 Ce qu'il faut retenir:
+
+-
+
 #### `✅.126`- Executer la classe example
 
 ```bash
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E09_Reactive
 ```
+
+#### 🖥️ Logs
 
 ```bash
 01:37:12.174 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
@@ -3207,11 +3308,17 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E09_Reactive
 
 ## 4.11 - Les `counters`
 
+#### 📘 Ce qu'il faut retenir:
+
+-
+
 #### `✅.127`- Exécuter la classe example
 
 ```bash
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E10_Counters
 ```
+
+#### 🖥️ Logs
 
 ```bash
 01:37:47.296 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
@@ -3226,11 +3333,17 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E10_Counters
 
 ## 4.12 - Les `Lightweight Transactions`
 
+#### 📘 Ce qu'il faut retenir:
+
+-
+
 #### `✅.128`- Exécuter la classe example
 
 ```bash
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E11_LightweightTransactions
 ```
+
+#### 🖥️ Logs
 
 ```bash
 01:38:30.073 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
@@ -3242,6 +3355,8 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E11_Lightweigh
 ```
 
 ## 4.13 - Object Mapping
+
+#### 📘 Ce qu'il faut retenir:
 
 Le mapping object est une technique qui consiste à associer les tables de la base de données avec les objets d'une application. Le but est de ne pas avoir à écrire soit même les requêtes CQL. Cette approche est toutefois limitée car elle réduit les possibilités offertes par la base.
 
@@ -3328,6 +3443,8 @@ public interface CommentDaoMapper {
 ```bash
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E12_ObjectMapping
 ```
+
+#### 🖥️ Logs
 
 ```bash
 01:51:17.581 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
