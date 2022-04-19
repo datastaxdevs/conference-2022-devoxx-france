@@ -1432,7 +1432,7 @@ WHERE id = 5069cc15-4300-4595-ae77-381c3af5dc5e;
 
 Vérification:
 ```sql
-SELECT \* FROM movie_stats;
+SELECT * FROM movie_stats;
 ```
 
 </details>
@@ -1476,7 +1476,7 @@ VALUES(uuid(), 'clu@sample.com', 'sample video',
 INSERT INTO videos(videoid, email, title, upload, url)
 VALUES(uuid(), 'clu@sample.com', 'video2', toTimeStamp(now()), 'http://google.fr');
 
-select videoid,email,title from videos;
+select videoid, email, title from videos;
 ```
 
 #### `✅.074`- Insertions dans la table `videos` avec `JSON
@@ -1496,7 +1496,7 @@ INSERT INTO videos JSON '{
      }
 }';
 
-select videoid,email,title from videos;
+select videoid, email, title from videos;
 ```
 
 #### `✅.075`- Requêter un enregistrement avec `JSON`
@@ -1519,7 +1519,7 @@ WHERE videoid=e466f561-4ea4-4eb7-8dcc-126e0fbfd573;
 
 ### 2.5.1 - Introduction aux Batches `Atomic`
 
-Avec Cassandra les opérations individuelles d'`insert`, `update`, `delete` sont atomiques (`atomic` = elles sont exécutées ou non, c'est blanc ou noir, pas de statut intermédaire) et isolées (`isolated` = les mises à jour ne sont pas visibles pour les autres). Afin de proposer de l'atomicité pour un groupe d'instructions Cassandra fournit les batches.
+Avec Cassandra les opérations individuelles d'`insert`, `update`, `delete` sont atomiques (`atomic` = elles sont exécutées ou non, c'est blanc ou noir, pas de statut intermédaire) et isolées (`isolated` = les mises à jour ne sont pas visibles pour les autres). Afin de proposer de l'atomicité pour un groupe d'instructions, Cassandra fournit les batches.
 
 On peut en recenser de 2 natures:
 
@@ -1538,7 +1538,7 @@ APPLY BATCH;
 
 Remarques importantes:
 
-- Les batches `single-partition` peuvent utiliser les `Lightweight transations` mais pas les autres. (nous les aborderons au chapître `2.8`)
+- Les batches `single-partition` peuvent utiliser les `Lightweight Transactions` mais pas les autres. (nous les aborderons au chapitre `2.8`)
 - L'ordre des instructions n'est pas important, les instructions seront toutes exécutées en parallèle.
 
 ### 2.5.2 - `EXEMPLE BATCH 1` - Le caddie
@@ -1582,7 +1582,7 @@ BEGIN BATCH
   INSERT INTO shopping_cart (cart_id, total)
   VALUES (b7255608-4a42-4829-9b84-a355e0e5100d, 2.98)
   IF NOT EXISTS;
-APPLY BATCH
+APPLY BATCH;
 ```
 
 #### `✅.078`- Vérification
@@ -1602,7 +1602,8 @@ WHERE cart_id = b7255608-4a42-4829-9b84-a355e0e5100d;
 <p/>
 <details>
 <summary>Cliquer pour afficher la solution</summary>
-<pre>
+
+```sql
 BEGIN BATCH
 
 INSERT INTO shopping_cart (cart_id, title, year, price, user)
@@ -1614,10 +1615,16 @@ WHERE cart_id = b7255608-4a42-4829-9b84-a355e0e5100d
 IF total = 2.98;
 
 APPLY BATCH;
+```
 
-</pre>Vérification:<pre>SELECT total, price, title, year 
+Vérification:
+
+```sql
+SELECT total, price, title, year 
 FROM shopping_cart
-WHERE cart_id = b7255608-4a42-4829-9b84-a355e0e5100d;</pre>
+WHERE cart_id = b7255608-4a42-4829-9b84-a355e0e5100d;
+```
+
 </details>
 <p/>
 
@@ -1689,13 +1696,13 @@ WHERE email = 'joe@datastax.com'
 
 SELECT * FROM ratings_by_movie
 WHERE title = 'Alice aux pays des merveilles'
-  AND year  = 2010;
-  AND email = 'joe@datastax.com'
+  AND year  = 2010
+  AND email = 'joe@datastax.com';
 ```
 
 #### `✅.084`- Suppression d'enregistrements avec un Batch (multi-partition)
 
-- Pour supprimer les val les valeurs utiliser la clé primaire complète (email, title, year)
+- Pour supprimer les valeurs, il convient d'utiliser la clé primaire complète (email, title, year)
 
 ```sql
 BEGIN BATCH
