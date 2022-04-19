@@ -143,9 +143,9 @@ Que vous soyez dans la salle avec nous pour Devoxx ou que vous regardiez la sess
 
 [Gitpod](https://www.gitpod.io/) est un IDE 100% dans le cloud. Il s'appuie sur [VS Code](https://github.com/gitpod-io/vscode/blob/gp-code/LICENSE.txt?lang=en-US) et fournit de nombreux outils pour développer dans plusieurs langages.
 
-#### `✅.001`- _Click-Droit_ sur le bouton pour ouvrir gitpod dans un nouveau onglet sur votre navigateur.
+#### `✅.001`- _Click-Droit_ sur le bouton pour ouvrir Gitpod dans un nouveau onglet sur votre navigateur.
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/datastaxdevs/conference-2022-devoxx){:target="_blank"}
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/datastaxdevs/conference-2022-devoxx)
 
 ## 1.2 - Apache Cassandra™ dans `Docker`
 
@@ -162,9 +162,9 @@ Lorsque Gitpod est démarré, localiser le terminal `cassandra-docker`. Il devra
 
 ### 1.2.1 - Démarrage du cluster
 
-Dans le répertoire `labs` repérer le fichier `docker-compose.yml`. Nous allons utiliser l'[image officielle Docker Cassandra](https://hub.docker.com/_/cassandra/).
+Dans le répertoire `labs` repérer le fichier `docker-compose.yml`. Nous allons utiliser l'[image officielle Docker Apache Cassandra™](https://hub.docker.com/_/cassandra/).
 
-#### `✅.002`- Ouvrir le fichier et visualiser comment le `seed` est un service séparé des autres noeuds. La recommentation est de 1 à 2 `seeds` par datacenter (anneau).
+#### `✅.002`- Ouvrir le fichier et visualiser comment le `seed` est un service séparé des autres noeuds. La recommentation est de 2 à 3 `seeds` par datacenter (anneau).
 
 ```bash
 gp open /workspace/conference-2022-devoxx/labs/docker-compose.yml
