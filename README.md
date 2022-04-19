@@ -3555,102 +3555,188 @@ Avec Astra, la manipulation des keyspaces est désactivé, c'est lui qui fixe le
 _Repérer le bouton `ADD KEYSPACE`_
 ![](https://awesome-astra.github.io/docs/img/faq/create-keyspace-button.png)
 
-_Créer le keyspace et valider avec `SAVE`_
+_Créer le keyspace `devoxx_spring` et valider avec `SAVE`_
 ![](https://awesome-astra.github.io/docs/img/faq/create-keyspace.png)
 
-To isolate the `Spring Data` work from what we did previous let's create a new keypace.
+#### 📘 Ce qu'il faut retenir:
 
-- _Locate the `new keyspace` button on the DB home page_
+- [Spring Data](https://spring.io/projects/spring-data) est la couche d'accès aux données proposée dans le framework spring. Elle se dérive pour plusieurs bases de données à la fois SQL (JPA) et NoSQL (Cassandra, Mongo, Redis...)
 
-![image](img/new_keyspace.png?raw=true)
+- [Spring Data Cassandra](https://spring.io/projects/spring-data-cassandra) comporte 1 librairie [`spring-data-cassandra`](https://mvnrepository.com/artifact/org.springframework.data/spring-data-cassandra) et la dernière version est [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.datastax.oss/java-driver-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.springframework.data/spring-data-cassandra)
 
-- \*Create the `spring_data` keyspace the DB will shoft in maintenance for a few seconds.
-
-![image](img/new_keyspace2.png?raw=true)
-
-#### `✅.129`- Placer vous dans le bon répertoire `2-spring-data`
-
-- Import the project `2-spring-data` in your IDE.
-
-- Locate the configuration file `application.properties` in the folder `src/main/resources`.
-
-- Edit the Spring configuration file updating `username`, `password` and `secure-connect-bundle` properties as shown below
-
-```ini
-spring.data.cassandra.schema-action=CREATE_IF_NOT_EXISTS
-spring.data.cassandra.request.timeout=10s
-spring.data.cassandra.connection.connect-timeout=10s
-spring.data.cassandra.connection.init-query-timeout=10s
-
-# -- Keys to be filled
-spring.data.cassandra.keyspace-name=devoxx_spring
-spring.data.cassandra.username=token
-spring.data.cassandra.password=AstraCS:<your_token>
-datastax.astra.secure-connect-bundle=/tmp/secure-connect-javazone.zip
+```xml
+<dependency>
+    <groupId>org.springframework.data</groupId>
+    <artifactId>spring-data-cassandra</artifactId>
+    <version>${latest}</version>
+</dependency>
 ```
 
-✅ 12c. Validate configuration and create schema
+- Depuis les versions `3.x` Spring Data s'appuie sur la dernière génération de drivers Cassandra `4.x`. Dans nos exemples nous allons nous appuyer sur `Spring-boot`. Pour utiliser la dernière génération nous devons utiliser une version supérieure a `2.3+`. Les compatibilités sont décrites dans le tableau ci-dessous:
 
-- _Check Connectivity_
+> | Drivers       | Spring-Data    | Spring Boot    |
+> | ------------- | -------------- | -------------- |
+> | Drivers `3.x` | `2.2` et avant | `2.2` et avant |
+> | Drivers `4.x` | `3.x` et après | `2.3` et avant |
+
+- Pour utiliser `Spring Data Cassandra` avec `Spring Boot` il existe 2 starters différents `spring-boot-starter-data-cassandra` (MVC) et `spring-boot-starter-data-cassandra-reactive` (Webflux). Dans notre exmple nous utilisons la première mais un exemple réactif est [disponible ici](https://github.com/datastaxdevs/workshop-spring-reactive)
+
+#### `✅.130`- Vérifier le `pom.xml`
+
+- Ouvrir le fichier
 
 ```bash
-cd ../2-spring-data
-mvn test -Dtest=com.datastax.workshop.E22_SpringDataAstraConnectivity
+gp open /workspace/conference-2022-devoxx/labs/2-spring-data/pom.xml
 ```
 
-- _Create Schema if needed_
-
-```bash
-mvn test -Dtest=com.datastax.workshop.E23_CreateSchemaInAstraTest
-```
-
-✅ 12d. Browse the code
-
-- _Project configuration, notice we are using a dedicated Spring Boot Starter_
+- Vous devez retrouver:
 
 ```xml
 <dependency>
   <groupId>org.springframework.boot</groupId>
-  <artifactId>spring-boot-starter-data-cassandra</artifactId>
+	<artifactId>spring-boot-starter-data-cassandra</artifactId>
 </dependency>
 ```
 
-- _Create a Projo_
+#### `✅.131`- Configuration de l'application Spring-Data
 
-```java
-@Table(value = TodoEntity.TABLENAME)
-public class TodoEntity {
+- Placer vous dans le répertoire `2-spring-data` et compiler le projet
 
- public static final String TABLENAME        = "todos";
- public static final String COLUMN_UID       = "uid";
- public static final String COLUMN_TITLE     = "title";
- public static final String COLUMN_COMPLETED = "completed";
- public static final String COLUMN_ORDER     = "offset";
-
- @PrimaryKey
- @Column(COLUMN_UID)
- @CassandraType(type = Name.UUID)
- private UUID uid;
-
- @Column(COLUMN_TITLE)
- @CassandraType(type = Name.TEXT)
- private String title;
-
- @Column(COLUMN_COMPLETED)
- @CassandraType(type = Name.BOOLEAN)
- private boolean completed = false;
-
- @Column(COLUMN_ORDER)
- @CassandraType(type = Name.INT)
- private int order = 0;
-
- public TodoEntity(String title, int offset) {
-   this(UUID.randomUUID(), title, false, offset);
- }
-}
+```bash
+cd /workspace/conference-2022-devoxx/labs/2-spring-data
+mvn clean compile
 ```
 
-- _Create the Repository (An interface !) extending `CassandraRepository`_
+- Localiser le fichier de configuration `application.yml`dans le répertoire `src/main/resources`. C'est le fichier de configuration principal de Spring-Boot.
+
+```bash
+gp open /workspace/conference-2022-devoxx/labs/2-spring-data/src/main/resources/application.yml
+```
+
+- Suivant la cible (Cassandra dans Docker ou Cassandra dans Astra) la configuration de `spring-data` changera légèrement c'est pourquoi nous avons proposé 2 exemple `application-astra.yml` et `application-astra.yml`
+
+- Copier le fichier qui vous correspond vers `application.yml`
+
+```bash
+/workspace/conference-2022-devoxx/labs/2-spring-data/src/main/resources/application-astra.yml /workspace/conference-2022-devoxx/labs/2-spring-data/src/main/resources/application.yml
+```
+
+ou
+
+```bash
+/workspace/conference-2022-devoxx/labs/2-spring-data/src/main/resources/application-local.yml /workspace/conference-2022-devoxx/labs/2-spring-data/src/main/resources/application.yml
+```
+
+- Vérifier la configuration et éditer là le cas échéant:
+
+_application-astra.yml_
+
+```yaml
+spring:
+  data:
+    cassandra:
+      schema-action: CREATE_IF_NOT_EXISTS
+      keyspace-name: devoxx_spring
+      username: token
+      password: AstraCS:<votre_jeton>
+datastax:
+  astra:
+    secure-connect-bundle: /home/gitpod/.cassandra/bootstrap.zip
+```
+
+_application-local.yml_
+
+```yaml
+spring:
+  data:
+    cassandra:
+      schema-action: CREATE_IF_NOT_EXISTS
+      keyspace-name: devoxx_spring
+      contact-points: localhost:9042
+      local-datacenter: dc1
+```
+
+#### `✅.132`- Validation de la configuration
+
+```bash
+ mvn test -Dtest=com.datastax.workshop.E01_SpringDataInit
+```
+
+#### 🖥️ Logs
+
+```
+[INFO] Running com.datastax.workshop.E01_SpringDataInit
+ ________                                  _______________   ________ ________
+ \______ \   _______  _________  ______  __\_____  \   _  \  \_____  \\_____  \
+ |    |  \_/ __ \  \/ /  _ \  \/  /\  \/  //  ____/  /_\  \  /  ____/ /  ____/
+ |    `   \  ___/\   (  <_> >    <  >    </       \  \_/   \/       \/       \
+ /_______  /\___  >\_/ \____/__/\_ \/__/\_ \_______ \_____  /\_______ \_______ \
+ \/     \/                \/      \/       \/     \/         \/       \/
+
+ The application will start at http://localhost:8080
+
+13:49:30.253 INFO  com.datastax.workshop.E01_SpringDataInit      : Starting E01_SpringDataInit using Java 17.0.1 on clunven-rmbp16 with PID 33320 (started by cedricklunven in /Users/cedricklunven/dev/workspaces/datastax/conference-2022-devoxx/labs/2-spring-data)
+13:49:30.255 INFO  com.datastax.workshop.E01_SpringDataInit      : No active profile set, falling back to default profiles: default
+13:49:34.035 INFO  com.datastax.workshop.E01_SpringDataInit      : Started E01_SpringDataInit in 3.965 seconds (JVM running for 4.659)
+13:49:34.329 INFO  com.datastax.workshop.E01_SpringDataInit      : Creating your CqlSession to Cassandra...
+13:49:34.329 INFO  com.datastax.workshop.E01_SpringDataInit      : + [OK] Your are connected to keyspace devoxx_spring
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.604 s - in com.datastax.workshop.E01_SpringDataInit
+[INFO]
+```
+
+## 5.2 - Comprendre les `CrudRepositories`
+
+#### 📘 Ce qu'il faut retenir:
+
+- Spring Data propose une system d'objet mapping pour associer les objets aux tables du modèles de données. Il utilise une interface générique `CrudRepository`.
+
+- Travaillons avec le modèle (non optimisé) d'une todolist.
+
+```sql
+CREATE TABLE todos (
+    uid uuid PRIMARY KEY,
+    completed boolean,
+    offset int,
+    title text
+)
+```
+
+- On définit un objet `TodoEntity` et on l'annotate avec les annotations Spring Data.
+
+> ```java
+> @Table(value = TodoEntity.TABLENAME)
+> public class TodoEntity {
+>
+>  public static final String TABLENAME        = "todos";
+>  public static final String COLUMN_UID       = "uid";
+>  public static final String COLUMN_TITLE     = "title";
+>  public static final String COLUMN_COMPLETED = "completed";
+>  public static final String COLUMN_ORDER     = "offset";
+>
+>  @PrimaryKey
+>  @Column(COLUMN_UID)
+>  @CassandraType(type = Name.UUID)
+>  private UUID uid;
+>
+>  @Column(COLUMN_TITLE)
+>  @CassandraType(type = Name.TEXT)
+>  private String title;
+>
+>  @Column(COLUMN_COMPLETED)
+>  @CassandraType(type = Name.BOOLEAN)
+>  private boolean completed = false;
+>
+>  @Column(COLUMN_ORDER)
+>  @CassandraType(type = Name.INT)
+>  private int order = 0;
+>
+>  public TodoEntity(String title, int offset) {
+>    this(UUID.randomUUID(), title, false, offset);
+>  }
+> }
+> ```
+
+- On définit une interface qui hérite de `CassandraRepository` (elle même hérite de `CRUDRepository`) en spécifiant le bean et la clé primaire.
 
 ```java
 @Repository
@@ -3658,7 +3744,67 @@ public interface TodoRepositoryCassandra extends CassandraRepository<TodoEntity,
 }
 ```
 
-- _Create a Better Repository now extending `SimpleCassandraRepository` to have access to CqlSession._
+#### `✅.133`- Utiliser les `Repository` Spring Data
+
+```bash
+cd /workspace/conference-2022-devoxx/labs/2-spring-data
+mvn test -Dtest=com.datastax.workshop.E02_SpringDataRepository
+```
+
+#### 🖥️ Logs
+
+```bash
+[INFO] Running com.datastax.workshop.E02_SpringDataRepository
+ ________                                  _______________   ________ ________
+ \______ \   _______  _________  ______  __\_____  \   _  \  \_____  \\_____  \
+ |    |  \_/ __ \  \/ /  _ \  \/  /\  \/  //  ____/  /_\  \  /  ____/ /  ____/
+ |    `   \  ___/\   (  <_> >    <  >    </       \  \_/   \/       \/       \
+ /_______  /\___  >\_/ \____/__/\_ \/__/\_ \_______ \_____  /\_______ \_______ \
+ \/     \/                \/      \/       \/     \/         \/       \/
+
+ The application will start at http://localhost:8080
+
+14:06:54.529 INFO  com.datastax.workshop.E02_SpringDataRepository : Starting E02_SpringDataRepository using Java 17.0.1 on clunven-rmbp16 with PID 33643 (started by cedricklunven in /Users/cedricklunven/dev/workspaces/datastax/conference-2022-devoxx/labs/2-spring-data)
+14:06:54.530 INFO  com.datastax.workshop.E02_SpringDataRepository : No active profile set, falling back to default profiles: default
+14:06:58.212 INFO  com.datastax.workshop.E02_SpringDataRepository : Started E02_SpringDataRepository in 3.895 seconds (JVM running for 4.565)
+14:06:58.635 INFO  com.datastax.workshop.E02_SpringDataRepository : Tache enregistree avec id 8a175b9e-1010-4f9a-aa5c-628c81c8dd34
+14:06:58.636 INFO  com.datastax.workshop.E02_SpringDataRepository : Liste des Taches
+14:06:58.746 INFO  com.datastax.workshop.E02_SpringDataRepository : TodoEntity(uid=8a175b9e-1010-4f9a-aa5c-628c81c8dd34, title=Apprendre Cassandra, completed=false, order=0)
+14:06:58.746 INFO  com.datastax.workshop.E02_SpringDataRepository : TodoEntity(uid=87eb778d-a938-441e-8ff5-e69feafb8719, title=Apprendre Cassandra, completed=false, order=0)
+14:06:58.746 INFO  com.datastax.workshop.E02_SpringDataRepository : TodoEntity(uid=47a5c298-b6ec-4e8a-abb5-fca041730af3, title=Apprendre Cassandra, completed=false, order=0)
+14:06:58.746 INFO  com.datastax.workshop.E02_SpringDataRepository : TodoEntity(uid=3847d7f9-0fa3-4d7e-b7f7-b76897b4e999, title=Apprendre Cassandra, completed=false, order=0)
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.724 s - in com.datastax.workshop.E02_SpringDataRepository
+```
+
+#### `✅.134`- Vérifier le résultat avec `CQLSh`
+
+```sql
+use devoxx_spring;
+SELECT * FROM todos;
+```
+
+#### 🖥️ Logs
+
+```bash
+token@cqlsh:devoxx_spring> SELECT * FROM todos;
+
+ uid                                  | completed | offset | title
+--------------------------------------+-----------+--------+---------------------
+ 8a175b9e-1010-4f9a-aa5c-628c81c8dd34 |     False |      0 | Apprendre Cassandra
+ 87eb778d-a938-441e-8ff5-e69feafb8719 |     False |      0 | Apprendre Cassandra
+ 47a5c298-b6ec-4e8a-abb5-fca041730af3 |     False |      0 | Apprendre Cassandra
+ 3847d7f9-0fa3-4d7e-b7f7-b76897b4e999 |     False |      0 | Apprendre Cassandra
+
+(4 rows)
+```
+
+## 5.3 - CassandraOperations
+
+#### 📘 Ce qu'il faut retenir:
+
+- Les `Repository` sont très puissants mais ne permettent pas tout. Le risque est de chercher à réutiliser les mêmes beans et les mêmes repositories pour différentes requêtes sur la même données alors que vous devez définir plusieurs tables.
+
+- Spring Data propose l'accès aux opérations `CqlSession` sous-jacente au travers de objets `CassandraOperations` et `CassandraTemple`. Vous pouvez les injecter lorsque vous en avez besoin. Ils sont également disponibles dans les repository si vous héritez de `SimpleCassandraRepository`.
 
 ```java
 @Repository
@@ -3676,13 +3822,53 @@ public class TodoRepositorySimpleCassandra extends SimpleCassandraRepository<Tod
    this.cqlSession = cqlSession;
    this.cassandraTemplate = ops;
  }
-
 }
 ```
 
-✅ 12e. Start the application
+- L'objet `CqlSession` fait parti du contexte Spring et vous pouvez également l'utiliser au besoin.
 
-Start
+#### `✅.135`- Utiliser `CassandraOperations` et un `SimpleCassandraRepository`
+
+```bash
+cd /workspace/conference-2022-devoxx/labs/2-spring-data
+mvn test -Dtest=com.datastax.workshop.E03_SpringDataCassandraOperations
+```
+
+#### 🖥️ Logs
+
+```bash
+[INFO] Running com.datastax.workshop.E03_SpringDataCassandraOperations
+ ________                                  _______________   ________ ________
+ \______ \   _______  _________  ______  __\_____  \   _  \  \_____  \\_____  \
+ |    |  \_/ __ \  \/ /  _ \  \/  /\  \/  //  ____/  /_\  \  /  ____/ /  ____/
+ |    `   \  ___/\   (  <_> >    <  >    </       \  \_/   \/       \/       \
+ /_______  /\___  >\_/ \____/__/\_ \/__/\_ \_______ \_____  /\_______ \_______ \
+ \/     \/                \/      \/       \/     \/         \/       \/
+
+ The application will start at http://localhost:8080
+
+14:22:16.841 INFO  com.datastax.workshop.E03_SpringDataCassandraOperations : Starting E03_SpringDataCassandraOperations using Java 17.0.1 on clunven-rmbp16 with PID 33920 (started by cedricklunven in /Users/cedricklunven/dev/workspaces/datastax/conference-2022-devoxx/labs/2-spring-data)
+14:22:16.843 INFO  com.datastax.workshop.E03_SpringDataCassandraOperations : No active profile set, falling back to default profiles: default
+14:22:20.384 INFO  com.datastax.workshop.E03_SpringDataCassandraOperations : Started E03_SpringDataCassandraOperations in 3.755 seconds (JVM running for 4.457)
+14:22:20.768 INFO  com.datastax.workshop.E02_SpringDataRepository : Tache enregistree avec id e73dcd8f-4427-42ab-9e32-4db8fd1a1144
+14:22:20.769 INFO  com.datastax.workshop.E02_SpringDataRepository : Liste des Taches
+14:22:20.865 INFO  com.datastax.workshop.E02_SpringDataRepository : TodoEntity(uid=8a175b9e-1010-4f9a-aa5c-628c81c8dd34, title=Apprendre Cassandra, completed=false, order=0)
+14:22:20.865 INFO  com.datastax.workshop.E02_SpringDataRepository : TodoEntity(uid=e73dcd8f-4427-42ab-9e32-4db8fd1a1144, title=Apprendre Cassandra, completed=false, order=0)
+14:22:20.865 INFO  com.datastax.workshop.E02_SpringDataRepository : TodoEntity(uid=87eb778d-a938-441e-8ff5-e69feafb8719, title=Apprendre Cassandra, completed=false, order=0)
+14:22:20.865 INFO  com.datastax.workshop.E02_SpringDataRepository : TodoEntity(uid=47a5c298-b6ec-4e8a-abb5-fca041730af3, title=Apprendre Cassandra, completed=false, order=0)
+14:22:20.865 INFO  com.datastax.workshop.E02_SpringDataRepository : TodoEntity(uid=3847d7f9-0fa3-4d7e-b7f7-b76897b4e999, title=Apprendre Cassandra, completed=false, order=0)
+14:22:20.875 INFO  com.datastax.workshop.E02_SpringDataRepository : Utilisation de CassandraOperations
+14:22:20.984 INFO  com.datastax.workshop.E02_SpringDataRepository : TodoEntity(uid=8a175b9e-1010-4f9a-aa5c-628c81c8dd34, title=Apprendre Cassandra, completed=false, order=0)
+14:22:20.984 INFO  com.datastax.workshop.E02_SpringDataRepository : TodoEntity(uid=e73dcd8f-4427-42ab-9e32-4db8fd1a1144, title=Apprendre Cassandra, completed=false, order=0)
+14:22:20.984 INFO  com.datastax.workshop.E02_SpringDataRepository : TodoEntity(uid=87eb778d-a938-441e-8ff5-e69feafb8719, title=Apprendre Cassandra, completed=false, order=0)
+14:22:20.984 INFO  com.datastax.workshop.E02_SpringDataRepository : TodoEntity(uid=47a5c298-b6ec-4e8a-abb5-fca041730af3, title=Apprendre Cassandra, completed=false, order=0)
+14:22:20.984 INFO  com.datastax.workshop.E02_SpringDataRepository : TodoEntity(uid=3847d7f9-0fa3-4d7e-b7f7-b76897b4e999, title=Apprendre Cassandra, completed=false, order=0)
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.677 s - in com.datastax.workshop.E03_SpringDataCassandraOperations
+```
+
+## 5.4 - Application Spring Boot
+
+- Les différents `Repository` peuvent être injectés dans les controllers et exposés au niveau des API. Une bonne pratique est de séparer les objets utilisés dans la couche d'accès aux données (entités) des objets utilisés dans les Apis (DTO).
 
 ```
 mvn spring-boot:run
@@ -3705,12 +3891,6 @@ You can work with an external user interface
 ```
 
 ```
-
-## 5.2 - Les `Repositories`
-
-## 5.3 - CassandraOperations
-
-## 5.4 - Application Spring Boot
 
 # LAB 6 - Cassandra Quarkus Extension
 

@@ -7,6 +7,11 @@ NC='\033[0m'
 cd /workspace/conference-2022-devoxx/labs/1-cassandra-drivers
 mvn clean compile
 
+cd /workspace/conference-2022-devoxx/labs/2-spring-data
+mvn clean compile
+
+cd /workspace/conference-2022-devoxx/labs
+
 echo -e ""
 echo -e "${BLUE}------------------------------------------------------------${NC}"
 echo -e "${BLUE}-- Pret pour les test Java                               ---${NC}"

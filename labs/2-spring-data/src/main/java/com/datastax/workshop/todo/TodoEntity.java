@@ -11,11 +11,13 @@ import org.springframework.data.cassandra.core.mapping.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(value = TodoEntity.TABLENAME)
+@ToString
 public class TodoEntity {
     
     public static final String TABLENAME        = "todos";
