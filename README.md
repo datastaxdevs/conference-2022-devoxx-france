@@ -1139,7 +1139,7 @@ SELECT id, name, searches FROM users;
 
 Les maps sont une collection de clé/valeur. Dans un map, chaque clé est unique. La clé et la valeur sont toute deux typées, on peut écrire une map sous la forme `MAP<TEXT, TEXT>`.
 
-#### `✅.056`- Ajouter une colonne `MAP` dans la table `users`
+#### `✅.053`- Ajouter une colonne `MAP` dans la table `users`
 
 - Ajouter une colonne nommée `session` de type `MAP<TIMEUUID, INT>` dans la table `users`
 
@@ -1148,7 +1148,7 @@ ALTER TABLE users ADD sessions MAP<TIMEUUID,INT>;
 SELECT name, sessions FROM users;
 ```
 
-#### `✅.057`- Ajouter/Supprimer des éléments d'une `MAP`
+#### `✅.054`- Ajouter/Supprimer des éléments d'une `MAP`
 
 Pour mettre à jour la valeur d'une `MAP` ou utilise à nouveau les accolade `{ cle1:valeur1 , cle2:valeur2 }`.
 
@@ -1166,7 +1166,7 @@ WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 SELECT name, sessions FROM users;
 ```
 
-#### `✅.058`- Remplacer un élément d'une `MAP`
+#### `✅.055`- Remplacer un élément d'une `MAP`
 
 ```sql
 UPDATE users
@@ -1180,7 +1180,7 @@ WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 SELECT name, sessions FROM users;
 ```
 
-#### `✅.059`- Exercice sur les `MAP`
+#### `✅.056`- Exercice sur les `MAP`
 
 - Ajouter une colonne `preferences` sur la table `users` de type `MAP<TEXT,TEXT>`. - Insérer les valeurs `color=noir, qualité=auto` dans cette map pour l'utilisateur `7902a572-e7dc-4428-b056-0571af415df3`.
 
@@ -1214,7 +1214,7 @@ Il est possible d'imbriquées les collections les unes dans les autres. On peut 
 
 Les collections imbriquées doivent contenir le terme `FROZEN`. Elles sont en effet stockées comme un blob. En d'autres termes, si l'un des items est mis à jour c'est toute la liste qui est réécrite.
 
-#### `✅.060`- Ajouter une colonne avec des collections imbriquées
+#### `✅.057`- Ajouter une colonne avec des collections imbriquées
 
 - Ajouter une colonne nommée `crew` de type `MAP<TEXT,<LIST<TEXT>>>` dans la table `movies`
 
@@ -1224,7 +1224,7 @@ ADD crew MAP<TEXT,FROZEN<LIST<TEXT>>>;
 SELECT title, year, crew FROM movies;
 ```
 
-#### `✅.061`- Ajouter et supprimer des éléments
+#### `✅.058`- Ajouter et supprimer des éléments
 
 - Dans la table `movies`, pour le film `5069cc15-4300-4595-ae77-381c3af5dc5e`, ajouter les valeurs pour `crew`: cast=[Johnny Depp,Mia Wasikowska] et directed by=[Tim Burton]
 
@@ -1242,7 +1242,7 @@ SELECT title, year, crew FROM movies;
 
 Un tuple est une liste de **taille fixe**. Chaque item de la liste peut avoir son propre type. Un tuple sera donc de la forme `TUPLE<type1, type2, ...typeN>`.
 
-#### `✅.062`- Ajouter une colonne `TUPLE`
+#### `✅.059`- Ajouter une colonne `TUPLE`
 
 - Ajouter une colonne nommée `full_name` de type `TUPLE<TEXT,TEXT,TEXT>` dans la table `users`
 
@@ -1250,7 +1250,7 @@ Un tuple est une liste de **taille fixe**. Chaque item de la liste peut avoir so
 ALTER TABLE users ADD full_name TUPLE<TEXT,TEXT,TEXT>;
 ```
 
-#### `✅.063`- Mettre à jour un `TUPLE`
+#### `✅.060`- Mettre à jour un `TUPLE`
 
 Pour mettre à jour un tuple on utilise des **parenthèses simples** `()`.
 
@@ -1270,7 +1270,7 @@ A l'inverse des User Defined types (UDT), il est nécessaire de mettre à jour t
 
 Les `UDT` ou `User Defined Type` sont des structures _custom_ que vous pouvez définir commr vous voulez, des sous-types à votre convenance. Il est possible de les imbriquer également avec la contrainte FROZEN présentée en [2.2.5](#).
 
-#### `✅.064`- Création d'un `UDT`
+#### `✅.061`- Création d'un `UDT`
 
 - Créer un `UDT` nommé `ADDRESS`
 
@@ -1283,7 +1283,7 @@ CREATE TYPE IF NOT EXISTS ADDRESS (
 );
 ```
 
-#### `✅.065`- Ajouter une colonne de type `UDT`
+#### `✅.062`- Ajouter une colonne de type `UDT`
 
 - Ajouter une colonne `address` dans la table `users` de type `ADDRESS`.
 
@@ -1292,7 +1292,7 @@ ALTER TABLE users ADD address ADDRESS;
 SELECT name, address FROM users;
 ```
 
-#### `✅.066`- Renseigner une colonne de type `UDT`
+#### `✅.063`- Renseigner une colonne de type `UDT`
 
 La mise à jour d'un `UDT` est faite avec des accolades `{ attribut:'valeur'}`. Le nom de l'attribut ne prend pas de guillemets.
 
@@ -1310,7 +1310,7 @@ SELECT name, address FROM users
 WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 ```
 
-#### `✅.067`- Mettre à jour une colonne de type `UDT`
+#### `✅.064`- Mettre à jour une colonne de type `UDT`
 
 - Dans la table `users`, pour l'utilisateur `7902a572-e7dc-4428-b056-0571af415df3` mettez à jour uniquement le `address.state` avec une nouvelle valeur `TX`.
 
@@ -1327,7 +1327,7 @@ FROM users
 WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 ```
 
-#### `✅.068`- Exercice UDT
+#### `✅.065`- Exercice UDT
 
 - Ajouter une colonne `previous_addresses` sur la table `user` comme une liste d'addresses (LIST<ADDRESS>), attention elle est considérée comme un type imbriqué.
 - Renseigner 2 valeurs de votre choix pour `previous_addresses` pour notre utilisateur `7902a572-e7dc-4428-b056-0571af415df3`.
@@ -1377,7 +1377,7 @@ Cassandra définit le type `COUNTER` qui induit plusieurs restrictions:
 - La valeur ne peut être ni forcée ou ni réinitialisée, on ne peut qu'incrémenter ou décrémenter. Si la valeur n'existait pas elle est insérée en considérant que la valeur par défaut était de `0`.
 - Une table avec un `COUNTER` ne doit contenir que des colonnes de type `counter` en dehors de sa clé primaire.
 
-#### `✅.069`- Création d'une table avec des counters
+#### `✅.066`- Création d'une table avec des counters
 
 - Créer une table `movie_stats` contenant un identifiant `id` de type `uuid` et 2 counters.
 
@@ -1390,7 +1390,7 @@ CREATE TABLE movie_stats (
 );
 ```
 
-#### `✅.070`- Mises à jour d'enregistrements avec counters
+#### `✅.067`- Mises à jour d'enregistrements avec counters
 
 - Insérer un enregistrement pour le film `5069cc15-4300-4595-ae77-381c3af5dc5e` avec les valeurs `num_ratings=1` et `sum_ratings=7`.
 
@@ -1412,7 +1412,7 @@ WHERE id = 5069cc15-4300-4595-ae77-381c3af5dc5e;
 SELECT * FROM movie_stats;
 ```
 
-#### `✅.071`- Exercice
+#### `✅.068`- Exercice
 
 - Dans la table `movie_stats`, ajouter une nouvelle colonne de type `counter` avec le nom `num_views` indiquant le nombre de vues pour chaque film
 - Encrémenter le 3 fois de `1`.
@@ -1450,7 +1450,7 @@ SELECT * FROM movie_stats;
 
 Il est possible de requêter (lecture et écriture) directement les tables en JSON. Les documents JSON devront respecter le schéma des tables sous-jacentes.
 
-#### `✅.072`- Créer une table `videos` avec un `UDT` `video_format`
+#### `✅.069`- Créer une table `videos` avec un `UDT` `video_format`
 
 ```sql
 CREATE TYPE IF NOT EXISTS video_format (
@@ -1471,7 +1471,7 @@ CREATE TABLE IF NOT EXISTS videos (
 );
 ```
 
-#### `✅.073`- Insertions dans la table `videos` avec `CQL`
+#### `✅.070`- Insertions dans la table `videos` avec `CQL`
 
 ```sql
 INSERT INTO videos(videoid, email, title, upload, url, tags, frames, formats)
@@ -1487,7 +1487,7 @@ VALUES(uuid(), 'clu@sample.com', 'video2', toTimeStamp(now()), 'http://google.fr
 select videoid, email, title from videos;
 ```
 
-#### `✅.074`- Insertions dans la table `videos` avec `JSON
+#### `✅.071`- Insertions dans la table `videos` avec `JSON
 
 ```sql
 INSERT INTO videos JSON '{
@@ -1507,7 +1507,7 @@ INSERT INTO videos JSON '{
 select videoid, email, title from videos;
 ```
 
-#### `✅.075`- Requêter un enregistrement avec `JSON`
+#### `✅.072`- Requêter un enregistrement avec `JSON`
 
 _Traditionnellement:_
 
@@ -1551,7 +1551,7 @@ Remarques importantes:
 
 ### 2.5.2 - `EXEMPLE BATCH 1` - Le caddie
 
-#### `✅.076`- Création du schéma
+#### `✅.073`- Création du schéma
 
 - Voici une table permettant de stocker les différents articles du caddie dans un site de vente en ligne
 
@@ -1569,7 +1569,7 @@ CREATE TABLE shopping_cart (
 );
 ```
 
-#### `✅.077`- Insertion Atomique avec un Batch
+#### `✅.074`- Insertion Atomique avec un Batch
 
 - Insérer 3 articles dans le même caddie `b7255608-4a42-4829-9b84-a355e0e5100d` avec un `BATCH`
 
@@ -1593,7 +1593,7 @@ BEGIN BATCH
 APPLY BATCH;
 ```
 
-#### `✅.078`- Vérification
+#### `✅.075`- Vérification
 
 - Afficher les articles du caddie `b7255608-4a42-4829-9b84-a355e0e5100d`
 
@@ -1603,7 +1603,7 @@ FROM shopping_cart
 WHERE cart_id = b7255608-4a42-4829-9b84-a355e0e5100d;
 ```
 
-#### `✅.079`- Exercice
+#### `✅.076`- Exercice
 
 - Mettre à jour le caddie en ajoutant un autre item et en mettant à jour le total. On notera que total est une colonne `static`, mettre á jour la valeur met à jour la valeur pour tous les enregistrements.
 
@@ -1638,7 +1638,7 @@ WHERE cart_id = b7255608-4a42-4829-9b84-a355e0e5100d;
 
 ### 2.5.3 - `EXEMPLE BATCH 2` - Mise à jour de plusieurs tables avec un BATCH
 
-#### `✅.080`- Créations du schéma
+#### `✅.077`- Créations du schéma
 
 Pour des raisons de dénormalisation par exemple il est fréquent d'enregistrer la même donnée au sein de 2 tables avec des clés primaires différentes.
 
@@ -1662,7 +1662,7 @@ CREATE TABLE  IF NOT EXISTS ratings_by_movie (
 );
 ```
 
-#### `✅.081`- Insertion d'enregistrements avec un Batch (multi-partition)
+#### `✅.078`- Insertion d'enregistrements avec un Batch (multi-partition)
 
 - Pour l'utilisateur `'joe@datastax.com`, insérer le rating `9` pour le film `Alice aux pays des merveilles` (2010).
 
@@ -1675,7 +1675,7 @@ BEGIN BATCH
 APPLY BATCH;
 ```
 
-#### `✅.082`- Mise à jour d'enregistrements avec un Batch (multi-partition)
+#### `✅.079`- Mise à jour d'enregistrements avec un Batch (multi-partition)
 
 - Mettre à jour le même rating avec la valeur `10`.
 
@@ -1692,7 +1692,7 @@ BEGIN BATCH
 APPLY BATCH;
 ```
 
-#### `✅.083`- Affichage du rating
+#### `✅.080`- Affichage du rating
 
 - Pour afficher les valeurs utiliser la clé primaire complète (email, title, year)
 
@@ -1708,7 +1708,7 @@ WHERE title = 'Alice aux pays des merveilles'
   AND email = 'joe@datastax.com';
 ```
 
-#### `✅.084`- Suppression d'enregistrements avec un Batch (multi-partition)
+#### `✅.081`- Suppression d'enregistrements avec un Batch (multi-partition)
 
 - Pour supprimer les valeurs, il convient d'utiliser la clé primaire complète (email, title, year)
 
@@ -1731,7 +1731,7 @@ Lorsqu'il est nécessaire de requêter la même donnée de plusieurs manières l
 
 Maintenant, dans les cas aux limites, **lorsque la cardinalité est faible** (peu de partitions contiennent la valeur) alors on peut utiliser un index secondaire.
 
-#### `✅.085`- Rappels sur la table `city_by_country`
+#### `✅.082`- Rappels sur la table `city_by_country`
 
 - Afficher la structure de la table `city_by_country`
 
@@ -1757,7 +1757,7 @@ WHERE city='Paris';
 
 `--- oups ---`
 
-#### `✅.086`- Création d'un index secondaire
+#### `✅.083`- Création d'un index secondaire
 
 On considère qu'il existe peu de villes qui s'appellent `Paris` au travers des différents pays, la cardinalité est donc faible.
 
@@ -1768,7 +1768,7 @@ CREATE INDEX IF NOT EXISTS country_city_idx
 ON city_by_country (city);
 ```
 
-#### `✅.087`- Requêter avec un index
+#### `✅.084`- Requêter avec un index
 
 - Utiliser l'index nouvellement créé pour lister la ville de `Paris`.
 
@@ -1830,7 +1830,7 @@ Dans la session d'aujourd'hui nous avons un cluster avec un seul anneau contenan
 
 ![my-pic](img/cluster-astra.png?raw=true)
 
-#### `✅.088`- Afficher et Définir le niveau de consistance
+#### `✅.085`- Afficher et Définir le niveau de consistance
 
 - Dans une console CQL, définisser le niveau de consistance :
 
@@ -1839,7 +1839,7 @@ CONSISTENCY;
 CONSISTENCY LOCAL_QUORUM;
 ```
 
-#### `✅.089`- Activer les logs `trace` et exécuter une requête:
+#### `✅.086`- Activer les logs `trace` et exécuter une requête:
 
 ```sql
 TRACING ON;
@@ -1854,7 +1854,7 @@ TRACING OFF;
 
 On notera que seuls 2 noeuds parmi les trois ont eu besoin de répondre avant de retourner le résultat au client.
 
-#### `✅.090`- Règle d'or pour la consistance.
+#### `✅.087`- Règle d'or pour la consistance.
 
 La règle d'or afin d'obtenir un système consistant à tout instant ( `immediate consistency`) c'est d'avoir, la somme des niveaux de consistance en lecture et écriture (CL_READ et CL_WRITE) supérieure au facteur de rèplication (RF)
 
@@ -1907,7 +1907,7 @@ Avec Cassandra, afin de rendre les requêtes les plus rapides possibles on veut 
 
 Ici on ne peut s'y soustraire, la condition `IF` précède l'écriture. Cette transaction s'appuie sur l'algorithme de consensus distribué nommé `Paxos` et nécessite une pseudo-synchronisation des noeuds. En conséquence il faut s'attendre à un temps de réponse de l'ordre de 4 fois supérieur.
 
-#### `✅.091`- Création d'une table pour illuster les LWT
+#### `✅.088`- Création d'une table pour illuster les LWT
 
 - Créer une table `sample_lwt` contenant des utilisateurs et leurs mots de passe.
 
@@ -1922,7 +1922,7 @@ CREATE TABLE sample_lwt (
 );
 ```
 
-#### `✅.092`- Insertion de données sous conditions avec les LWT
+#### `✅.089`- Insertion de données sous conditions avec les LWT
 
 - Insérer l'utilisateur `dragonslayer` seulement si ce dernier n'existe pas.
 
@@ -1948,7 +1948,7 @@ On notera que dans la réponse nous obtenons une colonne `WAS_APPLIED`:
 
 Un utilisateur veut mettre à jour son password. À sa première demande un jeton expirant au bout d'une heure est généré. Si une nouvelle demande est formulée durant cette heure, le jeton ne doit pas être mis à jour.
 
-#### `✅.093`- Créer une demande de mise à jour de mot de passe
+#### `✅.090`- Créer une demande de mise à jour de mot de passe
 
 - Mettre à jour l'enregistrement avec un jeton temporaire pour 1 heure. On remarquera que chaque écriture dispose d'une durée de vie (par défaut illimitée) appelée TTL _time-to-live_
 
@@ -1962,7 +1962,7 @@ SELECT * FROM sample_lwt
 WHERE username = 'devoxx_developer';
 ```
 
-#### `✅.094`- Mettre à jour le mot de passe
+#### `✅.091`- Mettre à jour le mot de passe
 
 - Une fois le mot de passe mis à jour au moyen du reset token il n'est plus possible de recommencer l'opération.
 
@@ -1978,7 +1978,7 @@ WHERE username = 'devoxx_developer'
 IF reset_token = 6ef95fd0-9ae0-11ea-a9d2-d777ab7dec9e;
 ```
 
-#### `✅.0095`- Afficher les informations de l'utilisateur
+#### `✅.0092`- Afficher les informations de l'utilisateur
 
 ```sql
 SELECT * FROM sample_lwt
@@ -1991,7 +1991,7 @@ Dans cet exemple nous voulons changer le statut d'une commande. L'idée est de b
 
 Il peut donc passer à `cancelled` seulement si le précédent est `awaiting shipment` ou `awaiting payment`. Il peut également passer de `awaiting shipment` à `shipped`.
 
-#### `✅.096`- Création du dataset
+#### `✅.093`- Création du dataset
 
 ```sql
 CREATE TABLE orders_by_user (
@@ -2008,7 +2008,7 @@ VALUES ('devoxx_developer', c420d3a3-cecc-4c25-a7f8-ef28eb532969, 'awaiting ship
 SELECT * FROM orders_by_user WHERE username = 'devoxx_developer';
 ```
 
-#### `✅.097`- Déclencher les envois
+#### `✅.094`- Déclencher les envois
 
 - Mettre à jour le statut à `shipped` si les conditions sont réunies (KO)
 
@@ -2030,7 +2030,7 @@ IF status = 'awaiting shipment';
 SELECT * FROM orders_by_user WHERE username = 'devoxx_developer';
 ```
 
-#### `✅.098`- Tenter d'annuler les commandes
+#### `✅.095`- Tenter d'annuler les commandes
 
 - Annuler une commande si les conditions sont réunies (OK)
 
@@ -2058,7 +2058,7 @@ SELECT * FROM orders_by_user WHERE username = 'devoxx_developer';
 
 Dans cet exemple nous allons simuler une vente aux enchères. L'enjeu est de ne pas permettre de surenchérir avec la même proposition et de gérer les accès concurrents.
 
-#### `✅.099`- Création du schéma et import du jeu de données
+#### `✅.096`- Création du schéma et import du jeu de données
 
 - Création de la table. On notera l'enchère de départ `starting_bid`, l'enchère la plus haute `highest_bid` et le meilleur enchérisseur `highest_bidder`. Nous voulons retrouver toutes les enchères pour un objet en particulier, l'identifiant de l'objet sera notre partition key.
 
@@ -2081,7 +2081,7 @@ VALUES ('Wii_a_cedrick', 50.00, 0.00);
 SELECT * FROM auction_items WHERE item_id = 'Wii_a_cedrick';
 ```
 
-#### `✅.100`- Un client place une enchère
+#### `✅.097`- Un client place une enchère
 
 - Emmanuel place une enchère à `50` qui equivaut à la mise de départ. Le `highest_bid` est toujours à 0.
 
@@ -2094,7 +2094,7 @@ IF starting_bid <= 50.00 AND highest_bid < 10.00;
 SELECT * FROM auction_items WHERE item_id = 'Wii_a_cedrick';
 ```
 
-#### `✅.101`- Un client place une enchère
+#### `✅.098`- Un client place une enchère
 
 - Marine veut également placer une enchère à `50` mais cette fois la condition n'est plus remplie. (was_applied=false)
 
@@ -2107,7 +2107,7 @@ IF starting_bid <= 50.00 AND highest_bid < 50.00;
 SELECT * FROM auction_items WHERE item_id = 'Wii_a_cedrick';
 ```
 
-#### `✅.102`- Le deuxième client place une second enchère plus important
+#### `✅.099`- Le deuxième client place une second enchère plus important
 
 ```sql
 UPDATE auction_items
@@ -2119,7 +2119,7 @@ SELECT * FROM auction_items WHERE item_id = 'Wii_a_cedrick';
 
 ### 2.8.6 - `EXEMPLE LWT 4:` - Historique des enchères
 
-#### `✅.103`- Création du schéma
+#### `✅.100`- Création du schéma
 
 - Créeons une table pour les enchères mais cette ajoutong le `bid_id` comme un `timeuuid` pour conserver tous les records (plus d'upserts).
 
@@ -2147,7 +2147,7 @@ VALUES ('Wii_a_cedrick', NOW(), 50.00, 0.00);
 SELECT * FROM bids_by_item WHERE item_id = 'Wii_a_cedrick';
 ```
 
-#### `✅.104`- Première enchère
+#### `✅.101`- Première enchère
 
 - Emmanuel place son enchère à 50 à nouveau.
 
@@ -2167,7 +2167,7 @@ IF starting_bid <= 50.00 AND highest_bid < 50.00;
 SELECT * FROM bids_by_item WHERE item_id = 'Wii_a_cedrick';
 ```
 
-#### `✅.105`- Deuxième enchère
+#### `✅.102`- Deuxième enchère
 
 - Marine place une enchère
 
@@ -2186,7 +2186,7 @@ IF starting_bid <= 50.00 AND highest_bid < 50.00;
 SELECT * FROM bids_by_item WHERE item_id = 'Wii_a_cedrick';
 ```
 
-#### `✅.106`- Troisième enchère
+#### `✅.103`- Troisième enchère
 
 - Avec un montant plus important Marine devient la meilleure enchérisseuse.
 
@@ -2202,6 +2202,10 @@ SELECT * FROM bids_by_item WHERE item_id = 'Wii_a_cedrick';
 ```
 
 Ce type de modèle de données est appelé ledger. Il conserve à la fois le dernier état du système mais tous les états précédents.
+
+<p/><br/>
+
+> [🏠 Retour à la table des matières](#-table-des-matières)
 
 # LAB 3 - Modélisation de données
 
@@ -2557,6 +2561,10 @@ VALUES ('vet_specialty', {'radiology', 'dentistry', 'surgery'});
 ```
 
 Vous avez désormais l'ensemble des bases pour bien démarrer avec Apache Cassandra™ et construire des modèles de données performants.
+
+<p/><br/>
+
+> [🏠 Retour à la table des matières](#-table-des-matières)
 
 # LAB 4 - Introduction aux drivers
 
@@ -3500,7 +3508,7 @@ Pour effectuer un mapping objet il n'est pas nécessaire de recourir à un frame
 > }
 > ```
 
-#### `✅.128`- Exécuter la classe example
+#### `✅.129`- Exécuter la classe example
 
 ```bash
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E12_ObjectMapping
@@ -3525,11 +3533,15 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E12_ObjectMapp
 
 Les drivers sont très puissants et fournissent l'ensemble des opérations permises par la base Apache Cassandra™. Ils sont au coeur des simplifications et des abstractions proposées par d'autres frameworks tels que Spring, Micronaut ou Quarkus aussi est'il important de bien les maîtriser. SI vous êtes bloqués retournés à l'objet `CqlSession`.
 
+<p/><br/>
+
+> [🏠 Retour à la table des matières](#-table-des-matières)
+
 # LAB 5 - Spring Data Cassandra
 
 ## 5.1 - Configuration
 
-#### `✅.129`- Création du keyspace `devoxx_spring`
+#### `✅.130`- Création du keyspace `devoxx_spring`
 
 _Dans Docker:_
 
@@ -3572,7 +3584,7 @@ _Créer le keyspace `devoxx_spring` et valider avec `SAVE`_
 
 - Pour utiliser `Spring Data Cassandra` avec `Spring Boot` il existe 2 starters différents `spring-boot-starter-data-cassandra` (MVC) et `spring-boot-starter-data-cassandra-reactive` (Webflux). Dans notre exmple nous utilisons la première mais un exemple réactif est [disponible ici](https://github.com/datastaxdevs/workshop-spring-reactive)
 
-#### `✅.130`- Vérifier le `pom.xml`
+#### `✅.131`- Vérifier le `pom.xml`
 
 - Ouvrir le fichier
 
@@ -3589,7 +3601,7 @@ gp open /workspace/conference-2022-devoxx/labs/2-spring-data/pom.xml
 </dependency>
 ```
 
-#### `✅.131`- Configuration de l'application Spring-Data
+#### `✅.132`- Configuration de l'application Spring-Data
 
 - Placer vous dans le répertoire `2-spring-data` et compiler le projet
 
@@ -3647,7 +3659,7 @@ spring:
       local-datacenter: dc1
 ```
 
-#### `✅.132`- Validation de la configuration
+#### `✅.133`- Validation de la configuration
 
 ```bash
  mvn test -Dtest=com.datastax.workshop.E01_SpringDataInit
@@ -3735,7 +3747,7 @@ public interface TodoRepositoryCassandra extends CassandraRepository<TodoEntity,
 }
 ```
 
-#### `✅.133`- Utiliser les `Repository` Spring Data
+#### `✅.134`- Utiliser les `Repository` Spring Data
 
 ```bash
 cd /workspace/conference-2022-devoxx/labs/2-spring-data
@@ -3767,7 +3779,7 @@ mvn test -Dtest=com.datastax.workshop.E02_SpringDataRepository
 [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.724 s - in com.datastax.workshop.E02_SpringDataRepository
 ```
 
-#### `✅.134`- Vérifier le résultat avec `CQLSh`
+#### `✅.135`- Vérifier le résultat avec `CQLSh`
 
 ```sql
 use devoxx_spring;
@@ -3818,7 +3830,7 @@ public class TodoRepositorySimpleCassandra extends SimpleCassandraRepository<Tod
 
 - L'objet `CqlSession` fait partie du contexte Spring et vous pouvez également l'utiliser au besoin.
 
-#### `✅.135`- Utiliser `CassandraOperations` et un `SimpleCassandraRepository`
+#### `✅.136`- Utiliser `CassandraOperations` et un `SimpleCassandraRepository`
 
 ```bash
 cd /workspace/conference-2022-devoxx/labs/2-spring-data
@@ -3867,7 +3879,7 @@ mvn test -Dtest=com.datastax.workshop.E03_SpringDataCassandraOperations
 
 Une bonne pratique est de séparer les objets utilisés dans la couche d'accès aux données (entités) des objets utilisés dans les Apis (DTO).
 
-#### `✅.136`- Lancer l'application
+#### `✅.137`- Lancer l'application
 
 - Démarrer l'application à l'aide du plugin `spring-boot`
 
@@ -3893,7 +3905,7 @@ gp preview "$(gp url 8080)/api/v1/todos/"
 
 ![](img/spring_api_gitpod.png?raw=true)
 
-#### `✅.137`- Tests d'intégration de l'application
+#### `✅.138`- Tests d'intégration de l'application
 
 - Stopper l'application avec un `CTRL+C`
 
@@ -3941,6 +3953,10 @@ mvn test -Dtest=com.datastax.workshop.E04_SpringControllerTest
 [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.918 s - in com.datastax.workshop.E04_SpringControllerTest
 ```
 
+<p/><br/>
+
+> [🏠 Retour à la table des matières](#-table-des-matières)
+
 # LAB 6 - Cassandra Quarkus Extension
 
 ## 6.1 - Introduction aux extensions Quarkus
@@ -3973,7 +3989,7 @@ Quarkus propose également un guide très bien fait sur le support de Cassandra 
 
 ## 6.2 - Connexion et configuration
 
-#### `✅.138`- Création du keyspace `devoxx_quarkus`
+#### `✅.139`- Création du keyspace `devoxx_quarkus`
 
 _Dans Docker:_
 
@@ -3993,7 +4009,7 @@ _Repérer le bouton `ADD KEYSPACE`_
 _Créer le keyspace `devoxx_quarkus` et valider avec `SAVE`_
 ![](https://awesome-astra.github.io/docs/img/faq/create-keyspace.png)
 
-#### `✅.139`- Configuration de l'application `Quarkus`
+#### `✅.140`- Configuration de l'application `Quarkus`
 
 - Placer vous dans le répertoire `3-quarkus` et compiler le projet
 
@@ -4031,7 +4047,7 @@ quarkus.cassandra.auth.username=<client_id>
 quarkus.cassandra.auth.password=<client_secret>
 ```
 
-#### `✅.140` - Validation de la configuration
+#### `✅.141` - Validation de la configuration
 
 ```
 cd /workspace/conference-2022-devoxx/labs/3-quarkus
@@ -4061,7 +4077,7 @@ mvn test -Dtest=com.datastax.workshop.E01_QuarkusInit
 2022-04-19 19:18:09,657 INFO  [io.quarkus] (main) Quarkus stopped in 0.021s
 ```
 
-#### `✅.141` - Utilisation de `CqlSession` avec `Quarkus`
+#### `✅.142` - Utilisation de `CqlSession` avec `Quarkus`
 
 ```
 cd /workspace/conference-2022-devoxx/labs/3-quarkus
@@ -4122,7 +4138,7 @@ public class Todo {
 >   .todoItemDao();
 > ```
 
-#### `✅.142` - Utilisation de l'`object mapping` avec `Quarkus`
+#### `✅.143` - Utilisation de l'`object mapping` avec `Quarkus`
 
 ```bash
 cd /workspace/conference-2022-devoxx/labs/3-quarkus
@@ -4230,6 +4246,10 @@ mvn test -Dtest=com.datastax.workshop.E04_QuarkusController
 2022-04-19 21:06:48,222 INFO  [com.dat.oss.qua.run.int.qua.CassandraClientRecorder] (main) Closing Quarkus Cassandra session.
 2022-04-19 21:06:48,236 INFO  [io.quarkus] (main) Quarkus stopped in 0.020s
 ```
+
+<p/><br/>
+
+> [🏠 Retour à la table des matières](#-table-des-matières)
 
 # LAB 7 - Micronaut Cassandra
 
@@ -4380,6 +4400,8 @@ mvn test -Dtest=com.datastax.workshop.E04_MicronautController
 Vous êtes à la fin de la session félicitations !!
 
 ![](img/end.gif?raw=true)
+
+#### `✅.152` - Restons connectés
 
 Si la session vous a plu.
 
