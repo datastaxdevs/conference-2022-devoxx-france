@@ -1297,7 +1297,7 @@ UPDATE users
 SET address = { street: '1100 Congress Ave',
                 city: 'Austin',
                 state: 'Texas',
-                zipcode: '78701' }
+                zipcode: 78701 }
 WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 
 SELECT name, address FROM users
@@ -1329,7 +1329,8 @@ WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 <p/>
 <details>
 <summary>Cliquer pour afficher la solution</summary>
-<pre>
+
+```sql 
 ALTER TABLE users 
 ADD previous_addresses LIST<FROZEN<ADDRESS>>;
 
@@ -1338,7 +1339,7 @@ SET previous_addresses = [
 { street: '10th and L St',
 city: 'Sacramento',
 state: 'CA',
-postal_code: '95814' } ]
+zipcode: 95814 } ]
 WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 
 UPDATE users
@@ -1346,15 +1347,16 @@ SET previous_addresses = previous_addresses + [
 { street: 'State St and Washington Ave',
 city: 'Albany',
 state: 'NY',
-postal_code: '12224' } ]
+zipcode: 12224 } ]
 WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
+```
 
-Vérification:<pre>
+```sql
+Vérification:
 SELECT name, address, previous_addresses
 FROM users
 WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
-
-</pre>
+```
 
 </details>
 <p/>
