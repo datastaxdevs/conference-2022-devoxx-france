@@ -1756,7 +1756,7 @@ On considère qu'il existe peu de villes qui s'appellent `Paris` au travers des 
 - Créer un index `country_city_idx`, dans la table `city_by_country` sur la colonne `city`
 
 ```sql
-CREATE INDEX  IF NOT EXISTS country_city_idx
+CREATE INDEX IF NOT EXISTS country_city_idx
 ON city_by_country (city);
 ```
 
@@ -1775,27 +1775,27 @@ WHERE city='Paris';
 describe index country_city_idx;
 ```
 
-> ℹ️ Sur Astra vous pouvez voir un index `CUSTOM` nommé `StorageAttachedIndex` (ou SAI). Un CEP est actuellement ouvert pour le versé dans `Cassandra 4.1`.
+> ℹ️ Sur Astra vous pouvez voir un index `CUSTOM` nommé `StorageAttachedIndex` (ou SAI). Un CEP est actuellement ouvert pour le verser dans `Cassandra 4.1`.
 >
 > ```
 > CREATE CUSTOM INDEX country_city_idx
 > ON devoxx.city_by_country (city) USING 'org.apache.cassandra.index.sai.> StorageAttachedIndex';
 > ```
 
-> ℹ️ Il existe d'autres type d'index custom comme `Sasi` que nous n'aborderons pas en détail ici (pas dans Astra + pas activé par défaut dans Cassandra). Il possède une configuration plus fine et est adapté à certaines requêtes _full text_ ou range queries. [Plus d'informations ici](https://docs.datastax.com/en/dse/5.1/cql/cql/cql_using/useSASIIndex.html)
+> ℹ️ Il existe d'autres types d'index custom comme `Sasi` que nous n'aborderons pas en détail ici (pas dans Astra + pas activé par défaut dans Cassandra). Il possède une configuration plus fine et est adapté à certaines requêtes _full text_ ou range queries. [Plus d'informations ici](https://docs.datastax.com/en/dse/5.1/cql/cql/cql_using/useSASIIndex.html)
 
 Les indexes secondaires ne sont pas une garantie de performance. L'index est un dictionnaire qui associe la valeur de la colonne indexée à la liste partitions contenant la valeur. L'index est distribué entre les différents noeuds. Une requête avec index east donc par définitions assez lente:
 
-- Pour une table donnée, demande à tous les noeuds N (stockant un partie de l'index) de lister les partitions contenant la valeur (P)
+- Pour une table donnée, demande à tous les noeuds N (stockant un partie de l'index) de lister les partitions contenant la valeur (P);
 - Pour chaque partition (P), scan pour répérer les enregistrements.
 
-La cardinatlité est donc (P \* E) on ne multiplie pas par N car tous les noeuds travaillent mais le réseau peut également ralentir la requête. Plus d'informations sur les indexes secondaires sont disponibles [ici](https://www.doanduyhai.com/blog/?p=13191)
+La cardinalité est donc (P \* E) on ne multiplie pas par N car tous les noeuds travaillent mais le réseau peut également ralentir la requête. Plus d'informations sur les indexes secondaires sont disponibles [ici](https://www.doanduyhai.com/blog/?p=13191)
 
-## 2.7 - Niveau de consistence
+## 2.7 - Niveau de consistance
 
 ### 2.7.1 - Introduction
 
-Dans un cluster Apache Cassandra™, la donnée est répliquée plusieurs fois dans chaque anneau, c'est le facteur de réplication. `REPLICATION_FACTOR` (RF) Il est spécifié à la **création du keyspace.**
+Dans un cluster Apache Cassandra™, la donnée est répliquée plusieurs fois dans chaque anneau, c'est le facteur de réplication. `REPLICATION_FACTOR` (RF) Il est spécifié à la **création de keyspace.**
 
 Lorsque l'on lit ou écrit dans la base, on définit combien de replicas doivent valider la réception du message c'est le `CONSISTENCY LEVEL` (CL) ou niveau de consistance. Il est spécifié à **chaque requête.**
 
@@ -1872,7 +1872,7 @@ Il y a plusieurs de combinaisons possibles:
 - `CL_READ=ONE avec CL_WRITE=ALL`
 - `CL_READ=ALL avec CL_WRITE=ONE`
 
-## 2.8 - Lightweight Transactions
+## 2.8 - LightWeight Transactions (LWT)
 
 ### 2.8.1 - Linearizable Consistency
 
