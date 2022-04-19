@@ -40,14 +40,20 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
   - [3.3 - Exemple de migration de Sql à NoSQL](#33---de-sql-à-nosql-avec-petclinic)
 - [#**LAB 4** - Introduction aux drivers](#lab-4---introduction-aux-drivers)
   - [4.1 - Connectivité](#41---connectivité)
-  - 4.2 - Création et exécution de requêtes
-  - 4.3 - Parsing des résultats
-  - 4.4 - Pagination
-  - 4.5 - Programmation Asynchrone
-  - 4.6 - Programmation Réactive
-  - 4.7 - Object Mapping
+  - [4.2 - Création du schéma](#42---création-du-schéma)
+  - [4.3 - Création des Statements](#43---création-des-statements)
+  - [4.4 - Opération Create, Read, Update, Delete](#44---opération-create-read-update-delete-crud)
+  - [4.5 - Batches](45---batches)
+  - [4.6 - Pagination](#46---pagination)
+  - [4.7 - Travailler avec List, Set et Map](#47---travailler-avec-list-set-et-map)
+  - [4.8 - Requêter avec JSON](#48---requêter-avec-json)
+  - [4.9 - Programmation Asynchrone](#49---programmation-asynchrone)
+  - [4.10 - Programmation Réactive](#410---programmation-réactive)
+  - [4.11 - Les counters](#411---les-counters)
+  - [4.12 - Les Lightweight Transactions](#412---les-lightweight-transactions)
+  - [4.13 - Object Mapping](#413---object-mapping)
 - [#**LAB 5** - Spring Data Cassandra](#lab8---spring-data-cassandra)
-  - 5.1 - Connexion et configuration
+  - [5.1 - Connexion et configuration](#51---configuration)
   - 5.2 - Comprendre les `CrudRepositories`
   - 5.3 - Manipulation de `CassandraOperations`
   - 5.4 - Application Spring Boot
