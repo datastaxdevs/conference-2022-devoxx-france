@@ -21,7 +21,7 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
 - [Objectifs](#objectifs)
 - [Foire aux questions](#foire-aux-questions)
 - [Supports de Formation](#supports-de-formation)
-- [#**LAB 1 - Initialisation des Environnements**](#lab1---création-de-la-base-de-donnée)
+- [#**LAB 1 - Initialisation des Environnements**](#lab1---création-de-la-base-de-données)
   - [1.1 - Démarrage de `Gitpod`](#11---démarrage-de-gitpod)
   - [1.2 - Apache Cassandra™ dans `Docker`](#12---apache-cassandra-dans-docker)
   - [1.3 - Apache Cassandra™ avec `Astra` (dbaas)](#13---apache-cassandra-avec-astra-dbaas)
@@ -32,18 +32,18 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
   - [2.4 - Types de données avancés](#24---types-de-données-avancés)
   - [2.5 - Batches](#25---batches)
   - [2.6 - Indexes secondaires](#26---index-secondaires)
-  - [2.7 - Niveaux de consistance](#27---niveau-de-consistence)
-  - [2.8 - Lightweight Transactions](#28---lightweight-transactions)
+  - [2.7 - Niveaux de consistance](#27---niveau-de-consistance)
+  - [2.8 - Lightweight Transactions](#28---lightweight-transactions-lwt)
 - [#**LAB 3 - La modélisation de données**](#lab-3---modélisation-de-données)
   - [3.1 - Méthodologie](#31---méthodologie)
-  - [3.2 - Modèle de données timeseries](#32---modèle-de-données-pour-les-timeseries)
+  - [3.2 - Modèle de données timeseries](#32---modèle-de-données-pour-des-timeseries)
   - [3.3 - Exemple de migration de Sql à NoSQL](#33---de-sql-à-nosql-avec-petclinic)
 - [#**LAB 4 - Introduction aux drivers**](#lab-4---introduction-aux-drivers)
   - [4.1 - Connectivité](#41---connectivité)
   - [4.2 - Création du Schéma](#42---création-du-schéma)
   - [4.3 - Création des Statements](#43---création-des-statements)
   - [4.4 - Opération Create, Read, Update, Delete](#44---opération-create-read-update-delete-crud)
-  - [4.5 - Batches](45---batches)
+  - [4.5 - Batches](#45---batches)
   - [4.6 - Pagination](#46---pagination)
   - [4.7 - Travailler avec des List, Set et Map](#47---travailler-avec-list-set-et-map)
   - [4.8 - Requêter avec JSON](#48---requêter-avec-json)
@@ -52,25 +52,23 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
   - [4.11 - Les Counters](#411---les-counters)
   - [4.12 - Les Lightweight Transactions](#412---les-lightweight-transactions)
   - [4.13 - Object Mapping](#413---object-mapping)
-- [#**LAB 5 - Spring Data Cassandra**](#lab8---spring-data-cassandra)
+- [#**LAB 5 - Spring Data Cassandra**]#lab-5---spring-data-cassandra)
   - [5.1 - Connexion et Configuration](#51---configuration)
-  - 5.2 - Comprendre les `CrudRepositories`
-  - 5.3 - Manipulation de `CassandraOperations`
-  - 5.4 - Application Spring Boot
-- [#**LAB 6** - Cassandra Quarkus extension](#lab9---cassandra-quarkus-extension)
-  - 6.1 - Introduction aux extensions Quarkus
-  - 6.2 - Connexion et configuration
-  - 6.2 - Application Quarkus
-- [#**LAB 7** - Micronaut Cassandra](#lab10---micronaut-cassandra)
-  - 7.1 - Connexion et Configuration
-  - 7.2 - Application Micronaut
-- [#**LAB 8** - La solution Stargate ](#lab11---stargate-apis)
-  - 8.1 - Introduction à Stargate.io
-  - 8.2 - Utilisation des Apis Rest
-  - 8.3 - Utilisation des Apis Documents
-  - 8.4 - Utilisation des Apis GraphQL
-  - 8.5 - Configuration de SDKs
-  - 8.6 - Utilisation des SDKs
+  - [5.2 - Comprendre les `CrudRepositories`](#52---comprendre-les-crudrepositories)
+  - [5.3 - Manipulation de `CassandraOperations`](#53---cassandraoperations)
+  - [5.4 - Application Spring Boot](#54---application-spring-boot)
+- [#**LAB 6** - Cassandra Quarkus extension](#lab-6---cassandra-quarkus-extension)
+  - [6.1 - Introduction aux extensions Quarkus](#61---introduction-aux-extensions-quarkus)
+  - [6.2 - Connexion et configuration](#62---connexion-et-configuration)
+  - [6.3 - Object Mapping](#63---object-mapping)
+  - [6.4 - Application Quarkus](#64---application-quarkus)
+- [#**LAB 7** - Micronaut Cassandra](#lab-7---micronaut-cassandra)
+  - [7.1 - Introduction à Micronaut](#71---introduction-à-micronaut)
+  - [7.2 - Connexion et Configuration](#72---connexion-et-configuration)
+  - [7.3 - Object Mapping](#73---object-mapping)
+  - [7.4 - Application Micronaut](#74---application-micronaut)
+
+---
 
 ## Objectifs
 
