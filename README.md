@@ -3243,11 +3243,31 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E07_Json
 
 ## 4.9 - Programmation Asynchrone
 
-![](img/query-async.png?raw=true)
-
 #### 📘 Ce qu'il faut retenir:
 
-- Pour exécuter une requête asynchrone il faut utiliser la méthode `executeAsync()` de la classe `CqlSession`
+- Pour exécuter une requête asynchrone il faut utiliser la méthode `executeAsync()` de la classe `CqlSession`. Les drivers retournent un `CompletionStage` pour chaque page.
+
+![](img/query-async.png?raw=true)
+
+- On utilise les Api dites fluent pour travailler sur les réponses
+
+> ```java
+> // Exécution
+> CompletionStage<Boolean> existUserAsync(CqlSession cqlSession, String email) {
+>   return cqlSession
+>     .executeAsync(stmtExistUser.bind(email))
+>     .thenApply(ars -> ars.one() != null);
+> }
+>
+> // Utilisation
+> existUserAsync(cqlSession, userEmail2)
+>   .thenAccept(exist -> LOGGER.info("+ '{}' exists ? {}", userEmail2, exist))
+>   .thenCompose(r->updateUserAsync(cqlSession, userEmail2,  "Eric", "Ramirez"))
+>   .thenCompose(r->existUserAsync(cqlSession, userEmail2))
+>   .thenAccept(exist -> LOGGER.info("+ '{}' exists ? {}", userEmail2, exist))
+>   .toCompletableFuture()
+>   .get();
+> ```
 
 #### `✅.125`- Executer la classe example
 
@@ -3282,7 +3302,29 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E08_Async
 
 #### 📘 Ce qu'il faut retenir:
 
--
+- Pour exécuter une requête réactive il faut utiliser la méthode `executeAsync()` de la classe `CqlSession`.
+
+![](img/query-reactive.png?raw=true)
+
+- Les drivers travaillent avec un `Subscriber`. Une notification est renvoyée pour chaque enregistrement. Ce n'est pas du _Change Data Capture_, les éléments retournés seront les éléments présents à l'exécution de la requête mais pas ceux arrivés par la suite.
+
+- Un système de back pressure est mis en place si le client est lent au traitement des notifications.
+
+- Il est très facile retrouver les objets habituels `Mono<>` et `Flux<>` (pour travailler avec Spring par exemple)
+
+> ```java
+> // Exécution
+> Mono<Boolean> existUserReactive(CqlSession cqlSession, String email) {
+>  ReactiveResultSet rrs = cqlSession.executeReactive(stmtExistUser.bind(email));
+>  return Mono.from(rrs).map(rs -> true).defaultIfEmpty(false);
+> }
+>
+> // Utilisation
+> existUserReactive(cqlSession, userEmail)
+>  .doOnNext(exist -> LOGGER.info("+ '{}' exists ? {}", userEmail, exist))
+>  .and(upsertUserReactive(cqlSession, userEmail, "Cedric", "Lunven"))
+>  .block();
+> ```
 
 #### `✅.126`- Executer la classe example
 
@@ -3310,7 +3352,17 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E09_Reactive
 
 #### 📘 Ce qu'il faut retenir:
 
--
+- Les opérations d'incrémentation et décrémentation sont fournies par le `QueryBuilder`
+
+> ````java
+> cqlSession.prepare(QueryBuilder
+>   .update(VIDEO_VIEWS_TABLENAME)
+>   .increment(VIDEO_VIEWS_VIEWS, QueryBuilder.bindMarker())
+>   .whereColumn(VIDEO_VIEWS_VIDEOID).isEqualTo(QueryBuilder.bindMarker())
+>   .build()
+> );
+> > ```
+> ````
 
 #### `✅.127`- Exécuter la classe example
 
@@ -3335,7 +3387,26 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E10_Counters
 
 #### 📘 Ce qu'il faut retenir:
 
--
+- Il est nécessaire d'ajouter la condition de la LWT dans le statement comme exemple le `ifNotExists` avec le `QueryBuilder` ou directement dans la requêtes `CQL`
+
+> ```java
+> cqlSession.prepare(QueryBuilder.insertInto(USER_TABLENAME)
+>   .value(USER_EMAIL, QueryBuilder.bindMarker())
+>   .value(USER_FIRSTNAME, QueryBuilder.bindMarker())
+>   .value(USER_LASTNAME, QueryBuilder.bindMarker())
+>   .ifNotExists()
+>   .build());
+> ```
+
+- Le `APPLIED` est disponible dans le `ResultSet` retourné après une exécution.
+
+> ```java
+>  boolean createUserIfNotExist(CqlSession cqlSession, String email, String firstname, String lastname) {
+>   return cqlSession
+>     .execute(stmtCreateUser.bind(email, firstname, lastname))
+>     .wasApplied();
+> }
+> ```
 
 #### `✅.128`- Exécuter la classe example
 
@@ -3358,85 +3429,85 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E11_Lightweigh
 
 #### 📘 Ce qu'il faut retenir:
 
-Le mapping object est une technique qui consiste à associer les tables de la base de données avec les objets d'une application. Le but est de ne pas avoir à écrire soit même les requêtes CQL. Cette approche est toutefois limitée car elle réduit les possibilités offertes par la base.
+Le mapping object est une technique qui consiste à associer les tables de la base de données avec les objets d'une application. Le but est de ne pas avoir à écrire soit même les requêtes CQL. Cette approche est toutefois limitée car elle réduit les possibilités offertes.
 
-Pour effectuer un mapping objet il n'est pas nécessaire de recourir à un framework externe type Spring, la fonctionnalité est proposée directement au niveau des drivers. Pour une documentation exhaustive référez-vous à la [documentation officielle](https://docs.datastax.com/en/developer/java-driver/4.13/manual/mapper/)
+Pour effectuer un mapping objet il n'est pas nécessaire de recourir à un framework externe type Spring, la fonctionnalité est proposée directement au niveau des drivers Cassandra. Pour une documentation exhaustive référez-vous à la [documentation officielle](https://docs.datastax.com/en/developer/java-driver/4.13/manual/mapper/)
 
-- Il est nécessaire d'importer la librairie `java-driver-mapper-runtime` dans le projet.
+- Il est nécessaire d'importer la librairie `java-driver-mapper-runtime`
 
-```xml
-<dependency>
-  <groupId>com.datastax.oss</groupId>
-  <artifactId>java-driver-mapper-runtime</artifactId>
-  <version>${derniere-version}</version>
-</dependency>
-```
+> ```xml
+> <dependency>
+>   <groupId>com.datastax.oss</groupId>
+>   <artifactId>java-driver-mapper-runtime</artifactId>
+>   <version>${derniere-version}</version>
+> </dependency>
+> ```
 
-- La librairie d'object mapping va venir générer les classes nécessaires à la compilation sur la base d'annotations dans le code. (`Annotation Processor`). Pour l'activer avec le build `Maven` il est nécessaire de le déclarer dans le bloc XML `annotationProcessorPaths`.
+- La librairie d'object mapping va venir générer les classes nécessaires à la compilation sur la base d'annotations dans le code. (`Annotation Processor`). Pour l'activer avec le build `Maven` il est nécessaire de le déclarer dans le bloc XML `annotationProcessorPaths` au niveau du plugin `maven-compiler-plugin`.
 
-```xml
-<plugins>
- <plugin>
-  <groupId>org.apache.maven.plugins</groupId>
-  <artifactId>maven-compiler-plugin</artifactId>
-  <configuration>
-   <release>11</release>
-   <source>11</source>
-   <target>11</target>
-   <annotationProcessorPaths>
-    <path>
-     <groupId>com.datastax.oss</groupId>
-     <artifactId>java-driver-mapper-processor</artifactId>
-    </path>
-   </annotationProcessorPaths>
-  </configuration>
- </plugin>
-</plugins>
-```
+> ```xml
+> <plugins>
+>  <plugin>
+>   <groupId>org.apache.maven.plugins</groupId>
+>   <artifactId>maven-compiler-plugin</artifactId>
+>   <configuration>
+>    <release>11</release>
+>    <source>11</source>
+>    <target>11</target>
+>    <annotationProcessorPaths>
+>     <path>
+>      <groupId>com.datastax.oss</groupId>
+>      <artifactId>java-driver-mapper-processor</artifactId>
+>     </path>
+>    </annotationProcessorPaths>
+>   </configuration>
+>  </plugin>
+> </plugins>
+> ```
 
-- Dans le principe on crée un objet sur la base du schéma de table (et non l'inverse - avec Cassandra c'et bien le modèle de données que l'on défini en premier)
+- Dans le principe ,on construit un objet sur la base du schéma de la table (et non l'inverse - avec Cassandra c'est bien le modèle de données que l'on définit en premier)
 
-```java
-@Entity
-@CqlName("myTable")
-public class CommentByUser {
+> ```java
+> @Entity
+> @CqlName("myTable")
+> public class CommentByUser {
+>
+>     @PartitionKey
+>     UUID userid;
+>
+>     @ClusteringColumn
+>     UUID commentid;
+>
+>     UUID videoid;
+>
+>     String comment;
+> }
+> ```
 
-    @PartitionKey
-    UUID userid;
+- Puis il est nécessaire de construire interface annotée avec `@Dao`. Il est à noter qu'en tant qu'interface elle ne contient pas d'implémentation. Les méthodes de `Create` (save), `Read` (findById), `Update` et `delete` (deleteById) sont disponibles et l'on peut déclarer d'autres méthodes plus spécifiques comme ci-dessous.
 
-    @ClusteringColumn
-    UUID commentid;
-
-    UUID videoid;
-
-    String comment;
-}
-```
-
-- On crée ensuite une interface annotée avec `@Dao`. Il est à noter qu'en tant qu'interface elle ne contient pas d'implémentation. Les méthodes de `Create` (save), `Read` (findById), `Update` et `delete` (deleteById) sont disponibles mais l'on peut déclarer d'autres méthodes comme ci-dessous.
-
-```java
-@Dao
-public interface CommentDao extends CassandraSchemaConstants {
-
-  @Query("SELECT * FROM ${keyspaceId}.${tableId} "
-         + "WHERE " + COMMENT_BY_USER_USERID + " = :userid ")
-  PagingIterable<CommentByUser> retrieveUserComments(UUID userid);
-```
+> ```java
+> @Dao
+> public interface CommentDao extends CassandraSchemaConstants {
+>
+>   @Query("SELECT * FROM ${keyspaceId}.${tableId} "
+>          + "WHERE " + COMMENT_BY_USER_USERID + " = :userid ")
+>   PagingIterable<CommentByUser> retrieveUserComments(UUID userid);
+> ```
 
 - Enfin le mapper, annoté avec `@Mapper` permet d'associer la `CqlSession` aux différents `@Dao`. Un seul est nécessaire dans votre application.
 
-```java
-@Mapper
-public interface CommentDaoMapper {
- @DaoFactory
- CommentDao commentDao();
-
- static MapperBuilder<CommentDaoMapper> builder(CqlSession session) {
-   return new CommentDaoMapperBuilder(session);
- }
-}
-```
+> ```java
+> @Mapper
+> public interface CommentDaoMapper {
+>  @DaoFactory
+>  CommentDao commentDao();
+>
+>  static MapperBuilder<CommentDaoMapper> builder(CqlSession session) {
+>    return new CommentDaoMapperBuilder(session);
+>  }
+> }
+> ```
 
 #### `✅.128`- Exécuter la classe example
 
@@ -3461,7 +3532,7 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E12_ObjectMapp
 01:51:24.116 INFO  com.datastax.samples.E12_ObjectMapping        : Video2 is cool
 ```
 
-Les drivers sont très puissants et fournissent l'ensemble des opérations permises par la base Apache Cassandra™. Ils sont au coeur de simplifications ou d'abstraction des autres frameworks tels que Spring, Micronaut ou Quarkus aussi est'il important de bien les maîtriser. Dans les parties suivantes nous nous interesserons à ces surcouches.
+Les drivers sont très puissants et fournissent l'ensemble des opérations permises par la base Apache Cassandra™. Ils sont au coeur des simplifications et des abstractions proposées par d'autres frameworks tels que Spring, Micronaut ou Quarkus aussi est'il important de bien les maîtriser. SI vous êtes bloqués retournés à l'objet `CqlSession`.
 
 # LAB 5 - Spring Data Cassandra
 
