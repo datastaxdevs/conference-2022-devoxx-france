@@ -609,7 +609,7 @@ INSERT INTO city_by_country(country, city, population)
 VALUES('FR','Reims', 182460);
 
 INSERT INTO city_by_country(country, city, population)
-VALUES('FR','Saint-Étienne', 172565);
+VALUES('FR','Saint-Etienne', 172565);
 
 INSERT INTO city_by_country(country, city, population)
 VALUES('FR','Toulon', 171953);
