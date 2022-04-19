@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastaxdev.todo.cassandra.TodoServiceCassandraCql;
 
-import io.micronaut.context.annotation.Property;
 import io.micronaut.context.event.ApplicationEventListener;
 import io.micronaut.discovery.event.ServiceReadyEvent;
 import jakarta.inject.Inject;
@@ -23,9 +22,6 @@ public class TodoApplicationStartup  implements ApplicationEventListener<Service
     /** Logger for the class. */
     private static final Logger LOGGER = LoggerFactory.getLogger(TodoApplicationStartup.class);
     
-    @Property(name = "todo.cassandra.create_schema", defaultValue="false")
-    private boolean createTable;
-    
     @Inject 
     private CqlSession cqlSession;
     
@@ -33,18 +29,9 @@ public class TodoApplicationStartup  implements ApplicationEventListener<Service
     @Override
     public void onApplicationEvent(final ServiceReadyEvent event) {
         LOGGER.info("Startup Initialization");
-        if (createTable) {
-            TodoServiceCassandraCql.createTableTodo(cqlSession);
-            LOGGER.info("+ Table TodoItems created if needed.");
-        }
+        TodoServiceCassandraCql.createTableTodo(cqlSession);
+        LOGGER.info("+ Table TodoItems created if needed.");
         LOGGER.info("[OK]");
-        
-        /* Accessing Context
-        try (ApplicationContext context = ApplicationContext.run()) {
-            cqlSession = context.getBean(CqlSession.class);
-        }
-        */
-        
     }
 
 

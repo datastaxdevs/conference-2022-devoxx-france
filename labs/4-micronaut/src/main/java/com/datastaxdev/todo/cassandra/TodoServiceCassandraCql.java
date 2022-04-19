@@ -20,9 +20,12 @@ import com.datastaxdev.TodoDto;
 import com.datastaxdev.TodoService;
 import com.datastaxdev.utils.ValidationUtils;
 
+import jakarta.inject.Singleton;
+
 /**
  * Implementation of the CRUD service with CORE CqlSession only.
  */
+@Singleton
 public class TodoServiceCassandraCql implements TodoService {
     
     /** Schema Constants. */

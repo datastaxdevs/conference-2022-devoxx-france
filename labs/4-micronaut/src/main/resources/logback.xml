@@ -12,7 +12,12 @@
     <logger name="com.datastaxdev" level="INFO" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
-
+    <logger name="com.datastax.workshop" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
+    <logger name="com.datastax.oss.driver" level="ERROR" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
     <root level="WARN">
         <appender-ref ref="STDOUT" />
     </root>

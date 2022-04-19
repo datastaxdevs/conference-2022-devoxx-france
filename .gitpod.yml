@@ -30,10 +30,22 @@ tasks:
       ./scripts/cassandra-start 2>/dev/null
   
 ports:
-  # Access Cassandra node
+  # Cassandra Node in Docker
   - port: 9042
     onOpen: ignore
     visibility: public
+  # Spring Application
+  - port: 8080
+    onOpen: open-browser
+    visibility: public
+  # Quarkus Application
+  - port: 8081
+    onOpen: open-browser
+    visibility: public 
+  # Micronaut Application
+  - port: 8082
+    onOpen: open-browser
+    visibility: public   
 
 github:
   prebuilds:

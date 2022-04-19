@@ -11,11 +11,14 @@ import com.datastax.oss.driver.api.mapper.annotations.Query;
 import com.datastaxdev.TodoDto;
 import com.datastaxdev.TodoService;
 
+import jakarta.inject.Singleton;
+
 /**
  * Implementation of the service with ObjectMapping.
  *
  * @author Cedrick LUNVEN (@clunven)
  */
+@Singleton
 public class TodoServicesCassandraOM implements TodoService {
 
     /** Driver Dao. */
