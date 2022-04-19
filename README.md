@@ -918,7 +918,7 @@ ALLOW FILTERING;
 SELECT city,population
 FROM city_by_country
 WHERE country='FR'
-AND population > 1000000
+AND population > 1000000;
 ```
 
 ...oups encore...cette fois le `ALLOW FILTERING` est toléré car nous avons une clé de partition (country) et que l'on considère que le nombre de ville par pays est limité
