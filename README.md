@@ -1184,7 +1184,7 @@ SELECT name, sessions FROM users;
 
 ```sql
 ALTER TABLE users ADD preferences MAP<TEXT,TEXT>;
-UPDATE users 
+UPDATE users
 SET preferences['color'] = 'dark'
 WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 
@@ -2256,7 +2256,7 @@ Voici le modèle physique dans notre cas et les modifications apportées (en ver
 _Dans Docker:_
 
 ```sql
-CREATE KEYSPACE IF NOT EXISTS sensor_data
+CREATE KEYSPACE IF NOT EXISTS devoxx_dm_sensor
 WITH REPLICATION = {
   'class' : 'NetworkTopologyStrategy',
   'dc1' : 3
@@ -2268,13 +2268,13 @@ Avec Astra, la manipulation des keyspaces est désactivé, c'est lui qui fixe le
 _Repérer le bouton `ADD KEYSPACE`_
 ![](https://awesome-astra.github.io/docs/img/faq/create-keyspace-button.png)
 
-_Créer le keyspace et valider avec `SAVE`_
+_Créer le keyspace `devoxx_dm_sensor` et valider avec `SAVE`_
 ![](https://awesome-astra.github.io/docs/img/faq/create-keyspace.png)
 
 #### `✅.105`- Importer le modèle données
 
 ```sql
-use sensor_data;
+use devoxx_dm_sensor;
 
 CREATE TABLE networks (
   bucket TEXT,
@@ -2374,7 +2374,7 @@ WHERE network    = 'forest-net'
 
 ## 3.3 - De SQL à NoSQL avec Petclinic
 
-#### `✅.110`- Introuction à l'application `petclinic`
+#### `✅.110`- Introduction à l'application `petclinic`
 
 PetClinic est une application de démonstration utilisée par les équipes Spring pour présenter les différentes fonctionnalités du framework. Une description exhaustive est diponible [ici](https://projects.spring.io/spring-petclinic/).
 
@@ -2431,12 +2431,12 @@ Un vétrinaire peut avoir plusieurs spécialit
 
 ![](img/petclinic_10.png?raw=true)
 
-#### `✅.112`- Création du keyspace `spring_petclinic`
+#### `✅.112`- Création du keyspace `devoxx_dm_petclinic`
 
 _Dans Docker:_
 
 ```sql
-CREATE KEYSPACE IF NOT EXISTS spring_petclinic
+CREATE KEYSPACE IF NOT EXISTS devoxx_dm_petclinic
 WITH REPLICATION = {
   'class' : 'NetworkTopologyStrategy',
   'dc1' : 3
@@ -2448,13 +2448,13 @@ Avec Astra, la manipulation des keyspaces est désactivé, c'est lui qui fixe le
 _Repérer le bouton `ADD KEYSPACE`_
 ![](https://awesome-astra.github.io/docs/img/faq/create-keyspace-button.png)
 
-_Créer le keyspace et valider avec `SAVE`_
+_Créer le keyspace `devoxx_dm_petclinic` et valider avec `SAVE`_
 ![](https://awesome-astra.github.io/docs/img/faq/create-keyspace.png)
 
 #### `✅.113`- Création du schéma
 
 ```sql
-use spring_petclinic;
+use devoxx_dm_petclinic;
 
 DROP INDEX IF EXISTS petclinic_idx_vetname;
 DROP INDEX IF EXISTS petclinic_idx_ownername;
@@ -3585,13 +3585,13 @@ gp open /workspace/conference-2022-devoxx/labs/2-spring-data/src/main/resources/
 - Copier le fichier qui vous correspond vers `application.yml`
 
 ```bash
-/workspace/conference-2022-devoxx/labs/2-spring-data/src/main/resources/application-astra.yml /workspace/conference-2022-devoxx/labs/2-spring-data/src/main/resources/application.yml
+cp /workspace/conference-2022-devoxx/labs/2-spring-data/src/main/resources/application-astra.yml /workspace/conference-2022-devoxx/labs/2-spring-data/src/main/resources/application.yml
 ```
 
 ou
 
 ```bash
-/workspace/conference-2022-devoxx/labs/2-spring-data/src/main/resources/application-local.yml /workspace/conference-2022-devoxx/labs/2-spring-data/src/main/resources/application.yml
+cp cp/workspace/conference-2022-devoxx/labs/2-spring-data/src/main/resources/application-local.yml /workspace/conference-2022-devoxx/labs/2-spring-data/src/main/resources/application.yml
 ```
 
 - Vérifier la configuration et éditer là le cas échéant:
@@ -3873,7 +3873,25 @@ gp preview "$(gp url 8080)/api/v1/todos/"
 
 - Stopper l'application avec un `CTRL+C`
 
-- Exécuter les unitaires suivant:
+- Editer la classe `E04_SpringControllerTest` pour remplacer `createURLWithPort` avec l'url de votre gitpod :
+
+_de:_
+
+```java
+private String createURLWithPort(String uri) {
+  return "http://localhost:" + port + uri;
+}
+```
+
+_à (ici 8080-datastaxdevs-conference2-g3jf9fgchk4.ws-eu34.gitpod.io est le résultat de ma commande gp url 8080):_
+
+```java
+private String createURLWithPort(String uri) {
+  return "https://8080-datastaxdevs-conference2-g3jf9fgchk4.ws-eu34.gitpod.io" + uri;
+}
+```
+
+- Exécuter le test unitaire suivant:
 
 ```bash
 cd /workspace/conference-2022-devoxx/labs/2-spring-data
@@ -3905,21 +3923,76 @@ mvn test -Dtest=com.datastax.workshop.E04_SpringControllerTest
 
 #### 📘 Ce qu'il faut retenir:
 
-- [Quarkus](https://quarkus.io/) est un framework pour construire des microservices sur la plateforme Java. Le parti pris est de r
+[Quarkus](https://quarkus.io/) est un framework pour construire des microservices sur la plateforme Java. Le parti pris est de réaliser le plus d'opérations possibles durant le build et de ne packager que ce qui est absolutement nécessaire. Les objectifs sont:
 
-To isolate the `Quarkus` work from what we did previous let's create a new keypace.
+- La production d'une image native de quelques mega-octets seulement
+- La production d'une image qui démarre en quelques millièmes de seconde.
 
-### ✅ 13a. Create a keyspace
+Une [extension Quarkus](https://quarkus.io/guides/writing-extensions) permet de simplifier la configuration d'une application et d'assurer une meilleure compatibilité. L'équipe `Datastax` a créé et open sourcé une extension pour Cassandra [ici](https://github.com/datastax/cassandra-quarkus). Voici ce qu'elle permet:
 
-- _Locate the `new keyspace` button on the DB home page_
+- Le support de reactif avec `Mutiny` (couche réactive de Quarkus)
+- L'intégration avec `vertx` et le event loop de Quarkus
+- Déclarer les `Mapper` (object mapping) dans `Arc`, le système d'injection de dpendance de Quarkus.
+- Fournir des hints pour la création d'une native image _aux petits oignons._
 
-![image](img/new_keyspace.png?raw=true)
+- La librairie à utiliser est `cassandra-quarkus-client` et la version est [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.datastax.oss.quarkus/cassandra-quarkus-client/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.datastax.oss.quarkus/cassandra-quarkus-client)
 
-- Create the `spring_data` keyspace the DB will shift in maintenance for a few seconds.
+```xml
+<dependency>
+  <groupId>com.datastax.oss.quarkus</groupId>
+  <artifactId>cassandra-quarkus-client</artifactId>
+  <version>${latest}</version>
+</dependency>
+```
 
-![image](img/new_keyspace3.png?raw=true)
+#### `✅.138`- Création du keyspace `devoxx_quarkus`
 
-### ✅ 13b. Setup the application
+_Dans Docker:_
+
+```sql
+CREATE KEYSPACE IF NOT EXISTS devoxx_quarkus
+WITH REPLICATION = {
+  'class' : 'NetworkTopologyStrategy',
+  'dc1' : 3
+}  AND DURABLE_WRITES = true;
+```
+
+Avec Astra, la manipulation des keyspaces est désactivé, c'est lui qui fixe les facteurs de réplications pour vous (Saas). La procédure est décrite en détail dans [Awesome Astra](https://awesome-astra.github.io/docs/pages/astra/faq/#how-do-i-create-a-namespace-or-a-keyspace) mais voici quelques captures:
+
+_Repérer le bouton `ADD KEYSPACE`_
+![](https://awesome-astra.github.io/docs/img/faq/create-keyspace-button.png)
+
+_Créer le keyspace `devoxx_quarkus` et valider avec `SAVE`_
+![](https://awesome-astra.github.io/docs/img/faq/create-keyspace.png)
+
+#### `✅.139`- Configuration de l'application `Quarkus`
+
+- Placer vous dans le répertoire `3-quarkus` et compiler le projet
+
+```bash
+cd /workspace/conference-2022-devoxx/labs/3-quarkus
+mvn clean compile
+```
+
+- Localiser le fichier de configuration `application.propertoes`dans le répertoire `src/main/resources`. C'est le fichier de configuration principal de Quarkus. Noter le nombre de clés de configuration `quarkus.cassandra`
+
+```bash
+gp open /workspace/conference-2022-devoxx/labs/3-quarkus/src/main/resources/application.properties
+```
+
+- Suivant la cible (Cassandra dans Docker ou Cassandra dans Astra) la configuration de `quarkus` changera légèrement c'est pourquoi nous avons proposé 2 exemple `application-astra.properties` et `application-astra.properties`
+
+- Copier le fichier qui vous correspond vers `application.properties`
+
+```bash
+cp /workspace/conference-2022-devoxx/labs/3-quarkus/src/main/resources/application-astra.properties /workspace/conference-2022-devoxx/labs/2-spring-data/src/main/resources/application.yml
+```
+
+ou
+
+```bash
+cp /workspace/conference-2022-devoxx/labs/3-quarkus/src/main/resources/application-local.properties /workspace/conference-2022-devoxx/labs/2-spring-data/src/main/resources/application.yml
+```
 
 - Import the project `3-quarkus` in your IDE.
 
