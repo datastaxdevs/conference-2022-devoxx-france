@@ -1297,7 +1297,7 @@ UPDATE users
 SET address = { street: '1100 Congress Ave',
                 city: 'Austin',
                 state: 'Texas',
-                postal_code: '78701' }
+                zipcode: '78701' }
 WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 
 SELECT name, address FROM users
@@ -1306,7 +1306,7 @@ WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 
 #### `✅.067`- Mettre à jour une colonne de type `UDT`
 
-- Dans la table `users`, pour l'utilisateur `7902a572-e7dc-4428-b056-0571af415df3` mettez à jour uniquement le `adress.state` avec une nouvelle valeur `TX`.
+- Dans la table `users`, pour l'utilisateur `7902a572-e7dc-4428-b056-0571af415df3` mettez à jour uniquement le `address.state` avec une nouvelle valeur `TX`.
 
 ```sql
 UPDATE users
@@ -1316,7 +1316,7 @@ SELECT name,
        address.street      AS street,
        address.city        AS city,
        address.state       AS state,
-       address.postal_code AS zip
+       address.zipcode     AS zip
 FROM users
 WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 ```
