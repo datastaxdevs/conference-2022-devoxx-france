@@ -1297,7 +1297,7 @@ UPDATE users
 SET address = { street: '1100 Congress Ave',
                 city: 'Austin',
                 state: 'Texas',
-                postal_code: '78701' }
+                zipcode: 78701 }
 WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 
 SELECT name, address FROM users
@@ -1306,7 +1306,7 @@ WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 
 #### `✅.067`- Mettre à jour une colonne de type `UDT`
 
-- Dans la table `users`, pour l'utilisateur `7902a572-e7dc-4428-b056-0571af415df3` mettez à jour uniquement le `adress.state` avec une nouvelle valeur `TX`.
+- Dans la table `users`, pour l'utilisateur `7902a572-e7dc-4428-b056-0571af415df3` mettez à jour uniquement le `address.state` avec une nouvelle valeur `TX`.
 
 ```sql
 UPDATE users
@@ -1316,7 +1316,7 @@ SELECT name,
        address.street      AS street,
        address.city        AS city,
        address.state       AS state,
-       address.postal_code AS zip
+       address.zipcode     AS zip
 FROM users
 WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 ```
@@ -1329,7 +1329,8 @@ WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 <p/>
 <details>
 <summary>Cliquer pour afficher la solution</summary>
-<pre>
+
+```sql 
 ALTER TABLE users 
 ADD previous_addresses LIST<FROZEN<ADDRESS>>;
 
@@ -1338,7 +1339,7 @@ SET previous_addresses = [
 { street: '10th and L St',
 city: 'Sacramento',
 state: 'CA',
-postal_code: '95814' } ]
+zipcode: 95814 } ]
 WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 
 UPDATE users
@@ -1346,15 +1347,16 @@ SET previous_addresses = previous_addresses + [
 { street: 'State St and Washington Ave',
 city: 'Albany',
 state: 'NY',
-postal_code: '12224' } ]
+zipcode: 12224 } ]
 WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
+```
 
-Vérification:<pre>
+Vérification:
+```sql
 SELECT name, address, previous_addresses
 FROM users
 WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
-
-</pre>
+```
 
 </details>
 <p/>
@@ -1411,7 +1413,8 @@ SELECT * FROM movie_stats;
 <p/>
 <details>
 <summary>Cliquer pour afficher la solution</summary>
-<pre>
+
+```sql
 ALTER TABLE movie_stats ADD num_views COUNTER;
 
 UPDATE movie_stats
@@ -1424,7 +1427,13 @@ WHERE id = 5069cc15-4300-4595-ae77-381c3af5dc5e;
 
 UPDATE movie_stats
 SET num_views = num_views + 1
-WHERE id = 5069cc15-4300-4595-ae77-381c3af5dc5e;</pre>Vérification:<pre>SSELECT \* FROM movie_stats;</pre>
+WHERE id = 5069cc15-4300-4595-ae77-381c3af5dc5e;
+```
+
+Vérification:
+```sql
+SELECT * FROM movie_stats;
+```
 
 </details>
 <p/>
@@ -1467,7 +1476,7 @@ VALUES(uuid(), 'clu@sample.com', 'sample video',
 INSERT INTO videos(videoid, email, title, upload, url)
 VALUES(uuid(), 'clu@sample.com', 'video2', toTimeStamp(now()), 'http://google.fr');
 
-select videoid,email,title from videos;
+select videoid, email, title from videos;
 ```
 
 #### `✅.074`- Insertions dans la table `videos` avec `JSON
@@ -1487,7 +1496,7 @@ INSERT INTO videos JSON '{
      }
 }';
 
-select videoid,email,title from videos;
+select videoid, email, title from videos;
 ```
 
 #### `✅.075`- Requêter un enregistrement avec `JSON`
@@ -1510,7 +1519,7 @@ WHERE videoid=e466f561-4ea4-4eb7-8dcc-126e0fbfd573;
 
 ### 2.5.1 - Introduction aux Batches `Atomic`
 
-Avec Cassandra les opérations individuelles d'`insert`, `update`, `delete` sont atomiques (`atomic` = elles sont exécutées ou non, c'est blanc ou noir, pas de statut intermédaire) et isolées (`isolated` = les mises à jour ne sont pas visibles pour les autres). Afin de proposer de l'atomicité pour un groupe d'instructions Cassandra fournit les batches.
+Avec Cassandra les opérations individuelles d'`insert`, `update`, `delete` sont atomiques (`atomic` = elles sont exécutées ou non, c'est blanc ou noir, pas de statut intermédaire) et isolées (`isolated` = les mises à jour ne sont pas visibles pour les autres). Afin de proposer de l'atomicité pour un groupe d'instructions, Cassandra fournit les batches.
 
 On peut en recenser de 2 natures:
 
@@ -1529,7 +1538,7 @@ APPLY BATCH;
 
 Remarques importantes:
 
-- Les batches `single-partition` peuvent utiliser les `Lightweight transations` mais pas les autres. (nous les aborderons au chapître `2.8`)
+- Les batches `single-partition` peuvent utiliser les `Lightweight Transactions` mais pas les autres. (nous les aborderons au chapitre `2.8`)
 - L'ordre des instructions n'est pas important, les instructions seront toutes exécutées en parallèle.
 
 ### 2.5.2 - `EXEMPLE BATCH 1` - Le caddie
@@ -1573,7 +1582,7 @@ BEGIN BATCH
   INSERT INTO shopping_cart (cart_id, total)
   VALUES (b7255608-4a42-4829-9b84-a355e0e5100d, 2.98)
   IF NOT EXISTS;
-APPLY BATCH
+APPLY BATCH;
 ```
 
 #### `✅.078`- Vérification
@@ -1593,7 +1602,8 @@ WHERE cart_id = b7255608-4a42-4829-9b84-a355e0e5100d;
 <p/>
 <details>
 <summary>Cliquer pour afficher la solution</summary>
-<pre>
+
+```sql
 BEGIN BATCH
 
 INSERT INTO shopping_cart (cart_id, title, year, price, user)
@@ -1605,10 +1615,16 @@ WHERE cart_id = b7255608-4a42-4829-9b84-a355e0e5100d
 IF total = 2.98;
 
 APPLY BATCH;
+```
 
-</pre>Vérification:<pre>SELECT total, price, title, year 
+Vérification:
+
+```sql
+SELECT total, price, title, year 
 FROM shopping_cart
-WHERE cart_id = b7255608-4a42-4829-9b84-a355e0e5100d;</pre>
+WHERE cart_id = b7255608-4a42-4829-9b84-a355e0e5100d;
+```
+
 </details>
 <p/>
 
@@ -1680,13 +1696,13 @@ WHERE email = 'joe@datastax.com'
 
 SELECT * FROM ratings_by_movie
 WHERE title = 'Alice aux pays des merveilles'
-  AND year  = 2010;
-  AND email = 'joe@datastax.com'
+  AND year  = 2010
+  AND email = 'joe@datastax.com';
 ```
 
 #### `✅.084`- Suppression d'enregistrements avec un Batch (multi-partition)
 
-- Pour supprimer les val les valeurs utiliser la clé primaire complète (email, title, year)
+- Pour supprimer les valeurs, il convient d'utiliser la clé primaire complète (email, title, year)
 
 ```sql
 BEGIN BATCH
@@ -1740,7 +1756,7 @@ On considère qu'il existe peu de villes qui s'appellent `Paris` au travers des 
 - Créer un index `country_city_idx`, dans la table `city_by_country` sur la colonne `city`
 
 ```sql
-CREATE INDEX  IF NOT EXISTS country_city_idx
+CREATE INDEX IF NOT EXISTS country_city_idx
 ON city_by_country (city);
 ```
 
@@ -1759,27 +1775,27 @@ WHERE city='Paris';
 describe index country_city_idx;
 ```
 
-> ℹ️ Sur Astra vous pouvez voir un index `CUSTOM` nommé `StorageAttachedIndex` (ou SAI). Un CEP est actuellement ouvert pour le versé dans `Cassandra 4.1`.
+> ℹ️ Sur Astra vous pouvez voir un index `CUSTOM` nommé `StorageAttachedIndex` (ou SAI). Un CEP est actuellement ouvert pour le verser dans `Cassandra 4.1`.
 >
 > ```
 > CREATE CUSTOM INDEX country_city_idx
 > ON devoxx.city_by_country (city) USING 'org.apache.cassandra.index.sai.> StorageAttachedIndex';
 > ```
 
-> ℹ️ Il existe d'autres type d'index custom comme `Sasi` que nous n'aborderons pas en détail ici (pas dans Astra + pas activé par défaut dans Cassandra). Il possède une configuration plus fine et est adapté à certaines requêtes _full text_ ou range queries. [Plus d'informations ici](https://docs.datastax.com/en/dse/5.1/cql/cql/cql_using/useSASIIndex.html)
+> ℹ️ Il existe d'autres types d'index custom comme `Sasi` que nous n'aborderons pas en détail ici (pas dans Astra + pas activé par défaut dans Cassandra). Il possède une configuration plus fine et est adapté à certaines requêtes _full text_ ou range queries. [Plus d'informations ici](https://docs.datastax.com/en/dse/5.1/cql/cql/cql_using/useSASIIndex.html)
 
 Les indexes secondaires ne sont pas une garantie de performance. L'index est un dictionnaire qui associe la valeur de la colonne indexée à la liste partitions contenant la valeur. L'index est distribué entre les différents noeuds. Une requête avec index east donc par définitions assez lente:
 
-- Pour une table donnée, demande à tous les noeuds N (stockant un partie de l'index) de lister les partitions contenant la valeur (P)
+- Pour une table donnée, demande à tous les noeuds N (stockant un partie de l'index) de lister les partitions contenant la valeur (P);
 - Pour chaque partition (P), scan pour répérer les enregistrements.
 
-La cardinatlité est donc (P \* E) on ne multiplie pas par N car tous les noeuds travaillent mais le réseau peut également ralentir la requête. Plus d'informations sur les indexes secondaires sont disponibles [ici](https://www.doanduyhai.com/blog/?p=13191)
+La cardinalité est donc (P \* E) on ne multiplie pas par N car tous les noeuds travaillent mais le réseau peut également ralentir la requête. Plus d'informations sur les indexes secondaires sont disponibles [ici](https://www.doanduyhai.com/blog/?p=13191)
 
-## 2.7 - Niveau de consistence
+## 2.7 - Niveau de consistance
 
 ### 2.7.1 - Introduction
 
-Dans un cluster Apache Cassandra™, la donnée est répliquée plusieurs fois dans chaque anneau, c'est le facteur de réplication. `REPLICATION_FACTOR` (RF) Il est spécifié à la **création du keyspace.**
+Dans un cluster Apache Cassandra™, la donnée est répliquée plusieurs fois dans chaque anneau, c'est le facteur de réplication. `REPLICATION_FACTOR` (RF) Il est spécifié à la **création de keyspace.**
 
 Lorsque l'on lit ou écrit dans la base, on définit combien de replicas doivent valider la réception du message c'est le `CONSISTENCY LEVEL` (CL) ou niveau de consistance. Il est spécifié à **chaque requête.**
 
@@ -1856,7 +1872,7 @@ Il y a plusieurs de combinaisons possibles:
 - `CL_READ=ONE avec CL_WRITE=ALL`
 - `CL_READ=ALL avec CL_WRITE=ONE`
 
-## 2.8 - Lightweight Transactions
+## 2.8 - LightWeight Transactions (LWT)
 
 ### 2.8.1 - Linearizable Consistency
 
