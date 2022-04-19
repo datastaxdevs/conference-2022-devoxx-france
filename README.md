@@ -1117,7 +1117,7 @@ WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 
 - Ajouter une seconde fois `Alice au pays des merveilles` pour l'utilisateur `7902a572-e7dc-4428-b056-0571af415df3` dans la table `users`.
 
-```
+```sql
 UPDATE users
 SET searches = searches + [ 'Alice au pays des merveilles' ]
 WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
