@@ -8,20 +8,20 @@
 
 <img src="img/badge.png?raw=true" width="200" align="right"/>
 
-Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **développeurs**. L'objectif est de vous rendre _dangeureux_ avec la technologie et savoir la mettre en oeuvre rapidement sur vos projets.
+Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **développeurs**. L'objectif est de vous rendre _dangereux_ avec la technologie et savoir la mettre en oeuvre rapidement sur vos projets.
 
-⏲️ **Durée:** 3 heures
+⏲️ **Durée :** 3 heures
 
 🎓 **Niveau** Débutant à intermédiaire
 
-<img src="img/splash.png?raw=true"  width="400px"/>
+<img src="img/splash.png?raw=true" width="400px"/>
 
-## 📋 Table des matières.
+## 📋 Table des matières
 
 - [Objectifs](#objectifs)
 - [Foire aux questions](#foire-aux-questions)
 - [Supports de Formation](#supports-de-formation)
-- [#**LAB 1 - Initialisation des environnements**](#lab1---création-de-la-base-de-donnée)
+- [#**LAB 1 - Initialisation des Environnements**](#lab1---création-de-la-base-de-donnée)
   - [1.1 - Démarrage de `Gitpod`](#11---démarrage-de-gitpod)
   - [1.2 - Apache Cassandra™ dans `Docker`](#12---apache-cassandra-dans-docker)
   - [1.3 - Apache Cassandra™ avec `Astra` (dbaas)](#13---apache-cassandra-avec-astra-dbaas)
@@ -40,20 +40,20 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
   - [3.3 - Exemple de migration de Sql à NoSQL](#33---de-sql-à-nosql-avec-petclinic)
 - [#**LAB 4 - Introduction aux drivers**](#lab-4---introduction-aux-drivers)
   - [4.1 - Connectivité](#41---connectivité)
-  - [4.2 - Création du schéma](#42---création-du-schéma)
+  - [4.2 - Création du Schéma](#42---création-du-schéma)
   - [4.3 - Création des Statements](#43---création-des-statements)
   - [4.4 - Opération Create, Read, Update, Delete](#44---opération-create-read-update-delete-crud)
   - [4.5 - Batches](45---batches)
   - [4.6 - Pagination](#46---pagination)
-  - [4.7 - Travailler avec List, Set et Map](#47---travailler-avec-list-set-et-map)
+  - [4.7 - Travailler avec des List, Set et Map](#47---travailler-avec-list-set-et-map)
   - [4.8 - Requêter avec JSON](#48---requêter-avec-json)
   - [4.9 - Programmation Asynchrone](#49---programmation-asynchrone)
   - [4.10 - Programmation Réactive](#410---programmation-réactive)
-  - [4.11 - Les counters](#411---les-counters)
+  - [4.11 - Les Counters](#411---les-counters)
   - [4.12 - Les Lightweight Transactions](#412---les-lightweight-transactions)
   - [4.13 - Object Mapping](#413---object-mapping)
 - [#**LAB 5 - Spring Data Cassandra**](#lab8---spring-data-cassandra)
-  - [5.1 - Connexion et configuration](#51---configuration)
+  - [5.1 - Connexion et Configuration](#51---configuration)
   - 5.2 - Comprendre les `CrudRepositories`
   - 5.3 - Manipulation de `CassandraOperations`
   - 5.4 - Application Spring Boot
@@ -62,7 +62,7 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
   - 6.2 - Connexion et configuration
   - 6.2 - Application Quarkus
 - [#**LAB 7** - Micronaut Cassandra](#lab10---micronaut-cassandra)
-  - 7.1 - Connexion et configuration
+  - 7.1 - Connexion et Configuration
   - 7.2 - Application Micronaut
 - [#**LAB 8** - La solution Stargate ](#lab11---stargate-apis)
   - 8.1 - Introduction à Stargate.io
@@ -74,11 +74,11 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
 
 ## Objectifs
 
-- 🎯 Comprendre la nature et l'architecture de la base de donnée NoSQL Apache Cassandra™ pour déterminer les **bons cas d'usage.**
-- 🎯 Comprendre les différences fondamentales avec les bases de données relationnelles et la **méthodologie pour construire un modèle de donnée** approprié.
-- 🎯 Savoir **utiliser les drivers** pour établir la connexion, construire ses requêtes et implémenter tout type de service.
-- 🎯 Disposer d'**exemples fonctionnels** pour bien démarrer avec les principaux frameworks Java: `Spring`, `Quarkus` et `Micronaut`.
-- 🎯 Découvrir le composant **Stargate**, en comprendre les différentes `Apis` et tester son utilisation avec le `SDK.`
+- 🎯 Comprendre la nature et l'architecture de la base de données NoSQL Apache Cassandra™ pour déterminer les **bons cas d'usage.**
+- 🎯 Comprendre les différences fondamentales avec les bases de données relationnelles et la **méthodologie pour construire un modèle de données** approprié.
+- 🎯 Savoir **utiliser les drivers** pour établir la connexion, construire ses requêtes et implémenter tous types de services.
+- 🎯 Disposer d'**exemples fonctionnels** pour bien démarrer avec les principaux frameworks Java : `Spring`, `Quarkus` et `Micronaut`.
+- 🎯 Découvrir le composant **Stargate**, en comprendre les différentes `Apis` et tester son utilisation avec le `SDK`.
 
 ## Foire aux questions
 
@@ -99,14 +99,14 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
 <hr>
 <p>Afin de rendre l'expérience la plus agréable possible nous fournissons un environnement dans le cloud avec l'outil Gitpod mais rien de vous empêche d'utiliser votre machine. Durant chaque atelier nous listerons les pré-requis.</p>
 
-<p>Le contenu étant dense, le temps pour l’installation de tous les outils localement est limité. Voici une liste exhaustive:
+<p>Le contenu étant dense, le temps pour l’installation de tous les outils localement est limité. Voici une liste exhaustive :
 <ol>
 <li><b>Java 8+</b> ainsi que <b>Maven 3.6+</b> pour les LABS avec Java.
 <li><b>Python 3+</b> ainsi que <b>pip3</b> pour les LABS avec Python.
 <li><b>Node 16+</b> ainsi que <b>NPM 8+</b> pour les LABS avec Javascript.
 <li><b>Docker</b> ainsi que <b>Docker-compose</b> pour démarrer les conteneurs.
 <li>Une machine disposant d'au moins <b>8Go de mémoire vive.</b>
-<li><b>2Go d'espace disque </b>pour télécharger les différents images et outils.
+<li><b>2Go d'espace disque libre </b>pour télécharger les différents images et outils.
 <li>Un atelier de développement logiciel  <b>(IDE)</b>comme Eclipse, IntelliJ, Netbean...
 </ol>
 </p>
@@ -114,7 +114,7 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
 
 <p/>
 <details>
-<summary><b> 3️⃣ Les outils resteront'ils gratuits après la session ?</b></summary>
+<summary><b> 3️⃣ Les outils resteront-ils gratuits après la session ?</b></summary>
 <hr>
 <b>Absolutement.</b> Toutes les solutions utilisées aujourd'hui sont gratuites. Pour les démonstrations avec les produits en Saas aucune carte de crédit ne sera demandée ni maintenant, ni après.
 </details>
@@ -124,28 +124,28 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
 <hr>
 
 <img src="img/certifications.png?raw=true" align="right" width="320px"/>
-Datastax propose <a href="https://www.datastax.com/dev/certifications">3 certifications </a> autour des technologies Apache Cassandra™. En 3h il nous est impossible de tout couvrir pour prétendre à la certification. Cependant tous les cours nécessaires sont disponibles sur <a href="https://academy.datastax.com">academy.datastax.com"</a> et <a href="https://datastax.com/dev">datastax.com/dev</a>. Participer à cette session (live) vous ouvre le droit à un voucher pour 2 tentatives gratuites aux certifications <i>(au lieu de 145$).</i>.</p>
+DataStax propose <a href="https://www.datastax.com/dev/certifications">3 certifications</a> autour des technologies Apache Cassandra™. En 3h il nous est impossible de tout couvrir pour prétendre à la certification. Cependant tous les cours nécessaires sont disponibles sur <a href="https://academy.datastax.com">academy.datastax.com"</a> et <a href="https://datastax.com/dev">datastax.com/dev</a>. Participer à cette session (live) vous ouvre le droit à un voucher pour 2 tentatives gratuites aux certifications <i>(au lieu de 145$)</i>.</p>
 </details>
 <p/>
 
 ## Supports de Formation
 
-Que vous soyez dans la salle avec nous pour Devoxx ou que vous regardiez la session maintenant sur Youtube voici toutes les supports nécessaires:
+Que vous soyez dans la salle avec nous pour Devoxx ou que vous regardiez la session maintenant sur Youtube voici toutes les supports nécessaires :
 
 - [Les slides](slides.pdf)
 - [Les labs](/hands-on)
 - [Une invitation sur notre serveur Discord](https://bit.ly/cassandra-workshop) pour échanger et rejoindre la communauté.
 - [Notre forum, community.datastax.com](https://community.datastax.com/) afin de poser vos questions.
 
-## LAB1 - Création de la base de donnée
+## LAB1 - Création de la base de données
 
 ## 1.1 - Démarrage de `Gitpod`
 
-[Gitpod](https://www.gitpod.io/) est un IDE 100% dans le cloud. Il s'appuie sur [VS Code](https://github.com/gitpod-io/vscode/blob/gp-code/LICENSE.txt?lang=en-US) et fourni de nombreux outils pour développer dans plusieurs langages.
+[Gitpod](https://www.gitpod.io/) est un IDE 100% dans le cloud. Il s'appuie sur [VS Code](https://github.com/gitpod-io/vscode/blob/gp-code/LICENSE.txt?lang=en-US) et fournit de nombreux outils pour développer dans plusieurs langages.
 
-#### `✅.001`- _Click-Droit_ sur le bouton pour ouvrir gitpod dans un nouveau ongley sur votre navigateur.
+#### `✅.001`- _Click-Droit_ sur le bouton pour ouvrir gitpod dans un nouveau onglet sur votre navigateur.
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/datastaxdevs/conferennce-2022-devoxx)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/datastaxdevs/conference-2022-devoxx){:target="_blank"}
 
 ## 1.2 - Apache Cassandra™ dans `Docker`
 
