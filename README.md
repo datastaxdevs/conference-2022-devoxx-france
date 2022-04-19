@@ -52,7 +52,7 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
   - [4.11 - Les Counters](#411---les-counters)
   - [4.12 - Les Lightweight Transactions](#412---les-lightweight-transactions)
   - [4.13 - Object Mapping](#413---object-mapping)
-- [#**LAB 5 - Spring Data Cassandra**]#lab-5---spring-data-cassandra)
+- [#**LAB 5 - Spring Data Cassandra**](#lab-5---spring-data-cassandra)
   - [5.1 - Connexion et Configuration](#51---configuration)
   - [5.2 - Comprendre les `CrudRepositories`](#52---comprendre-les-crudrepositories)
   - [5.3 - Manipulation de `CassandraOperations`](#53---cassandraoperations)
@@ -134,6 +134,10 @@ Que vous soyez dans la salle avec nous pour Devoxx ou que vous regardiez la sess
 - [Les labs](/hands-on)
 - [Une invitation sur notre serveur Discord](https://bit.ly/cassandra-workshop) pour échanger et rejoindre la communauté.
 - [Notre forum, community.datastax.com](https://community.datastax.com/) afin de poser vos questions.
+
+<p/><br/>
+
+> [🏠 Retour à la table des matières](#-table-des-matières)
 
 ## LAB1 - Création de la base de données
 
@@ -521,6 +525,10 @@ DESCRIBE KEYSPACES;
 > netflix                datastax_sla        system_traces
 > system_schema          data_endpoint_auth  ecommerce
 > ```
+
+<p/><br/>
+
+> [🏠 Retour à la table des matières](#-table-des-matières)
 
 # LAB2 - Les Fondamentaux d'Apache Cassandra™
 
