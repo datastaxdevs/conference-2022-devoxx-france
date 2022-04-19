@@ -4368,3 +4368,15 @@ mvn test -Dtest=com.datastax.workshop.E04_MicronautController
 #### 🖥️ Logs
 
 ![](img/micronaut_test_04.png?raw=true)
+
+---
+
+Vous êtes à la fin de la session félicitations !!
+
+![](img/end.gif?raw=true)
+
+Si la session vous a plu.
+
+- Rejoignez mon réseau sur [linkedin](https://www.linkedin.com/in/clunven/)
+- Twittez à propos de la session avec `@clunven` et `#DevoxxFR`
+- Notez la session sur l'application `Devoxx`
