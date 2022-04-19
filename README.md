@@ -3868,7 +3868,21 @@ mvn test -Dtest=com.datastax.workshop.E03_SpringDataCassandraOperations
 
 ## 5.4 - Application Spring Boot
 
-- Les différents `Repository` peuvent être injectés dans les controllers et exposés au niveau des API. Une bonne pratique est de séparer les objets utilisés dans la couche d'accès aux données (entités) des objets utilisés dans les Apis (DTO).
+#### 📘 Ce qu'il faut retenir:
+
+- Les différents `Repository` peuvent être injectés dans les controllers et exposés au niveau des APIs.
+
+![](img/spring_layers.png?raw=true)
+
+Une bonne pratique est de séparer les objets utilisés dans la couche d'accès aux données (entités) des objets utilisés dans les Apis (DTO).
+
+#### `✅.136`- Lancer l'application
+
+```bash
+mvn spring-boot:run
+```
+
+#### `✅.137`- Tests d'integration de l'application
 
 ```
 mvn spring-boot:run

@@ -8,16 +8,8 @@ import org.springframework.data.cassandra.core.mapping.Column;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(value = TodoEntity.TABLENAME)
-@ToString
 public class TodoEntity {
     
     public static final String TABLENAME        = "todos";
@@ -43,8 +35,103 @@ public class TodoEntity {
     @CassandraType(type = Name.INT)
     private int order = 0;
     
+    
+    public TodoEntity() {}
+    
+    public TodoEntity(UUID uid, String title, boolean completed, int order) {
+        super();
+        this.uid = uid;
+        this.title = title;
+        this.completed = completed;
+        this.order = order;
+    }
+
     public TodoEntity(String title, int offset) {
         this(UUID.randomUUID(), title, false, offset);
+    }
+    
+    
+
+    /**
+     * Getter accessor for attribute 'uid'.
+     *
+     * @return
+     *       current value of 'uid'
+     */
+    public UUID getUid() {
+        return uid;
+    }
+
+    /**
+     * Setter accessor for attribute 'uid'.
+     * @param uid
+     * 		new value for 'uid '
+     */
+    public void setUid(UUID uid) {
+        this.uid = uid;
+    }
+
+    /**
+     * Getter accessor for attribute 'title'.
+     *
+     * @return
+     *       current value of 'title'
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * Setter accessor for attribute 'title'.
+     * @param title
+     * 		new value for 'title '
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    /**
+     * Getter accessor for attribute 'completed'.
+     *
+     * @return
+     *       current value of 'completed'
+     */
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    /**
+     * Setter accessor for attribute 'completed'.
+     * @param completed
+     * 		new value for 'completed '
+     */
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
+
+    /**
+     * Getter accessor for attribute 'order'.
+     *
+     * @return
+     *       current value of 'order'
+     */
+    public int getOrder() {
+        return order;
+    }
+
+    /**
+     * Setter accessor for attribute 'order'.
+     * @param order
+     * 		new value for 'order '
+     */
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return "+ TodoEntity [uid=" + uid + ", title=" + title + ", completed=" + completed + ", order=" + order + "]";
     }
 
 }
