@@ -1196,7 +1196,7 @@ WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 Vérification:
 
 ```sql
-SELECT id, name, emails FROM users;
+SELECT id, name, preferences FROM users;
 ```
 
 </details>
