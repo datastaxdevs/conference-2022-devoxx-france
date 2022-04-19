@@ -2915,34 +2915,64 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E02_Statements
 
 - On commence par définir les différents requêtes que l'on `prepare()` pour obtenir des `PreparedStatement`
 
-```java
-private void prepareStatements(CqlSession cqlSession) {
+> ```java
+> private void prepareStatements(CqlSession cqlSession) {
+>
+>   // Create (upsert)
+>   stmtCreateUser = cqlSession.prepare(QueryBuilder
+>     .insertInto(USER_TABLENAME)
+>     .value(USER_EMAIL, QueryBuilder.bindMarker())
+>     .value(USER_FIRSTNAME, QueryBuilder.bindMarker())
+>     .value(USER_LASTNAME, QueryBuilder.bindMarker())
+>     .build());
+>
+>   // READ
+>   stmtExistUser = cqlSession.prepare(QueryBuilder
+>     .selectFrom(USER_TABLENAME).column(USER_EMAIL)
+>     .whereColumn(USER_EMAIL)
+>     .isEqualTo(QueryBuilder.bindMarker())
+>     .build());
+>
+>   // DELETE
+>   stmtDeleteUser = cqlSession.prepare(QueryBuilder
+>      .deleteFrom(USER_TABLENAME)
+>      .whereColumn(USER_EMAIL)
+>      .isEqualTo(QueryBuilder.bindMarker())
+>      .build());
+> }
+> ```
 
-  // Create
-  stmtCreateUser = cqlSession.prepare(QueryBuilder
-    .insertInto(USER_TABLENAME)
-    .value(USER_EMAIL, QueryBuilder.bindMarker())
-    .value(USER_FIRSTNAME, QueryBuilder.bindMarker())
-    .value(USER_LASTNAME, QueryBuilder.bindMarker())
-    .ifNotExists().build());
+- On les utilise ensuite avec des `bind()`
 
-  // READ
-  stmtExistUser = cqlSession.prepare(QueryBuilder
-    .selectFrom(USER_TABLENAME).column(USER_EMAIL)
-    .whereColumn(USER_EMAIL)
-    .isEqualTo(QueryBuilder.bindMarker())
-    .build());
+> ```java
+> boolean existUser(CqlSession cqlSession, String email) {
+>   return cqlSession.execute(stmtExistUser.bind(email)).getAvailableWithoutFetching() > 0;
+> }
+> ```
 
-  // DELETE
-  stmtDeleteUser = cqlSession.prepare(QueryBuilder
-     .deleteFrom(USER_TABLENAME)
-     .whereColumn(USER_EMAIL)
-     .isEqualTo(QueryBuilder.bindMarker())
-     .build());
-}
-```
+> void deleteUser(CqlSession cqlSession, String email) {
+> cqlSession.execute(stmtDeleteUser.bind(email));
+> }
+>
+> ```
+>
+> ```
 
-#### `✅.120`- Executer la classe example
+- Les requêtes retournent un `ResultSet` contenant un iterable de `Row`. Lorsque le resultat est unique nous pouvons utiliser `one()`. On access aux différentes colonnes par le nom et le type exemple `.getString("colonne")`
+
+> ```java
+> ResultSet rs = cqlSession.execute(stmtFindUser.bind(email));
+> Row record = rs.one();
+>
+> public UserDto(Row tableUsersRow) {
+>   super();
+>   this.email      = tableUsersRow.getString(USER_EMAIL);
+>   this.firstName  = tableUsersRow.getString(USER_FIRSTNAME);
+>   this.lastName   = tableUsersRow.getString(USER_LASTNAME);
+> }
+> ```
+
+#### `✅.120`- Exécuter la classe example
 
 ```bash
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E03_OperationsCrud
@@ -2972,11 +3002,30 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E03_Operations
 
 ## 4.5 - Batches
 
-#### `✅.121`- Executer la classe example
+#### 📘 Ce qu'il faut retenir:
+
+- Le batch est implémenter au traver d'un `BatchStatement` en y ajoutant les autres `Statements`
+
+> ```java
+> private static void updateComment(CqlSession cqlSession,
+>   UUID commentid, UUID userid,
+>   UUID videoid, String comment) {
+>   cqlSession.execute(BatchStatement
+>     .builder(BatchType.LOGGED)
+>     .addStatement(stmt1.bind(videoid, userid, commentid, comment))
+>     .addStatement(stmt2.bind(userid, videoid, commentid, comment))
+>     .build()
+>     );
+> }
+> ```
+
+#### `✅.121`- Exécuter la classe example
 
 ```bash
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E04_Batches
 ```
+
+#### 🖥️ Logs
 
 ```bash
 01:27:49.909 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
@@ -2997,11 +3046,38 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E04_Batches
 
 ## 4.6 - Pagination
 
+#### 📘 Ce qu'il faut retenir:
+
+- Avec Cassandra toutes les requêtes sont paginées, la taille la page (pageSize) par défaut `5000`.
+
+- Le drivers ira chercher les données de la page suivante de manière transparente si vous travaillez avec l'iterable de `Row` du resultset. Pour ne pas le faire il faut travailler avec `getAvailableWithoutFetching()`.
+
+> ```java
+> ResultSet page1 = cqlSession.execute(statement);
+>
+> Iterator<Row> page1Iter = page1.iterator();
+> while (0 <  page1.getAvailableWithoutFetching()) {
+>   LOGGER.info("Page1: " + page1Iter.next().getString(USER_EMAIL));
+> }
+> ```
+
+- Le resultset contient un `pagingState` qu'il est nécessaire de conserver et de re-spécifié si la requête pour la page suivante intervient plus tard. (comportement fréquent avec les interfaces utilisateurs).
+
+> ```java
+> ByteBuffer pagingStateAsBytes = page1.getExecutionInfo().getPagingState();
+>
+> // Preparation page 2
+> statement.setPagingState(pagingStateAsBytes);
+> ResultSet page2 = cqlSession.execute(statement);
+> ```
+
 #### `✅.122`- Executer la classe example
 
 ```bash
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E05_Paging
 ```
+
+#### 🖥️ Logs
 
 ```bash
 01:30:21.231 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
