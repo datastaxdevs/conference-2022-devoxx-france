@@ -1190,7 +1190,7 @@ WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 
 UPDATE users
 SET preferences['quality'] = 'auto'
-WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;</pre>
+WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 ```
 
 Vérification:
