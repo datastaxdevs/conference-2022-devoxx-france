@@ -1181,7 +1181,8 @@ SELECT name, sessions FROM users;
 <p/>
 <details>
 <summary>Cliquer pour afficher la solution</summary>
-<pre>
+
+```sql
 ALTER TABLE users ADD preferences MAP<TEXT,TEXT>;
 UPDATE users 
 SET preferences['color'] = 'dark'
@@ -1190,8 +1191,13 @@ WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 UPDATE users
 SET preferences['quality'] = 'auto'
 WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;</pre>
+```
 
-Vérification:<pre>SELECT id, name, emails FROM users;</pre>
+Vérification:
+
+```sql
+SELECT id, name, emails FROM users;
+```
 
 </details>
 <p/>
