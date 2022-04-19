@@ -3825,7 +3825,7 @@ public class TodoRepositorySimpleCassandra extends SimpleCassandraRepository<Tod
 }
 ```
 
-- L'objet `CqlSession` fait parti du contexte Spring et vous pouvez également l'utiliser au besoin.
+- L'objet `CqlSession` fait partie du contexte Spring et vous pouvez également l'utiliser au besoin.
 
 #### `✅.135`- Utiliser `CassandraOperations` et un `SimpleCassandraRepository`
 
@@ -3878,37 +3878,67 @@ Une bonne pratique est de séparer les objets utilisés dans la couche d'accès 
 
 #### `✅.136`- Lancer l'application
 
+- Démarrer l'application à l'aide du plugin `spring-boot`
+
 ```bash
 mvn spring-boot:run
 ```
 
-#### `✅.137`- Tests d'integration de l'application
+- L'application démarre sur le port `8080`. La liste des `todos` est disponible sur `http://localhost:8080/api/v1/todos/`. Sur gitpod les ports n'étant pas ouverts il y a aura une translation d'adresse. Afficher l'Url gitpod
 
-```
-mvn spring-boot:run
-```
+![](img/spring_api_local.png?raw=true)
 
-You can access Hello world
+- Afficher l'url translatée par `Gitpod` _(`gp` est la ligne de commande de gitpod)_
 
-```
-http://localhost:8080/
+```bash
+gp url 8080
 ```
 
-You can interact with the API
+- Afficher la liste des `todos`
 
 ```
-
+gp preview "$(gp url 8080)/api/v1/todos/"
 ```
 
-You can work with an external user interface
+![](img/spring_api_gitpod.png?raw=true)
 
+#### `✅.137`- Tests d'intégration de l'application
+
+- Stopper l'application avec un `CTRL+C`
+
+- Exécuter les unitaires suivant:
+
+```bash
+cd /workspace/conference-2022-devoxx/labs/2-spring-data
+mvn test -Dtest=com.datastax.workshop.E04_SpringControllerTest
 ```
 
+#### 🖥️ Logs
+
+```bash
+[INFO] Running com.datastax.workshop.E04_SpringControllerTest
+ ________                                  _______________   ________ ________
+ \______ \   _______  _________  ______  __\_____  \   _  \  \_____  \\_____  \
+ |    |  \_/ __ \  \/ /  _ \  \/  /\  \/  //  ____/  /_\  \  /  ____/ /  ____/
+ |    `   \  ___/\   (  <_> >    <  >    </       \  \_/   \/       \/       \
+ /_______  /\___  >\_/ \____/__/\_ \/__/\_ \_______ \_____  /\_______ \_______ \
+ \/     \/                \/      \/       \/     \/         \/       \/
+
+ The application will start at http://localhost:8080
+
+15:41:30.731 INFO  com.datastax.workshop.E04_SpringControllerTest : Starting E04_SpringControllerTest using Java 17.0.1 on clunven-rmbp16 with PID 41891 (started by cedricklunven in /Users/cedricklunven/dev/workspaces/datastax/conference-2022-devoxx/labs/2-spring-data)
+15:41:30.733 INFO  com.datastax.workshop.E04_SpringControllerTest : No active profile set, falling back to default profiles: default
+15:41:34.436 INFO  com.datastax.workshop.E04_SpringControllerTest : Started E04_SpringControllerTest in 3.898 seconds (JVM running for 4.712)
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.918 s - in com.datastax.workshop.E04_SpringControllerTest
 ```
 
 # LAB 6 - Cassandra Quarkus Extension
 
 ## 6.1 - Configuration
+
+#### 📘 Ce qu'il faut retenir:
+
+- [Quarkus](https://quarkus.io/) est un framework pour construire des microservices sur la plateforme Java. Le parti pris est de r
 
 To isolate the `Quarkus` work from what we did previous let's create a new keypace.
 
@@ -3918,7 +3948,7 @@ To isolate the `Quarkus` work from what we did previous let's create a new keypa
 
 ![image](img/new_keyspace.png?raw=true)
 
-- \*Create the `spring_data` keyspace the DB will shoft in maintenance for a few seconds.
+- Create the `spring_data` keyspace the DB will shift in maintenance for a few seconds.
 
 ![image](img/new_keyspace3.png?raw=true)
 
