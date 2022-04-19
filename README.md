@@ -2793,15 +2793,9 @@ CREATE TABLE devoxx_drivers.videos_views (
 );
 ```
 
-#### `✅.118`- Création du schéma
+#### 📘 Ce qu'il faut retenir:
 
-- Exécuter la classe `E01_CreateSchema` pour créer les tables et les types nécessaires.
-
-```bash
-mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E01_CreateSchema
-```
-
-#### 📘 On notera que
+- Pour exécuter une requête on travaille avec l'object `CqlSession` et la méthode `execute()`.
 
 - Les requêtes sont construites en utilisant un builder `SchemaBuilder`.
 
@@ -2816,6 +2810,14 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E01_CreateSche
 > ```
 
 - Les constantes sont regroupées dans un interface `SchemaConstants`. C'est une bonne pratique. En cas de renommage d'une colonne il ne faut changer qu'un seul fichier.
+
+#### `✅.118`- Création du schéma
+
+- Exécuter la classe `E01_CreateSchema` pour créer les tables et les types nécessaires.
+
+```bash
+mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E01_CreateSchema
+```
 
 #### 🖥️ Logs
 
@@ -2909,11 +2911,44 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E02_Statements
 
 ## 4.4 - Opération `Create`, `Read`, `Update`, `Delete` (CRUD)
 
+#### 📘 Ce qu'il faut retenir:
+
+- On commence par définir les différents requêtes que l'on `prepare()` pour obtenir des `PreparedStatement`
+
+```java
+private void prepareStatements(CqlSession cqlSession) {
+
+  // Create
+  stmtCreateUser = cqlSession.prepare(QueryBuilder
+    .insertInto(USER_TABLENAME)
+    .value(USER_EMAIL, QueryBuilder.bindMarker())
+    .value(USER_FIRSTNAME, QueryBuilder.bindMarker())
+    .value(USER_LASTNAME, QueryBuilder.bindMarker())
+    .ifNotExists().build());
+
+  // READ
+  stmtExistUser = cqlSession.prepare(QueryBuilder
+    .selectFrom(USER_TABLENAME).column(USER_EMAIL)
+    .whereColumn(USER_EMAIL)
+    .isEqualTo(QueryBuilder.bindMarker())
+    .build());
+
+  // DELETE
+  stmtDeleteUser = cqlSession.prepare(QueryBuilder
+     .deleteFrom(USER_TABLENAME)
+     .whereColumn(USER_EMAIL)
+     .isEqualTo(QueryBuilder.bindMarker())
+     .build());
+}
+```
+
 #### `✅.120`- Executer la classe example
 
 ```bash
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E03_OperationsCrud
 ```
+
+#### 🖥️ Logs
 
 ```bash
 01:27:16.760 INFO  com.datastax.samples.CqlSessionProvider       : Creating your CqlSession to Cassandra...
