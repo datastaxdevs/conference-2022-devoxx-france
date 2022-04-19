@@ -8,7 +8,7 @@
 
 <img src="img/badge.png?raw=true" width="200" align="right"/>
 
-Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **développeurs**. L'objectif est de vous rendre _dangereux_ avec la technologie et savoir la mettre en oeuvre rapidement sur vos projets.
+Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **développeurs**. L'objectif est de vous rendre _dangereux_ avec la technologie et savoir la mettre en œuvre rapidement sur vos projets.
 
 ⏲️ **Durée :** 3 heures
 
@@ -114,7 +114,7 @@ Bienvenue dans ce workshop de découverte d'Apache Cassandra™ adressé aux **d
 <details>
 <summary><b> 3️⃣ Les outils resteront-ils gratuits après la session ?</b></summary>
 <hr>
-<b>Absolutement.</b> Toutes les solutions utilisées aujourd'hui sont gratuites. Pour les démonstrations avec les produits en Saas aucune carte de crédit ne sera demandée ni maintenant, ni après.
+<b>Absolument.</b> Toutes les solutions utilisées aujourd'hui sont gratuites. Pour les démonstrations avec les produits en Saas aucune carte de crédit ne sera demandée ni maintenant, ni après.
 </details>
 <p/>
 <details>
@@ -166,7 +166,7 @@ Lorsque Gitpod est démarré, localiser le terminal `cassandra-docker`. Il devra
 
 Dans le répertoire `labs` repérer le fichier `docker-compose.yml`. Nous allons utiliser l'[image officielle Docker Apache Cassandra™](https://hub.docker.com/_/cassandra/).
 
-#### `✅.002`- Ouvrir le fichier et visualiser comment le `seed` est un service séparé des autres noeuds. La recommentation est de 2 à 3 `seeds` par datacenter (anneau).
+#### `✅.002`- Ouvrir le fichier et visualiser comment le `seed` est un service séparé des autres nœuds. La recommandation est de 2 à 3 `seeds` par datacenter (anneau).
 
 ```bash
 gp open /workspace/conference-2022-devoxx/labs/docker-compose.yml
@@ -190,7 +190,7 @@ docker-compose up -d
 
 #### `✅.004`- Afficher le statut des conteneurs avec `Docker`
 
-Les deux conteneurs (services) démarrent. Le second réalise une temporisation de 30 seconds afin d'attendre que le noeud seed bootstrape.
+Les deux conteneurs (services) démarrent. Le second réalise une temporisation de 30 secondes afin d'attendre que le nœud seed bootstrappe.
 
 ```bash
 docker ps
@@ -229,7 +229,7 @@ echo "container ID saved: $dc1_seed_containerid"
 docker exec -it $dc1_seed_containerid nodetool status
 ```
 
-> 🖥️ Résultat (après environ 1min)
+> 🖥️ Résultat (après environ 1 minute)
 >
 > ```
 > Datacenter: dc1
@@ -259,7 +259,7 @@ Nous n'avons pas définis de volumes sur les services docker. Si vous éteignez 
 
 #### `✅.009`- Vérifier le statut
 
-Attendez une bonne minute pour laisser le temps aux noeuds de joindre le cluster et de boostraper puis exécuter:
+Attendez une bonne minute pour laisser le temps aux noeuds de joindre le cluster et de bootstrapper puis exécuter:
 
 ```bash
 docker exec -it $dc1_seed_containerid nodetool status
@@ -343,7 +343,7 @@ WITH REPLICATION = {
 }  AND DURABLE_WRITES = true;
 ```
 
-`NetworkTopologyStrategy` sera toujours la classe à utiliser sauf dans le cas d'un noeud unique pour les développements auxquel cas on utilisera `SimpleReplicationStrategy`.
+`NetworkTopologyStrategy` sera toujours la classe à utiliser sauf dans le cas d'un nœud unique pour les développements auquel cas on utilisera `SimpleReplicationStrategy`.
 
 ```sql
 CREATE KEYSPACE IF NOT EXISTS test
