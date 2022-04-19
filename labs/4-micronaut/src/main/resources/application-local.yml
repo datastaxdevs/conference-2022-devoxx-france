@@ -1,0 +1,53 @@
+# Core Application
+micronaut:
+  application:
+    name: astra-todo-micronaut
+  server:
+    port: 9292
+    cors:
+      enabled: true
+
+# ===========================
+# Custom property TODOLIST
+# ===========================
+todo:
+  #persistence: inmemory
+  #persistence: cassandra-cql
+  persistence: cassandra-om
+  cassandra:
+    create_schema: true
+
+# Local Cassandra
+#cassandra:
+#  default:
+#    basic:
+#      session-keyspace: native_java
+#      contact-points:
+#        - "localhost:9042"
+#      load-balancing-policy:
+#        local-datacenter: datacenter1
+# ---------------------------------------
+
+# Astra
+cassandra:
+  default:
+    basic:
+      request:
+        timeout: 5 seconds
+        consistency: LOCAL_QUORUM
+        page-size: 5000
+      session-keyspace: native_java
+      cloud:
+        secure-connect-bundle: /Users/cedricklunven/Downloads/secure-connect-workshops.zip
+    advanced:
+      auth-provider:
+        class: PlainTextAuthProvider
+        username: token
+        password: "AstraCS:gdZaqzmFZszaBTOlLgeecuPs:edd25600df1c01506f5388340f138f277cece2c93cb70f4b5fa386490daa5d44"
+      connection:
+        init-query-timeout: 10 seconds          
+        set-keyspace-timeout: 10 seconds
+      control-connection.timeout: 10 seconds
+
+
+
