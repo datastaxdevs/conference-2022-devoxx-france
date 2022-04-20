@@ -1060,7 +1060,7 @@ WHERE id = 5069cc15-4300-4595-ae77-381c3af5dc5e;
 SELECT title, year, production FROM movies;
 ```
 
-#### `✅.050`- Exercice `SET`\*\*
+#### `✅.050`- Exercice `SET`
 
 - Ajouter une colonne `genres` de type `SET<TEXT>` dans la table `movies`
 - Ajouter les valeurs `Aventure`, `Famille` et `Fantasie` dans le set `genres` pour l'identifiant `5069cc15-4300-4595-ae77-381c3af5dc5e`.
@@ -2460,12 +2460,12 @@ Un vétérinaire peut avoir plusieurs spécialités.
 
 ![](img/petclinic_10.png?raw=true)
 
-#### `✅.112`- Création du keyspace `devoxx_dm_petclinic`
+#### `✅.112`- Création du keyspace `spring_petclinic`
 
 _Dans Docker:_
 
 ```sql
-CREATE KEYSPACE IF NOT EXISTS devoxx_dm_petclinic
+CREATE KEYSPACE IF NOT EXISTS spring_petclinic
 WITH REPLICATION = {
   'class' : 'NetworkTopologyStrategy',
   'dc1' : 3
@@ -2483,7 +2483,7 @@ _Créer le keyspace `devoxx_dm_petclinic` et valider avec `SAVE`_
 #### `✅.113`- Création du schéma
 
 ```sql
-use devoxx_dm_petclinic;
+use spring_petclinic;
 
 DROP INDEX IF EXISTS petclinic_idx_vetname;
 DROP INDEX IF EXISTS petclinic_idx_ownername;
@@ -2560,6 +2560,8 @@ VALUES ('pet_type ', {'bird', 'cat', 'dog', 'lizard','hamster','snake'});
 INSERT INTO petclinic_reference_lists(list_name, values)
 VALUES ('vet_specialty', {'radiology', 'dentistry', 'surgery'});
 ```
+
+Le code de l'application Petclinic est disponible à [workshop spring pet clinic](https://github.com/datastaxdevs/workshop-spring-reactive)> Vous pourriez également la lancer dans un second gitpod.
 
 Vous avez désormais l'ensemble des bases pour bien démarrer avec Apache Cassandra™ et construire des modèles de données performants.
 
@@ -2749,6 +2751,8 @@ Vous devez obtenir un `SUCCESS` dans la console.
 Afin d'illustrer une grand nombre de cas d'usages et non se limiter au _Hello World_ nous allons travailler avec les objets listés ci-dessous. La première étape sera de définir les objets en utilisant du code.
 
 ```sql
+use devoxx_drivers;
+
 CREATE TYPE devoxx_drivers.video_format (
     width int,
     height int
