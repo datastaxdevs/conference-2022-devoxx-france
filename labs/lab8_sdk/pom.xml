@@ -9,7 +9,7 @@
 		<relativePath/>
 	</parent>
 	<groupId>com.datastax.samples</groupId>
-	<artifactId>javazone-4-sdk</artifactId>
+	<artifactId>LABlab8-4-sdk</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>javazone-4-sdk</name>
 	<description>Workshop to show Stargate APIs.</description>
