@@ -12,3 +12,4 @@ echo -e "${BLUE}- QUARKUS [OK]                                             -${NC
 echo -e "${BLUE}------------------------------------------------------------${NC}"
 
 
+cd /workspace/conference-2022-devoxx/labs/lab6_quarkus

@@ -10,3 +10,5 @@ clear
 echo -e "${BLUE}------------------------------------------------------------${NC}"
 echo -e "${BLUE}- MICRONAUT [OK]                                           -${NC}"
 echo -e "${BLUE}------------------------------------------------------------${NC}"
+
+cd /workspace/conference-2022-devoxx/labs/lab7_micronaut
