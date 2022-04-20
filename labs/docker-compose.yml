@@ -10,7 +10,7 @@ services:
       - cassandra
     mem_limit: 2G
     volumes:
-      - ./data_modelling:/tmp/data_modelling
+      - ./lab3_data_modelling:/tmp/data_modelling
       #- ~/docker-volumes/dc1_seed/:/var/lib/cassandra/data
     environment:
       - CASSANDRA_DC=dc1

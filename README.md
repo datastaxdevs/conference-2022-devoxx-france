@@ -353,7 +353,7 @@ WITH REPLICATION = {
 } AND DURABLE_WRITES = true;
 ```
 
-`DURABLE_WRITES` ? Dans le chemin d'écriture Cassandra écrit en mémoire (`memtable`) avant de _flusher_ les valeurs sur disque (SSTABLE) soit par vacation soit lorsque'un seuil est atteint en mémoire. Utiliser `DURABLE_WRITES = true` permet d'ecrire dans le `commit log` avant même l'écriture en mémoire cela permet de ne pas perdre la donnée, il faut tout le temps le faire mais c'est la valeur par défaut.
+`DURABLE_WRITES` ? Dans le chemin d'écriture Cassandra écrit en mémoire (`memtable`) avant de _flusher_ les valeurs sur disque (SSTABLE) soit par vacation soit lorsqu'un seuil est atteint en mémoire. Utiliser `DURABLE_WRITES = true` permet d'écrire dans le `commit log` avant même l'écriture en mémoire cela permet de ne pas perdre la donnée, il faut tout le temps le faire mais c'est la valeur par défaut.
 
 #### `✅.014`- Lister les keyspaces
 
@@ -403,7 +403,7 @@ Lorsque vous créez un compte vous créez également une `Organization`, il s'ag
 ```mermaid
   graph TD
     USER(Utilisateur) -->|n...m|ORG(Organisations)
-    ORG -->|0..n|DB(Dabatases)
+    ORG -->|0..n|DB(Databases)
     DB  -->|1..n|KS(Keyspaces)
     ORG -->|0..n|STR(Streaming Tenants)
 ```
@@ -412,7 +412,7 @@ Lorsque vous créez un compte vous créez également une `Organization`, il s'ag
 
 > 📖 Documentation: [Créer vos identifiants pour Astra 🇬🇧](https://awesome-astra.github.io/docs/pages/astra/create-token/#c-procedure)
 
-Lorsque vous créez un jeton, il faut lui associer un role qui regroupe plusieurs permissions.
+Lorsque vous créez un jeton, il faut lui associer un rôle qui regroupe plusieurs permissions.
 
 ```mermaid
   graph TD
@@ -422,7 +422,7 @@ Lorsque vous créez un jeton, il faut lui associer un role qui regroupe plusieur
     ROLE-->|1..n|PERMISSIONS(permissions)
 ```
 
-Pour la session, utiliser le role `Database Administrator` afin d'avoir accès à tout.
+Pour la session, utiliser le rôle `Database Administrator` afin d'avoir accès à tout.
 
 Télécharger le fichier `CSV` localement, les informations affichées ne seront plus disponibles ultérieurement pour des raisons de sécurité.
 
@@ -444,7 +444,7 @@ Vos identifiants contiennent 3 champs:
 
 ### 1.3.2 - Configurer `Gitpod`
 
-Dans `Gitpod`, repérer le terminal `cassandra-astra` nous allons configurer `cqlsh` pour utiliser la base de donnée Cassandra dans ASTRA 🚀.
+Dans `Gitpod`, repérer le terminal `cassandra-astra` nous allons configurer `cqlsh` pour utiliser la base de données Cassandra dans ASTRA 🚀.
 
 On pourra noter que la console CQLSH est également disponible dans l'interface web Astra en tant qu'onglet nommé `CQL Console`. Cependant pour ne pas multiplier les fenêtres nous vous invitons à rester dans gitpod.
 
@@ -558,7 +558,7 @@ Sans suspense, le keyspace est vide.
 desc tables;
 ```
 
-#### `✅.028`- Créer de votre première table.
+#### `✅.028`- Créer votre première table.
 
 ```sql
 CREATE TABLE IF NOT EXISTS city_by_country (
@@ -701,7 +701,7 @@ On notera:
 - Que la personne qui rédige le Lab a une nette préférence pour les villes françaises.
 - Que les instructions sont très proches du `SQL`
 
-#### `✅.030`- Lister les engistrements de la table
+#### `✅.030`- Lister les enregistrements de la table
 
 Exécuter la requête sans fournir de filtre.
 
@@ -768,7 +768,7 @@ WHERE country='JP';</pre>
 </details>
 <p/>
 
-> Lorsque l'on supprime un enregistrement en réalité la donnée est toujours dans la table. On vient ajouter une ligne dite `Tombstone` qui indique la valeur à vide. Si vous manquez de place sur disque le `DELETE` peut etre dangeureux.
+> Lorsque l'on supprime un enregistrement, en réalité la donnée est toujours dans la table. On vient ajouter une ligne dite `Tombstone` qui indique la valeur à vide. Si vous manquez de place sur disque, un `DELETE` peut être dangeureux.
 
 #### `✅.035`- Supprimer les enregistrements pour le Canada `(CA)`
 
@@ -819,7 +819,7 @@ Dans la clause _`SELECT`_ on trouve :
 
 - les caractères généraux comme `*`
 - le nom des colonnes
-- des aggrégats comme `COUNT()` et `AVG()`
+- des agrégats comme `COUNT()` et `AVG()`
 - des fonctions numériques notamment sur le time-to-live (`TTL`) et le timestamp d'écriture (`WRITETIME`).
 
 Dans la clause _`FROM`_ on trouve :
@@ -835,9 +835,9 @@ Dans la clause _`WHERE`_ on trouve les critères de filtre des enregistrements m
 
 La clause de `GROUP BY` permet de grouper les enregistrements par clé de partition puis clustering colonnes (`clustering key`) dans **l'ordre de définition** de la clé primaire.
 
-Les clauses `LIMIT` et ` PER PARTITION LIMIT` permettent de limiter le nombre d'enregistrement retournés globalement ou par partition.
+Les clauses `LIMIT` et ` PER PARTITION LIMIT` permettent de limiter le nombre d'enregistrements retournés globalement ou par partition.
 
-La clause `ALLOW FILTERING` permet d'autoriser le _full scan_ du cluster et de ne pas uniquement rechercher sur la clé primaire. La règle est de **toujours éviter de l'utiliser**. Il existe un cas aux limites lorsque la clé de partition est connue et que la taille de la partition est failble.
+La clause `ALLOW FILTERING` permet d'autoriser le _full scan_ du cluster et de ne pas uniquement rechercher sur la clé primaire. La règle est de **toujours éviter de l'utiliser**. Il existe un cas aux limites lorsque la clé de partition est connue et que la taille de la partition est faible.
 
 #### `✅.037`- Requêter la clé de partition avec une égalité `=`
 
@@ -963,7 +963,7 @@ Il existe en revanche des types de données dits _avancés_ sur lesquels il conv
 
 Un `UUID` est un nombre sur 128 bits qui peut être généré automatiquement. Ils sont utilisés pour identifier une entité ou une relation dans les bases Cassandra.
 
-Ils fournissent une manière efficace de créer des identifiants sans introduire de synchronisation entre les noeuds. On s'affranchit ainsi d'`UPSERT` involontaires lors des accès concurrents (`MAX()`).
+Ils fournissent une manière efficace de créer des identifiants sans introduire de synchronisation entre les nœuds. On s'affranchit ainsi d'`UPSERT` involontaires lors des accès concurrents (`MAX()`).
 
 Le CQL supporte les 2 types suivants:
 
@@ -1032,7 +1032,7 @@ Vérification:<pre>SELECT * FROM movies;</pre>
 
 ### 2.4.2 - Les `SET`
 
-Comme en Java un `SET` est un attribut multi-valué, non ordonné, qui assure l'unicité de chaque enregistrement (dédoublonnage). Il a lui même un `type` qui indique quels renseignent sur les objets que l'on peut y insérer.
+Comme en Java un `SET` est un attribut multi-valué, non ordonné, qui assure l'unicité de chaque enregistrement (dédoublonnage). Il a lui-même un `type` qui indique quels objets l'on peut y insérer.
 
 #### `✅.048`- Ajouter une colonne `SET` dans la table `movies`
 
@@ -1088,7 +1088,7 @@ SELECT title, year, genres FROM movies;
 
 ### 2.4.3 - Les `LIST`
 
-Comme en Java une `LIST` est un attribut multi-valué, qui conserve l'ordre d'insertion. Il a lui même un `type` qui indique quels sont les objets que l'ont peut y insérer.
+Comme en Java une `LIST` est un attribut multi-valué, qui conserve l'ordre d'insertion. Il a lui-même un `type` qui indique quels sont les objets que l'on peut y insérer.
 
 Les données y sont indexées, on peut donc accéder à un élément en fournissant l'offset.
 
@@ -1137,7 +1137,7 @@ SELECT id, name, searches FROM users;
 
 ### 2.4.4 - Les `MAP`
 
-Les maps sont une collection de clé/valeur. Dans un map, chaque clé est unique. La clé et la valeur sont toute deux typées, on peut écrire une map sous la forme `MAP<TEXT, TEXT>`.
+Les maps sont une collection de clé/valeur. Dans un map, chaque clé est unique. La clé et la valeur sont toutes deux typées, on peut écrire une map sous la forme `MAP<TEXT, TEXT>`.
 
 #### `✅.053`- Ajouter une colonne `MAP` dans la table `users`
 
@@ -1150,7 +1150,7 @@ SELECT name, sessions FROM users;
 
 #### `✅.054`- Ajouter/Supprimer des éléments d'une `MAP`
 
-Pour mettre à jour la valeur d'une `MAP` ou utilise à nouveau les accolade `{ cle1:valeur1 , cle2:valeur2 }`.
+Pour mettre à jour la valeur d'une `MAP` ou utilise à nouveau les accolades `{ cle1:valeur1 , cle2:valeur2 }`.
 
 - Définir une session pour l'utilisateur `7902a572-e7dc-4428-b056-0571af415df3` en utilisant `now()`.
 
@@ -1210,9 +1210,9 @@ SELECT id, name, preferences FROM users;
 
 ### 2.4.5 - Collections Imbriquées 🪆🪆🪆
 
-Il est possible d'imbriquées les collections les unes dans les autres. On peut ainsi avoir une liste de listes de maps. (`LIST<LIST<MAP<TEXT,TEXT>>>`).
+Il est possible d'imbriquer les collections les unes dans les autres. On peut ainsi avoir une liste de listes de maps. (`LIST<LIST<MAP<TEXT,TEXT>>>`).
 
-Les collections imbriquées doivent contenir le terme `FROZEN`. Elles sont en effet stockées comme un blob. En d'autres termes, si l'un des items est mis à jour c'est toute la liste qui est réécrite.
+Les collections imbriquées doivent contenir le terme `FROZEN`. Elles sont en effet stockées comme un blob. En d'autres termes, si l'un des items est mis à jour, c'est toute la liste qui est réécrite.
 
 #### `✅.057`- Ajouter une colonne avec des collections imbriquées
 
@@ -1268,7 +1268,7 @@ A l'inverse des User Defined types (UDT), il est nécessaire de mettre à jour t
 
 ### 2.4.7 - Les `UDT` ou User Defined Type
 
-Les `UDT` ou `User Defined Type` sont des structures _custom_ que vous pouvez définir commr vous voulez, des sous-types à votre convenance. Il est possible de les imbriquer également avec la contrainte FROZEN présentée en [2.2.5](#).
+Les `UDT` ou `User Defined Type` sont des structures _custom_ que vous pouvez définir comme vous voulez, des sous-types à votre convenance. Il est possible de les imbriquer également avec la contrainte FROZEN présentée en [2.2.5](#).
 
 #### `✅.061`- Création d'un `UDT`
 
@@ -1329,7 +1329,7 @@ WHERE id = 7902a572-e7dc-4428-b056-0571af415df3;
 
 #### `✅.065`- Exercice UDT
 
-- Ajouter une colonne `previous_addresses` sur la table `user` comme une liste d'addresses (LIST<ADDRESS>), attention elle est considérée comme un type imbriqué.
+- Ajouter une colonne `previous_addresses` sur la table `user` comme une liste d'adresses (LIST<ADDRESS>), attention elle est considérée comme un type imbriqué.
 - Renseigner 2 valeurs de votre choix pour `previous_addresses` pour notre utilisateur `7902a572-e7dc-4428-b056-0571af415df3`.
 
 <p/>
@@ -1415,7 +1415,7 @@ SELECT * FROM movie_stats;
 #### `✅.068`- Exercice
 
 - Dans la table `movie_stats`, ajouter une nouvelle colonne de type `counter` avec le nom `num_views` indiquant le nombre de vues pour chaque film
-- Encrémenter le 3 fois de `1`.
+- Incrémenter le 3 fois de `1`.
 
 <p/>
 <details>
@@ -1640,7 +1640,7 @@ WHERE cart_id = b7255608-4a42-4829-9b84-a355e0e5100d;
 
 #### `✅.077`- Créations du schéma
 
-Pour des raisons de dénormalisation par exemple il est fréquent d'enregistrer la même donnée au sein de 2 tables avec des clés primaires différentes.
+Pour des raisons de dénormalisation par exemple, il est fréquent d'enregistrer la même donnée au sein de 2 tables avec des clés primaires différentes.
 
 - Créer deux tables `ratings_by_user` et `ratings_by_movie` indiquant le rating d'un film avec la colonne `rating` de type `int`.
 
@@ -1747,7 +1747,7 @@ FROM city_by_country
 WHERE country='FR';
 ```
 
-En revanche, il n'est pas possible de rechercher sur les villes uniquement (sans ALLOW FILTERING). La partition n'étant pas fournie cela entrainerait un full scan du cluster.
+En revanche, il n'est pas possible de rechercher sur les villes uniquement (sans ALLOW FILTERING). La partition n'étant pas fournie, cela entraînerait un full scan du cluster.
 
 ```sql
 SELECT *
@@ -1792,12 +1792,12 @@ describe index country_city_idx;
 
 > ℹ️ Il existe d'autres types d'index custom comme `Sasi` que nous n'aborderons pas en détail ici (pas dans Astra + pas activé par défaut dans Cassandra). Il possède une configuration plus fine et est adapté à certaines requêtes _full text_ ou range queries. [Plus d'informations ici](https://docs.datastax.com/en/dse/5.1/cql/cql/cql_using/useSASIIndex.html)
 
-Les indexes secondaires ne sont pas une garantie de performance. L'index est un dictionnaire qui associe la valeur de la colonne indexée à la liste partitions contenant la valeur. L'index est distribué entre les différents noeuds. Une requête avec index east donc par définitions assez lente:
+Les indexes secondaires ne sont pas une garantie de performance. L'index est un dictionnaire qui associe la valeur de la colonne indexée à la liste partitions contenant la valeur. L'index est distribué entre les différents nœuds. Une requête avec index est donc par définitions assez lente:
 
-- Pour une table donnée, demande à tous les noeuds N (stockant un partie de l'index) de lister les partitions contenant la valeur (P);
-- Pour chaque partition (P), scan pour répérer les enregistrements.
+- Pour une table donnée, demande à tous les nœuds N (stockant un partie de l'index) de lister les partitions contenant la valeur (P);
+- Pour chaque partition (P), scan pour repérer les enregistrements.
 
-La cardinalité est donc (P \* E) on ne multiplie pas par N car tous les noeuds travaillent mais le réseau peut également ralentir la requête. Plus d'informations sur les indexes secondaires sont disponibles [ici](https://www.doanduyhai.com/blog/?p=13191)
+La cardinalité est donc (P \* E) on ne multiplie pas par N car tous les nœuds travaillent mais le réseau peut également ralentir la requête. Plus d'informations sur les indexes secondaires sont disponibles [ici](https://www.doanduyhai.com/blog/?p=13191)
 
 ## 2.7 - Niveau de consistance
 
@@ -1809,30 +1809,30 @@ Lorsque l'on lit ou écrit dans la base, on définit combien de replicas doivent
 
 Les principaux CL sont listés dans le tableau ci-dessous mais vous pouvez consulter la liste exhaustive [ici](https://docs.datastax.com/en/dse/6.8/cql/cql/cql_reference/cqlsh_commands/cqlshConsistency.html).
 
-| Consistency Level | Description                                                                                                    |
-| ----------------- | -------------------------------------------------------------------------------------------------------------- |
-| ONE,TWO,THREE     | 1,2 ou 3 noeuds doivent répondre respectivement. _(`ONE` est non disponible sur Astra)_.                       |
-| LOCAL_ONE         | Un seul noeud dans l'anneau local (`local datacenter`) doit répondre. _(non disponible sur Astra)_.            |
-| QUORUM            | Une majorité des noeuds (n/2 + 1) doivent répondre peu importe le datacenter.                                  |
-| LOCAL_QUORUM      | Une majorité des noeuds dans l'anneau local (`local datacenter`) (n/2 + 1) doivent répondre.                   |
-| EACH_QUORUM       | Une majorité des noeuds (n/2 + 1) dans **chaque** anneau doivent répondre.                                     |
-| ALL               | Tous les noeuds doivent répondre mais alors la disponibilité n'est plus assurée. Ce mode n'est pas recommandé. |
+| Consistency Level | Description                                                                                                   |
+| ----------------- | ------------------------------------------------------------------------------------------------------------- |
+| ONE,TWO,THREE     | 1,2 ou 3 noeuds doivent répondre respectivement. _(`ONE` est non disponible sur Astra)_.                      |
+| LOCAL_ONE         | Un seul nœuds dans l'anneau local (`local datacenter`) doit répondre. _(non disponible sur Astra)_.           |
+| QUORUM            | Une majorité des nœuds (n/2 + 1) doivent répondre peu importe le datacenter.                                  |
+| LOCAL_QUORUM      | Une majorité des nœuds dans l'anneau local (`local datacenter`) (n/2 + 1) doivent répondre.                   |
+| EACH_QUORUM       | Une majorité des nœuds (n/2 + 1) dans **chaque** anneau doivent répondre.                                     |
+| ALL               | Tous les nœuds doivent répondre mais alors la disponibilité n'est plus assurée. Ce mode n'est pas recommandé. |
 
 ### 2.7.2 - Démonstration
 
-Dans la session d'aujourd'hui nous avons un cluster avec un seul anneau contenant 3 noeuds.
+Dans la session d'aujourd'hui nous avons un cluster avec un seul anneau contenant 3 nœuds.
 
 - Dans **Docker** le datacenter est `dc1`. Il contient 3 noeuds.
 
 ![my-pic](img/cluster-docker.png?raw=true)
 
-- Dans **Astra** le nom du datacenter correspond au nom de la région que vous avez choisi, par exemple `eu-central-1`. Les noeuds n'ont pas de nom réseau, uniquement des adresses `ip`.
+- Dans **Astra** le nom du datacenter correspond au nom de la région que vous avez choisie, par exemple `eu-central-1`. Les nœuds n'ont pas de nom réseau, uniquement des adresses `ip`.
 
 ![my-pic](img/cluster-astra.png?raw=true)
 
 #### `✅.085`- Afficher et Définir le niveau de consistance
 
-- Dans une console CQL, définisser le niveau de consistance :
+- Dans une console CQL, définir le niveau de consistance :
 
 ```sql
 CONSISTENCY;
@@ -1852,7 +1852,7 @@ WHERE country='DE';
 TRACING OFF;
 ```
 
-On notera que seuls 2 noeuds parmi les trois ont eu besoin de répondre avant de retourner le résultat au client.
+On notera que seuls 2 nœuds parmi les trois ont eu besoin de répondre avant de retourner le résultat au client.
 
 #### `✅.087`- Règle d'or pour la consistance.
 
@@ -1866,15 +1866,15 @@ CL_READ + CL_WRITE > RF
 
 ![my-pic](img/cl_write.png?raw=true)
 
-- **Au même moment**, un autre client, effectue une lecture en quorum sur la même donnée. Deux replicas répondent et parmi eux le noeud inconsistant. _(pas de chance ^\_^)_.
+- **Au même moment**, un autre client effectue une lecture en quorum sur la même donnée. Deux replicas répondent et parmi eux le nœud inconsistant. _(pas de chance ^\_^)_.
 
 ![my-pic](img/cl_read.png?raw=true)
 
-- Cette fois le noeud qui coordonne la requête (appelé le coordinator node) prendra la valeur avec le timestamp le plus tard. La dernière écriture gagne et la réponse retournée sera correcte.
+- Cette fois le nœud qui coordonne la requête (appelé le coordinator node) prendra la valeur avec le timestamp le plus tard. La dernière écriture gagne et la réponse retournée sera correcte.
 
-- Nous avons bien la somme du nombre de noeuds qui répondent à l'écriture `(2 = QUORUM)` et du nombre de noeuds qui répondent à la lecture `(2 = QUORUM)` strictement supérieure au facteur de réplication `(4>3)`.
+- Nous avons bien la somme du nombre de nœuds qui répondent à l'écriture `(2 = QUORUM)` et du nombre de noeuds qui répondent à la lecture `(2 = QUORUM)` strictement supérieure au facteur de réplication `(4>3)`.
 
-Il y a plusieurs de combinaisons possibles:
+Il y a plusieurs combinaisons possibles:
 
 - `CL_READ=*QUORUM avec CL_WRITE=*QUORUM`
 - `CL_READ=ONE avec CL_WRITE=ALL`
@@ -1905,9 +1905,9 @@ IF EXISTS | IF predicate [ AND ... ];
 
 Avec Cassandra, afin de rendre les requêtes les plus rapides possibles on veut éviter de faire des _lectures_ avant des _écritures_.
 
-Ici on ne peut s'y soustraire, la condition `IF` précède l'écriture. Cette transaction s'appuie sur l'algorithme de consensus distribué nommé `Paxos` et nécessite une pseudo-synchronisation des noeuds. En conséquence il faut s'attendre à un temps de réponse de l'ordre de 4 fois supérieur.
+Ici on ne peut s'y soustraire, la condition `IF` précède l'écriture. Cette transaction s'appuie sur l'algorithme de consensus distribué nommé `Paxos` et nécessite une pseudo-synchronisation des noeuds. En conséquence, il faut s'attendre à un temps de réponse de l'ordre de 4 fois supérieur.
 
-#### `✅.088`- Création d'une table pour illuster les LWT
+#### `✅.088`- Création d'une table pour illustrer les LWT
 
 - Créer une table `sample_lwt` contenant des utilisateurs et leurs mots de passe.
 
@@ -2056,7 +2056,7 @@ SELECT * FROM orders_by_user WHERE username = 'devoxx_developer';
 
 ### 2.8.5 - `EXEMPLE LWT 3` - Système d'enchères
 
-Dans cet exemple nous allons simuler une vente aux enchères. L'enjeu est de ne pas permettre de surenchérir avec la même proposition et de gérer les accès concurrents.
+Dans cet exemple, nous allons simuler une vente aux enchères. L'enjeu est de ne pas permettre de surenchérir avec la même proposition et de gérer les accès concurrents.
 
 #### `✅.096`- Création du schéma et import du jeu de données
 
@@ -2083,7 +2083,7 @@ SELECT * FROM auction_items WHERE item_id = 'Wii_a_cedrick';
 
 #### `✅.097`- Un client place une enchère
 
-- Emmanuel place une enchère à `50` qui equivaut à la mise de départ. Le `highest_bid` est toujours à 0.
+- Emmanuel place une enchère à `50` qui équivaut à la mise de départ. Le `highest_bid` est toujours à 0.
 
 ```sql
 UPDATE auction_items
@@ -2121,7 +2121,7 @@ SELECT * FROM auction_items WHERE item_id = 'Wii_a_cedrick';
 
 #### `✅.100`- Création du schéma
 
-- Créeons une table pour les enchères mais cette ajoutong le `bid_id` comme un `timeuuid` pour conserver tous les records (plus d'upserts).
+- Créons une table pour les enchères mais cette ajoutons le `bid_id` comme un `timeuuid` pour conserver tous les records (plus d'upserts).
 
 - L'ordre des enchères est `DESC`, les derniers seront en haut de la liste.
 
@@ -2211,7 +2211,7 @@ Ce type de modèle de données est appelé ledger. Il conserve à la fois le der
 
 ## 3.1 - Méthodologie
 
-Pour construire un modèle données avec Apache Cassandra™ les entités ne sont pas suffisantes. Il faut également disposer de la liste des requêtes aussi appelée `Application Workflow`.
+Pour construire un modèle de données avec Apache Cassandra™ les entités ne sont pas suffisantes. Il faut également disposer de la liste des requêtes aussi appelée `Application Workflow`.
 
 Par des règles de mapping on peut alors retrouver le design des différentes tables (`modèle logique de données`). La dernière étape est une optimisation où au travers des différents types de données et des opérations de batch on réduit le nombre de table.
 
@@ -2219,7 +2219,7 @@ Ce processus est décrit dans la figure ci-dessous:
 
 ![my-pic](img/modelisation-workflow.png?raw=true)
 
-Nous allons appliquer la méthodologie pour quelques cas concret, un apprentissage par l'exemple.
+Nous allons appliquer la méthodologie pour quelques cas concrets, un apprentissage par l'exemple.
 
 ## 3.2 - Modèle de données pour des `timeseries`
 
@@ -2227,9 +2227,9 @@ _Une **série temporelle** ou **timeseries** correspond à l'enregistrement de l
 
 ### 3.2.1 - Modèle conceptuel de données
 
-**Définition:** Un modèle conceptuel de données permet de représenter les objets et leurs intéractions pour un domain fonctionnel en particulier. Le modèle permet la visualisation des différentes entités et les relations qui les caractérisent avec leur cardinalité et leur contraintes.
+**Définition:** Un modèle conceptuel de données permet de représenter les objets et leurs intéractions pour un domaine fonctionnel en particulier. Le modèle permet la visualisation des différentes entités et les relations qui les caractérisent avec leur cardinalité et leur contraintes.
 
-Dans premier exemple nous nous intéressons à l'enregistrement de mesure pour des capteurs. Les entités sont `Network` (réseau), `Sensor` (capteur), `Temperature` (mesure).
+Dans premier exemple, nous nous intéressons à l'enregistrement de mesure pour des capteurs. Les entités sont `Network` (réseau), `Sensor` (capteur), `Temperature` (mesure).
 
 Le diagramme entité relation peut être décrit comme suit:
 re
@@ -2237,7 +2237,7 @@ re
 
 ### 3.2.2 - Workflow Applicatif
 
-**Définition:** Un workflow applicatif _(application workflow)_ permet de comprendre les patterns d'accès à la données ainsi que leur enchainement. Pour chaque requête il faut préciser quels sont les attributs recherchés, dans quel ordre et avec quelle aggrégation doivent ils être retournés.
+**Définition:** Un workflow applicatif _(application workflow)_ permet de comprendre les patterns d'accès à la données ainsi que leur enchaînement. Pour chaque requête il faut préciser quels sont les attributs recherchés, dans quel ordre et avec quelle agrégation doivent ils être retournés.
 
 Dans notre exemple:
 
@@ -2245,7 +2245,7 @@ Dans notre exemple:
 
 - `Q3`: Affiche les différents capteurs (`Sensor`) pour un réseau (`Network`) en particulier.
 
-- `Q2`: Pour un réseau donné, pour une plage horaire spécifiée (date/heure), afficher une moyenne horaire de la température pour chaque capteur.
+- `Q2`: Pour un réseau donné, pour une plage horaire spécifiée (date/heure), affiche une moyenne horaire de la température pour chaque capteur.
 
 - `Q4`: Pour un réseau donné, pour un capteur donné, pour une plage horaire spécifiée (date/heure) afficher l'ensemble des mesures sans filtres mais avec un affichage par ordre décroissant par rapport au temps. (les dernières entrées seront les premiers éléments retournés.)
 
@@ -2253,11 +2253,11 @@ Dans notre exemple:
 
 ### 3.2.3 - Modèle logique de données
 
-**Définition:** : Le modéle logique de données reprend les patterns d'accès à la donnée (`Q1..Q4`) que l'on enrichit avec les différents attributs provenant du diagramme entité relation. En utilisant les critères de recherche on définit les clés primaires des tables en utilisant la notation de `Chebotko`:
+**Définition:** : Le modèle logique de données reprend les patterns d'accès à la donnée (`Q1..Q4`) que l'on enrichit avec les différents attributs provenant du diagramme entité relation. En utilisant les critères de recherche on définit les clés primaires des tables en utilisant la notation de `Chebotko`:
 
 - `K` : partition KEY. C'est le plus important. Elle peut porter sur une **ou plusieurs ** colonne. C'est la clé de découpage, l'élément indispensable dans la clause where. On enregistre ensemble ce que l'on souhaite retrouver ensemble plus tard. C'est comme si on faisait la jointure à l'écriture et non à la lecture.
 
-- `C` : Clusting Column with order `ASC` (`↑`) or `DESC` (`↓`). Elles sont utilisés comme critère de filtre secondaire (attention l'ordre est important) et pour assurer l'unicité d'un enregistrement.
+- `C` : Clustering Column with order `ASC` (`↑`) or `DESC` (`↓`). Elles sont utilisées comme critère de filtre secondaire (attention l'ordre est important) et pour assurer l'unicité d'un enregistrement.
 
 - `S` : Static column. C'est une colonne qui prend la même valeur pour tous les enregistrements d'une même partition.
 
@@ -2265,13 +2265,13 @@ Dans notre exemple:
 
 ### 3.2.4 - Modèle physique de données
 
-**Définition:** : Le modèle physique de donnée est obtenu par extension du modèle logique en ajoutant les types propres à Cassandra et en cherchant les optimisations possibles (TIMEUUID, Index secondaires..).
+**Définition:** : Le modèle physique de données est obtenu par extension du modèle logique en ajoutant les types propres à Cassandra et en cherchant les optimisations possibles (TIMEUUID, Index secondaires..).
 
-Il faut être vigilant à la taille des partitions les limites recommandées sont `100.000` enregistrements maximum et `100` Mo maximum. Les autres optimisations peuvent concerner des aggrégations ou de l'indexation.
+Il faut être vigilant à la taille des partitions les limites recommandées sont `100.000` enregistrements maximum et `100` Mo maximum. Les autres optimisations peuvent concerner des agrégations ou de l'indexation.
 
 Voici le modèle physique dans notre cas et les modifications apportées (en vert)
 
-- La table `networks` ne peut être partitionnée uniquement sur le nom car la requête reviendrai à faire un _full-scan._ En définissant un `bucket` on explore moins de partitions et la requête `Q1` est dramatiquement plus rapide.
+- La table `networks` ne peut être partitionnée uniquement sur le nom car la requête reviendrait à faire un _full-scan._ En définissant un `bucket` on explore moins de partitions et la requête `Q1` est dramatiquement plus rapide.
 
 - Sur la table `temperatures_by_network` 2 optimisations ont été apportées. Les colonnes `date` et `hour` peuvent être mergées en une seule de type `TIMESTAMP`. La seconde est une nouvelle fois d'éviter les partitions larges et d'introduire une colonne `week` pour diviser:
   - **Ancien design:** 100 capteurs, génèrent 100 lignes en une heure dans `temperatures_by_network` => 2400/jour, 16800/semaine, 876000/année....
@@ -2354,7 +2354,7 @@ SOURCE '/tmp/data_modelling/sensor_data.cql'
 _Pour Astra:_ fournissez le chemin complet du fichier
 
 ```sql
-SOURCE '/workspace/conference-2022-devoxx/labs/data_modelling/sensor_data.cql'
+SOURCE '/workspace/conference-2022-devoxx/labs/lab3_data_modelling/sensor_data.cql'
 ```
 
 #### `✅.107`- Utilisation du modèle, lister les données
@@ -2404,7 +2404,7 @@ WHERE network    = 'forest-net'
 
 #### `✅.110`- Introduction à l'application `petclinic`
 
-PetClinic est une application de démonstration utilisée par les équipes Spring pour présenter les différentes fonctionnalités du framework. Une description exhaustive est diponible [ici](https://projects.spring.io/spring-petclinic/).
+PetClinic est une application de démonstration utilisée par les équipes Spring pour présenter les différentes fonctionnalités du framework. Une description exhaustive est disponible [ici](https://projects.spring.io/spring-petclinic/).
 
 Il existe même une communauté dédiée [Spring Clinic](https://spring-petclinic.github.io/) qui a étendu le principe en proposant de nouvelles implémentations. Il est possible de tester une démo live sur [Heroku](https://spring-petclinic-community.herokuapp.com/). _(Mais vous allez faire mieux et la lancer sur votre machine durant cette session)_.
 
@@ -2418,7 +2418,7 @@ Nous partons du modèle relationnel de l'application (elle existe déjà, il suf
 
 ![](img/petclinic_01.png?raw=true)
 
-Dans ce modèle nous identifions différents type de relations `one-to-many` et `many-to-many` qui peuvent sembler difficiles à implémenter dans Cassandra qui ne propose ni transaction, ni intégrité référentielle ni relations ou jointures d'aucune sorte.
+Dans ce modèle nous identifions différents types de relations `one-to-many` et `many-to-many` qui peuvent sembler difficiles à implémenter dans Cassandra qui ne propose ni transaction, ni intégrité référentielle ni relations ou jointures d'aucune sorte.
 
 ![](img/petclinic_02.png?raw=true)
 
@@ -2454,7 +2454,8 @@ La logique est identique pour lister les Vétérinaires ou afficher la liste des
 
 #### PetClinic - Spécialité des vétérinaire `Many to Many`
 
-Un vétrinaire peut avoir plusieurs spécialit
+Un vétérinaire peut avoir plusieurs spécialités.
+
 ![](img/petclinic_09.png?raw=true)
 
 ![](img/petclinic_10.png?raw=true)
@@ -2471,7 +2472,7 @@ WITH REPLICATION = {
 }  AND DURABLE_WRITES = true;
 ```
 
-Avec Astra, la manipulation des keyspaces est désactivé, c'est lui qui fixe les facteurs de réplications pour vous (Saas). La procédure est décrite en détail dans [Awesome Astra](https://awesome-astra.github.io/docs/pages/astra/faq/#how-do-i-create-a-namespace-or-a-keyspace) mais voici quelques captures:
+Avec Astra, la manipulation des keyspaces est désactivée, c'est lui qui fixe les facteurs de réplications pour vous (Saas). La procédure est décrite en détail dans [Awesome Astra](https://awesome-astra.github.io/docs/pages/astra/faq/#how-do-i-create-a-namespace-or-a-keyspace) mais voici quelques captures:
 
 _Repérer le bouton `ADD KEYSPACE`_
 ![](https://awesome-astra.github.io/docs/img/faq/create-keyspace-button.png)
@@ -2548,7 +2549,7 @@ CREATE INDEX IF NOT EXISTS petclinic_idx_ownername ON petclinic_owner(last_name)
 CREATE INDEX IF NOT EXISTS petclinic_idx_vetname ON petclinic_vet(last_name);
 ```
 
-Cette fois des index secondaires ont été placé sur les noms. Nous avons considéré que la cardinalité était faible.
+Cette fois des index secondaires ont été placés sur les noms. Nous avons considéré que la cardinalité était faible.
 
 #### `✅.114`- Insertion des données de références
 
@@ -2570,7 +2571,7 @@ Vous avez désormais l'ensemble des bases pour bien démarrer avec Apache Cassan
 
 Les applications se connectant à Cassandra utilisent des libraires nommées _drivers_ qui prennent en charge la communication binaire avec la base de données. Vous êtes peut-être déjà familier avec les drivers `JDBC` pour les bases de données relationnelles.
 
-Les drivers pour Apache Cassandra ont été écrit par la `Datastax`. Pour les insérer dans vos projets voici les dépendances maven nécessaires.
+Les drivers pour Apache Cassandra ont été écrits par `Datastax`. Pour les insérer dans vos projets voici les dépendances maven nécessaires.
 
 ```xml
 <!-- Obligatoire -->
@@ -2580,7 +2581,7 @@ Les drivers pour Apache Cassandra ont été écrit par la `Datastax`. Pour les i
 	<version>${cassandra-driver-version}</version>
 </dependency>
 
-<!-- Optionelles pour Object mapping -->
+<!-- Optionnelles pour Object mapping -->
 <dependency>
   <groupId>com.datastax.oss</groupId>
 	<artifactId>java-driver-query-builder</artifactId>
@@ -2605,10 +2606,10 @@ Une fois les drivers importés dans votre projet, pour se connecter à Cassandra
 
 - d'un `contact point` (ip:port)
 - du `datacenter` avec lequel vous voulez travailler (`local datacenter`)
-- Éventuellement du nom du keyspace pour ne pas avoir à prefixer toutes les requêtes.
+- Éventuellement du nom du keyspace pour ne pas avoir à préfixer toutes les requêtes.
 - Éventuellement d'un identifiant et mot de passe. Lors de la connexion vous indiquez également
 
-La connexion est un object `CqlSession` qui devra être un singleton dans votre application.
+La connexion est un objet `CqlSession` qui devra être un singleton dans votre application.
 
 > ```java
 > CqlSession cqlSession = CqlSession.builder()
@@ -2618,7 +2619,7 @@ La connexion est un object `CqlSession` qui devra être un singleton dans votre 
 >   .build();
 > ```
 
-`Astra` est une base de données dans le cloud. Pour des raisons de sécurité vous ne voulez pas ouvrir des sockets sur internet, tout passe par HTTP. Pour mettre en place le tunnel SSl nécessaire vous avez besoin de certificats `X509`(authentification forte). Tout est disponible sous la forme d'une archive zip `secureConnecBundle`. Il est nécesaire de la fournir.
+`Astra` est une base de données dans le cloud. Pour des raisons de sécurité vous ne voulez pas ouvrir des sockets sur internet, tout passe par HTTP. Pour mettre en place le tunnel SSl nécessaire vous avez besoin de certificats `X509`(authentification forte). Tout est disponible sous la forme d'une archive zip `secureConnecBundle`. Il est nécessaire de le fournir.
 
 ![](img/secure_bundle.png)
 
@@ -2630,7 +2631,7 @@ La connexion est un object `CqlSession` qui devra être un singleton dans votre 
 >   .build();
 > ```
 
-Cette configuration est possible au driver du `CqlSessionBuilder` comme présenter ci-dessus. Toutes les clés ne sont pas disponible programmatiquement. Vous aurez également besoin d'une fichier `application.conf` pour la configuration plus fine.
+Cette configuration est possible au driver du `CqlSessionBuilder` comme présenté ci-dessus. Toutes les clés ne sont pas disponibles programmatiquement. Vous aurez également besoin d'une fichier `application.conf` pour la configuration plus fine.
 
 ```TypeScript
 datastax-java-driver {
@@ -2673,17 +2674,17 @@ WITH REPLICATION = {
 }  AND DURABLE_WRITES = true;
 ```
 
-Avec Astra, la manipulation des keyspaces est désactivé, c'est lui qui fixe les facteurs de réplications pour vous (Saas). La procédure est décrite en détail dans [Awesome Astra](https://awesome-astra.github.io/docs/pages/astra/faq/#how-do-i-create-a-namespace-or-a-keyspace) mais voici quelques captures:
+Avec Astra, la manipulation des keyspaces est désactivée, c'est lui qui fixe les facteurs de réplications pour vous (Saas). La procédure est décrite en détail dans [Awesome Astra](https://awesome-astra.github.io/docs/pages/astra/faq/#how-do-i-create-a-namespace-or-a-keyspace) mais voici quelques captures:
 
 _Repérer le bouton `ADD KEYSPACE`_
 ![](https://awesome-astra.github.io/docs/img/faq/create-keyspace-button.png)
 
-_Créer le keyspace et valider avec `SAVE`_
+_Créer le keyspace `devoxx_drivers` et valider avec `SAVE`_
 ![](https://awesome-astra.github.io/docs/img/faq/create-keyspace.png)
 
 #### `✅.116`- Configurer votre connexion à Apache Cassandra™ dans `CqlSessionProvider`
 
-Nous avons choisi de déléguer la creation de la connexion `CqlSession` dans une classe dédiée `CqlSessionProvider` et cela pour deux raisons:
+Nous avons choisi de déléguer la création de la connexion `CqlSession` dans une classe dédiée `CqlSessionProvider` et cela pour deux raisons:
 
 - Mutualisation du code: La connexion à la base Cassandra est nécessaire dans tous les exemples
 - Certains utilisent Astra pour les exercices et d'autres `Docker`.
@@ -2691,10 +2692,10 @@ Nous avons choisi de déléguer la creation de la connexion `CqlSession` dans un
 - Ouvrir la classe `CqlSessionProvider`
 
 ```bash
-gp open /workspace/conference-2022-devoxx/labs/1-cassandra-drivers/src/main/java/com/datastax/samples/CqlSessionProvider.java
+gp open /workspace/conference-2022-devoxx/labs/lab4_cassandra_drivers/src/main/java/com/datastax/samples/CqlSessionProvider.java
 ```
 
-- Vérifier les informations de connexion. Si vous utilisez `Astra` mettez à jour votre token.
+- Vérifier les informations de connexion. Si vous utilisez `Astra`, mettez à jour votre token.
 
 ```java
 public static final String LOCAL_DATACENTER   = "dc1";
@@ -2730,7 +2731,7 @@ protected static synchronized CqlSession getCqlSession() {
 - Lancer le test de connectivité avec `Maven`.
 
 ```bash
-cd /workspace/conference-2022-devoxx/labs/1-cassandra-drivers
+cd /workspace/conference-2022-devoxx/labs/lab4_cassandra_drivers
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E00_TestConnectivity
 ```
 
@@ -2794,7 +2795,7 @@ CREATE TABLE devoxx_drivers.videos_views (
 
 #### 📘 Ce qu'il faut retenir:
 
-- Pour exécuter une requête on travaille avec l'object `CqlSession` et la méthode `execute()`.
+- Pour exécuter une requête on travaille avec l'objet `CqlSession` et la méthode `execute()`.
 
 - Les requêtes sont construites en utilisant un builder `SchemaBuilder`.
 
@@ -2838,9 +2839,9 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E01_CreateSche
 
 #### 📘 Ce qu'il faut retenir:
 
-- Pour exécuter une requête on travaille avec l'object `CqlSession` et la méthode `execute()`.
+- Pour exécuter une requête on travaille avec l'objet `CqlSession` et la méthode `execute()`.
 
-- Les requêtes peuvent être éxécutées en tant que chaînes de caractères
+- Les requêtes peuvent être exécutées en tant que chaînes de caractères
 
 > ```java
 > cqlSession.execute("" +
@@ -2872,7 +2873,7 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E01_CreateSche
 >   .addNamedValue("l", "Lunven").build());
 > ```
 
-- Pour accélérer leur exécution il faut les `prepare()` au chargement de l'application. On les utilise alors avec un `bind()` des paramètres. Dans ce dernier exemple nous avons aussi démontré l'utilisation du `QueryBuilder` pour constuire la requête.
+- Pour accélérer leur exécution il faut les `prepare()` au chargement de l'application. On les utilise alors avec un `bind()` des paramètres. Dans ce dernier exemple nous avons aussi démontré l'utilisation du `QueryBuilder` pour construire la requête.
 
 _Prepare_
 ![](img/query-connect.png?raw=true)
@@ -2953,17 +2954,13 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E02_Statements
 > boolean existUser(CqlSession cqlSession, String email) {
 >   return cqlSession.execute(stmtExistUser.bind(email)).getAvailableWithoutFetching() > 0;
 > }
-> ```
-
+>
 > void deleteUser(CqlSession cqlSession, String email) {
 > cqlSession.execute(stmtDeleteUser.bind(email));
 > }
->
-> ```
->
 > ```
 
-- Les requêtes retournent un `ResultSet` contenant un iterable de `Row`. Lorsque le resultat est unique nous pouvons utiliser `one()`. On access aux différentes colonnes par le nom et le type exemple `.getString("colonne")`
+- Les requêtes retournent un `ResultSet` contenant un iterable de `Row`. Lorsque le résultat est unique nous pouvons utiliser `one()`. On accède aux différentes colonnes par le nom et le type exemple `.getString("colonne")`
 
 > ```java
 > ResultSet rs = cqlSession.execute(stmtFindUser.bind(email));
@@ -3076,7 +3073,7 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E04_Batches
 > ResultSet page2 = cqlSession.execute(statement);
 > ```
 
-#### `✅.122`- Executer la classe example
+#### `✅.122`- Exécuter la classe example
 
 ```bash
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E05_Paging
@@ -3589,7 +3586,7 @@ _Créer le keyspace `devoxx_spring` et valider avec `SAVE`_
 - Ouvrir le fichier
 
 ```bash
-gp open /workspace/conference-2022-devoxx/labs/2-spring-data/pom.xml
+gp open /workspace/conference-2022-devoxx/labs/lab5_spring_data/pom.xml
 ```
 
 - Vous devez retrouver:
@@ -3603,17 +3600,17 @@ gp open /workspace/conference-2022-devoxx/labs/2-spring-data/pom.xml
 
 #### `✅.132`- Configuration de l'application Spring-Data
 
-- Placer vous dans le répertoire `2-spring-data` et compiler le projet
+- Placer vous dans le répertoire `lab5_spring_data` et compiler le projet
 
 ```bash
-cd /workspace/conference-2022-devoxx/labs/2-spring-data
+cd /workspace/conference-2022-devoxx/labs/lab5_spring_data
 mvn clean compile
 ```
 
 - Localiser le fichier de configuration `application.yml`dans le répertoire `src/main/resources`. C'est le fichier de configuration principal de Spring-Boot.
 
 ```bash
-gp open /workspace/conference-2022-devoxx/labs/2-spring-data/src/main/resources/application.yml
+gp open /workspace/conference-2022-devoxx/labs/lab5_spring_data/src/main/resources/application.yml
 ```
 
 - Suivant la cible (Cassandra dans Docker ou Cassandra dans Astra) la configuration de `spring-data` changera légèrement c'est pourquoi nous avons proposé 2 exemple `application-astra.yml` et `application-astra.yml`
@@ -3621,13 +3618,13 @@ gp open /workspace/conference-2022-devoxx/labs/2-spring-data/src/main/resources/
 - Copier le fichier qui vous correspond vers `application.yml`
 
 ```bash
-cp /workspace/conference-2022-devoxx/labs/2-spring-data/src/main/resources/application-astra.yml /workspace/conference-2022-devoxx/labs/2-spring-data/src/main/resources/application.yml
+cp /workspace/conference-2022-devoxx/labs/lab5_spring_data/src/main/resources/application-astra.yml /workspace/conference-2022-devoxx/labs/lab5_spring_data/src/main/resources/application.yml
 ```
 
 ou
 
 ```bash
-cp cp/workspace/conference-2022-devoxx/labs/2-spring-data/src/main/resources/application-local.yml /workspace/conference-2022-devoxx/labs/2-spring-data/src/main/resources/application.yml
+cp cp/workspace/conference-2022-devoxx/labs/lab5_spring_data/src/main/resources/application-local.yml /workspace/conference-2022-devoxx/labs/lab5_spring_data/src/main/resources/application.yml
 ```
 
 - Vérifier la configuration et éditer là le cas échéant:
@@ -3750,7 +3747,7 @@ public interface TodoRepositoryCassandra extends CassandraRepository<TodoEntity,
 #### `✅.134`- Utiliser les `Repository` Spring Data
 
 ```bash
-cd /workspace/conference-2022-devoxx/labs/2-spring-data
+cd /workspace/conference-2022-devoxx/labs/lab5_spring_data
 mvn test -Dtest=com.datastax.workshop.E02_SpringDataRepository
 ```
 
@@ -3833,7 +3830,7 @@ public class TodoRepositorySimpleCassandra extends SimpleCassandraRepository<Tod
 #### `✅.136`- Utiliser `CassandraOperations` et un `SimpleCassandraRepository`
 
 ```bash
-cd /workspace/conference-2022-devoxx/labs/2-spring-data
+cd /workspace/conference-2022-devoxx/labs/lab5_spring_data
 mvn test -Dtest=com.datastax.workshop.E03_SpringDataCassandraOperations
 ```
 
@@ -3930,7 +3927,7 @@ private String createURLWithPort(String uri) {
 - Exécuter le test unitaire suivant:
 
 ```bash
-cd /workspace/conference-2022-devoxx/labs/2-spring-data
+cd /workspace/conference-2022-devoxx/labs/lab5_spring_data
 mvn test -Dtest=com.datastax.workshop.E04_SpringControllerTest
 ```
 
@@ -4011,17 +4008,17 @@ _Créer le keyspace `devoxx_quarkus` et valider avec `SAVE`_
 
 #### `✅.140`- Configuration de l'application `Quarkus`
 
-- Placer vous dans le répertoire `3-quarkus` et compiler le projet
+- Placer vous dans le répertoire `lab6_quarkus` et compiler le projet
 
 ```bash
-cd /workspace/conference-2022-devoxx/labs/3-quarkus
+cd /workspace/conference-2022-devoxx/labs/lab6_quarkus
 mvn clean compile
 ```
 
 - Localiser le fichier de configuration `application.properties` dans le répertoire `src/main/resources`. C'est le fichier de configuration principal de Quarkus. Noter le nombre de clés de configuration `quarkus.cassandra`
 
 ```bash
-gp open /workspace/conference-2022-devoxx/labs/3-quarkus/src/main/resources/application.properties
+gp open /workspace/conference-2022-devoxx/labs/lab6_quarkus/src/main/resources/application.properties
 ```
 
 - Suivant la cible (Cassandra dans Docker ou Cassandra dans Astra) la configuration de `quarkus` changera légèrement c'est pourquoi nous avons proposé 2 exemples `application-astra.properties` et `application-local.properties`
@@ -4029,13 +4026,13 @@ gp open /workspace/conference-2022-devoxx/labs/3-quarkus/src/main/resources/appl
 - Copier le fichier qui vous correspond vers `application.properties`
 
 ```bash
-cp /workspace/conference-2022-devoxx/labs/3-quarkus/src/main/resources/application-astra.properties /workspace/conference-2022-devoxx/labs/3-quarkus/src/main/resources/application.properties
+cp /workspace/conference-2022-devoxx/labs/lab6_quarkus/src/main/resources/application-astra.properties /workspace/conference-2022-devoxx/labs/lab6_quarkus/src/main/resources/application.properties
 ```
 
 ou
 
 ```bash
-cp /workspace/conference-2022-devoxx/labs/3-quarkus/src/main/resources/application-local.properties /workspace/conference-2022-devoxx/labs/3-quarkus/src/main/resources/application.propertoes
+cp /workspace/conference-2022-devoxx/labs/lab6_quarkus/src/main/resources/application-local.properties /workspace/conference-2022-devoxx/labs/lab6_quarkus/src/main/resources/application.propertoes
 ```
 
 - Dans le cas de Astra changer la clef `quarkus.cassandra.auth.password` pour correspondre à votre base.
@@ -4050,7 +4047,7 @@ quarkus.cassandra.auth.password=<client_secret>
 #### `✅.141` - Validation de la configuration
 
 ```
-cd /workspace/conference-2022-devoxx/labs/3-quarkus
+cd /workspace/conference-2022-devoxx/labs/lab6_quarkus
 mvn test -Dtest=com.datastax.workshop.E01_QuarkusInit
 ```
 
@@ -4080,7 +4077,7 @@ mvn test -Dtest=com.datastax.workshop.E01_QuarkusInit
 #### `✅.142` - Utilisation de `CqlSession` avec `Quarkus`
 
 ```
-cd /workspace/conference-2022-devoxx/labs/3-quarkus
+cd /workspace/conference-2022-devoxx/labs/lab6_quarkus
 mvn test -Dtest=com.datastax.workshop.E02_QuarkusCql
 ```
 
@@ -4141,7 +4138,7 @@ public class Todo {
 #### `✅.143` - Utilisation de l'`object mapping` avec `Quarkus`
 
 ```bash
-cd /workspace/conference-2022-devoxx/labs/3-quarkus
+cd /workspace/conference-2022-devoxx/labs/lab6_quarkus
 mvn test -Dtest=com.datastax.workshop.E03_QuarkusObjectMapping
 ```
 
@@ -4175,6 +4172,7 @@ mvn test -Dtest=com.datastax.workshop.E03_QuarkusObjectMapping
 - Uitiliser le plugin pour démarrer l'application en mode `dev`. Attention cette dernière utilise aussi le port `8080` donc assurez-vous de ne pas avoir laisser l'application Spring démarrée.
 
 ```bash
+cd /workspace/conference-2022-devoxx/labs/lab6_quarkus
 mvn quarkus:dev -DskipTests
 ```
 
@@ -4222,7 +4220,7 @@ gp preview "$(gp url 8080)/q/swagger-ui"
 Arrêter l'application en utilisant la touche `q`. Nous pouvons terminer par un test d'intégration
 
 ```bash
-cd /workspace/conference-2022-devoxx/labs/3-quarkus
+cd /workspace/conference-2022-devoxx/labs/lab6_quarkus
 mvn test -Dtest=com.datastax.workshop.E04_QuarkusController
 ```
 
@@ -4287,17 +4285,17 @@ _Créer le keyspace `devoxx_micronaut` et valider avec `SAVE`_
 
 #### `✅.146`- Configuration de l'application `Micronaut`
 
-- Placer vous dans le répertoire `4-micronaut` et compiler le projet
+- Placer vous dans le répertoire `lab7_micronaut` et compiler le projet
 
 ```bash
-cd /workspace/conference-2022-devoxx/labs/4-micronaut
+cd /workspace/conference-2022-devoxx/labs/lab7_micronaut
 mvn clean compile
 ```
 
 - Localiser le fichier de configuration `application.yml` dans le répertoire `src/main/resources`. C'est le fichier de configuration principal de Micronaut.
 
 ```bash
-gp open /workspace/conference-2022-devoxx/labs/4-micronaut/src/main/resources/application.yml
+gp open /workspace/conference-2022-devoxx/labs/lab7_micronaut/src/main/resources/application.yml
 ```
 
 - Suivant la cible (Cassandra dans Docker ou Cassandra dans Astra) la configuration de `micronaut` changera légèrement c'est pourquoi nous avons proposé 2 exemples `application-astra.yml` et `application-local.yml`
@@ -4305,13 +4303,13 @@ gp open /workspace/conference-2022-devoxx/labs/4-micronaut/src/main/resources/ap
 - Copier le fichier qui vous correspond vers `application.yml`
 
 ```bash
-cp /workspace/conference-2022-devoxx/labs/4-micronaut/src/main/resources/application-astra.yml /workspace/conference-2022-devoxx/labs/4-micronaut/src/main/resources/application.yml
+cp /workspace/conference-2022-devoxx/labs/lab7_micronaut/src/main/resources/application-astra.yml /workspace/conference-2022-devoxx/labs/lab7_micronaut/src/main/resources/application.yml
 ```
 
 ou
 
 ```bash
-cp /workspace/conference-2022-devoxx/labs/4-micronaut/src/main/resources/application-local.yml /workspace/conference-2022-devoxx/labs/4-micronaut/src/main/resources/application.yml
+cp /workspace/conference-2022-devoxx/labs/lab7_micronaut/src/main/resources/application-local.yml /workspace/conference-2022-devoxx/labs/lab7_micronaut/src/main/resources/application.yml
 ```
 
 - Dans le cas de Astra changer la clef `cassandra.default.advanced.auth-provider.password` pour correspondre à votre base. On remarquera que Micronaut on fait le choix d'utiliser les mêmes clefs que le fichier de configuration du drivers et de ne pas réinventer la roue (merci à eux).
@@ -4319,7 +4317,7 @@ cp /workspace/conference-2022-devoxx/labs/4-micronaut/src/main/resources/applica
 #### `✅.147` - Validation de la configuration
 
 ```
-cd /workspace/conference-2022-devoxx/labs/4-micronaut
+cd /workspace/conference-2022-devoxx/labs/lab7_micronaut
 mvn test -Dtest=com.datastax.workshop.E01_MicronautInit
 ```
 
@@ -4330,7 +4328,7 @@ mvn test -Dtest=com.datastax.workshop.E01_MicronautInit
 #### `✅.148` - Utilisation de `CqlSession` avec `Micronaut`
 
 ```
-cd /workspace/conference-2022-devoxx/labs/4-micronaut
+cd /workspace/conference-2022-devoxx/labs/lab7_micronaut
 mvn test -Dtest=com.datastax.workshop.E02_MicronautCql
 ```
 
@@ -4343,7 +4341,7 @@ mvn test -Dtest=com.datastax.workshop.E02_MicronautCql
 #### `✅.149` - Utilisation de l'`object mapping` avec `Micronaut`
 
 ```bash
-cd /workspace/conference-2022-devoxx/labs/4-micronaut
+cd /workspace/conference-2022-devoxx/labs/lab7_micronaut
 mvn test -Dtest=com.datastax.workshop.E04_MicronautObjectMapping
 ```
 
@@ -4356,7 +4354,7 @@ mvn test -Dtest=com.datastax.workshop.E04_MicronautObjectMapping
 #### `✅.150`- Démarrer l'application `micronaut`
 
 ```bash
-cd /workspace/conference-2022-devoxx/labs/4-micronaut
+cd /workspace/conference-2022-devoxx/labs/lab7_micronaut
 mvn clean compile exec:java
 ```
 
@@ -4387,7 +4385,7 @@ gp preview "$(gp url 8082)/api/v1/clun/todos/"
 Arrêter l'application en utilisant la touche `CTRL+C`. Nous pouvons terminer par un test d'intégration
 
 ```bash
-cd /workspace/conference-2022-devoxx/labs/4-micronaut
+cd /workspace/conference-2022-devoxx/labs/lab7_micronaut
 mvn test -Dtest=com.datastax.workshop.E04_MicronautController
 ```
 
