@@ -4,26 +4,27 @@ image:
 tasks:
   - name: lab4_cassandra_drivers
     before: |
-      chmod 700 /workspace/conference-2022-devoxx/labs/lab4_cassandra/lab4_cassandra_drivers_init
+      chmod 700 /workspace/conference-2022-devoxx/labs/lab4_cassandra_drivers/init
     command: |
-      ./labs/lab4_cassandra/lab4_cassandra_drivers_init
+      ./labs/lab4_cassandra_drivers/init
   - name: lab5_spring_data
     before: |
-      chmod 700 /workspace/conference-2022-devoxx/labs/lab5_spring_data/lab5_spring_data_init
+      chmod 700 /workspace/conference-2022-devoxx/labs/lab5_spring_data/init
     command: |
-      ./labs/lab5_spring_data/lab5_spring_data_init
+      ./labs/lab5_spring_data/init
   - name: lab6_quarkus
     before: |
-      chmod 700 /workspace/conference-2022-devoxx/labs/lab6_quarkus/lab6_quarkus_init
+      chmod 700 /workspace/conference-2022-devoxx/labs/lab6_quarkus/init
     command: |
-      ./labs/lab6_quarkus/lab6_quarkus_init
+      ./labs/lab6_quarkus/init
   - name: lab7_micronaut
     before: |
-      chmod 700 /workspace/conference-2022-devoxx/labs/lab7_micronaut/lab7_micronaut_init
+      chmod 700 /workspace/conference-2022-devoxx/labs/lab7_micronaut/init
     command: |
-      ./labs/lab7_micronaut/lab7_micronaut_init
+      ./labs/lab7_micronaut/init
   - name: gp
     command: |
+      clear
       gp url 8080
 
 
