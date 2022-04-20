@@ -4,9 +4,9 @@ spring:
       schema-action: CREATE_IF_NOT_EXISTS
       keyspace-name: devoxx_spring
       username: token
-      password: AstraCS:gdZaqzmFZszaBTOlLgeecuPs:edd25600df1c01506f5388340f138f277cece2c93cb70f4b5fa386490daa5d44
+      password: <YOUR_TOKEN>
 datastax:
   astra:
-    secure-connect-bundle: /Users/cedricklunven/Downloads/secure-connect-workshops.zip      
+    secure-connect-bundle: /home/gitpod/.cassandra/bootstrap.zip
       
       

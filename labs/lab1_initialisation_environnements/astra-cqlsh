@@ -1,0 +1,17 @@
+#!/bin/bash
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+echo -e "${BLUE}------------------------------------------------------------${NC}"
+echo -e "${BLUE}--  Astra CQLSH [Launch]                                 ---${NC}"
+echo -e "${BLUE}------------------------------------------------------------${NC}"
+set -a
+source /workspace/conference-2022-devoxx/.env
+set +a
+echo -e "${GREEN}[OK]${NC} - Database ID is ${BLUE}${ASTRA_DB_ID}${NC}"
+echo -e "${GREEN}[OK]${NC} - Database REGION is ${BLUE}${ASTRA_DB_REGION}${NC}"
+echo -e "${GREEN}[OK]${NC} - Database TOKEN is ${BLUE}${ASTRA_DB_ADMIN_TOKEN}${NC}"
+echo -e "${GREEN}[OK]${NC} - Secure Connect Bundle downloaded"
+echo -e "${GREEN}[OK]${NC} - Launching Astra CQLSH...."
+/workspace/conference-2022-devoxx/tools/cqlsh-astra/bin/cqlsh -u token -p ${ASTRA_DB_ADMIN_TOKEN} -b /home/gitpod/.cassandra/bootstrap.zip

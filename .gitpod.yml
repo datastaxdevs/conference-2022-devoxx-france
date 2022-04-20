@@ -2,14 +2,31 @@ image:
   file: .gitpod.Dockerfile
 
 tasks:
-  # -------------------------------------------------
-  # Prebuild the Application and download the librairies
-  # -------------------------------------------------
-  - name: test-java
+  - name: lab4_cassandra_drivers
     before: |
-      chmod 700 /workspace/conference-2022-devoxx/scripts/java-start
+      chmod 700 /workspace/conference-2022-devoxx/labs/lab4_cassandra/lab4_cassandra_drivers_init
     command: |
-      ./scripts/java-start
+      ./labs/lab4_cassandra/lab4_cassandra_drivers_init
+  - name: lab5_spring_data
+    before: |
+      chmod 700 /workspace/conference-2022-devoxx/labs/lab5_spring_data/lab5_spring_data_init
+    command: |
+      ./labs/lab5_spring_data/lab5_spring_data_init
+  - name: lab6_quarkus
+    before: |
+      chmod 700 /workspace/conference-2022-devoxx/labs/lab6_quarkus/lab6_quarkus_init
+    command: |
+      ./labs/lab6_quarkus/lab6_quarkus_init
+  - name: lab7_micronaut
+    before: |
+      chmod 700 /workspace/conference-2022-devoxx/labs/lab7_micronaut/lab7_micronaut_init
+    command: |
+      ./labs/lab7_micronaut/lab7_micronaut_init
+  - name: gp
+    command: |
+      gp url 8080
+
+
   # -------------------------------------------------
   # Install Cqlsh for Astra and setup for a DB
   # -------------------------------------------------
@@ -17,17 +34,17 @@ tasks:
     env:
         CQLENG_ALLOW_SCHEMA_MANAGEMENT: 1
     before: |
-      chmod 700 /workspace/conference-2022-devoxx/scripts/astra-cqlsh
-      chmod 700 /workspace/conference-2022-devoxx/scripts/astra-cqlsh-install
-      chmod 700 /workspace/conference-2022-devoxx/scripts/cassandra-start
-      chmod 700 /workspace/conference-2022-devoxx/scripts/cassandra-cqlsh
+      chmod 700 /workspace/conference-2022-devoxx/labs/lab1_initialisation_environnements/astra-cqlsh
+      chmod 700 /workspace/conference-2022-devoxx/labs/lab1_initialisation_environnements/astra-cqlsh-install
+      chmod 700 /workspace/conference-2022-devoxx/labs/lab1_initialisation_environnements/cassandra-start
+      chmod 700 /workspace/conference-2022-devoxx/labs/lab1_initialisation_environnements/cassandra-cqlsh
     command: |
-      ./scripts/astra-cqlsh-install
+      ./labs/lab1_initialisation_environnements/astra-cqlsh-install
   - name: cassandra-docker
     before: |
       docker pull cassandra:4.0.3
     command: |
-      ./scripts/cassandra-start 2>/dev/null
+      ./labs/lab1_initialisation_environnements/cassandra-start 2>/dev/null
   
 ports:
   # Cassandra Node in Docker
@@ -42,6 +59,10 @@ ports:
   - port: 8081
     onOpen: open-browser
     visibility: public 
+  # Micronaut Application
+  - port: 5005
+    onOpen: ignore
+    visibility: public      
   # Micronaut Application
   - port: 8082
     onOpen: open-browser

@@ -2820,6 +2820,7 @@ CREATE TABLE devoxx_drivers.videos_views (
 - Exécuter la classe `E01_CreateSchema` pour créer les tables et les types nécessaires.
 
 ```bash
+cd /workspace/conference-2022-devoxx/labs/lab4_cassandra_drivers
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E01_CreateSchema
 ```
 
@@ -2899,6 +2900,7 @@ _Requête_
 #### `✅.119`- Exécuter la classe example
 
 ```bash
+cd /workspace/conference-2022-devoxx/labs/lab4_cassandra_drivers
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E02_Statements
 ```
 
@@ -2981,6 +2983,7 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E02_Statements
 #### `✅.120`- Exécuter la classe example
 
 ```bash
+cd /workspace/conference-2022-devoxx/labs/lab4_cassandra_drivers
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E03_OperationsCrud
 ```
 
@@ -3028,6 +3031,7 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E03_Operations
 #### `✅.121`- Exécuter la classe example
 
 ```bash
+cd /workspace/conference-2022-devoxx/labs/lab4_cassandra_drivers
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E04_Batches
 ```
 
@@ -3080,6 +3084,7 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E04_Batches
 #### `✅.122`- Exécuter la classe example
 
 ```bash
+cd /workspace/conference-2022-devoxx/labs/lab4_cassandra_drivers
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E05_Paging
 ```
 
@@ -3164,6 +3169,7 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E05_Paging
 #### `✅.123`- Exécuter la classe example
 
 ```bash
+cd /workspace/conference-2022-devoxx/labs/lab4_cassandra_drivers
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E06_ListSetMapAndUdt
 ```
 
@@ -3214,6 +3220,7 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E06_ListSetMap
 #### `✅.124`- Exécuter la classe example
 
 ```bash
+cd /workspace/conference-2022-devoxx/labs/lab4_cassandra_drivers
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E07_Json
 ```
 
@@ -3272,6 +3279,7 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E07_Json
 #### `✅.125`- Exécuter la classe example
 
 ```bash
+cd /workspace/conference-2022-devoxx/labs/lab4_cassandra_drivers
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E08_Async
 ```
 
@@ -3329,6 +3337,7 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E08_Async
 #### `✅.126`- Exécuter la classe example
 
 ```bash
+cd /workspace/conference-2022-devoxx/labs/lab4_cassandra_drivers
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E09_Reactive
 ```
 
@@ -3367,6 +3376,7 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E09_Reactive
 #### `✅.127`- Exécuter la classe example
 
 ```bash
+cd /workspace/conference-2022-devoxx/labs/lab4_cassandra_drivers
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E10_Counters
 ```
 
@@ -3411,6 +3421,7 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E10_Counters
 #### `✅.128`- Exécuter la classe example
 
 ```bash
+cd /workspace/conference-2022-devoxx/labs/lab4_cassandra_drivers
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E11_LightweightTransactions
 ```
 
@@ -3512,6 +3523,7 @@ Pour effectuer un mapping objet il n'est pas nécessaire de recourir à un frame
 #### `✅.129`- Exécuter la classe example
 
 ```bash
+cd /workspace/conference-2022-devoxx/labs/lab4_cassandra_drivers
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E12_ObjectMapping
 ```
 
@@ -3663,7 +3675,8 @@ spring:
 #### `✅.133`- Validation de la configuration
 
 ```bash
- mvn test -Dtest=com.datastax.workshop.E01_SpringDataInit
+/workspace/conference-2022-devoxx/labs/lab5_spring_data
+mvn test -Dtest=com.datastax.workshop.E01_SpringDataInit
 ```
 
 #### 🖥️ Logs
@@ -3885,6 +3898,7 @@ Une bonne pratique est de séparer les objets utilisés dans la couche d'accès 
 - Démarrer l'application à l'aide du plugin `spring-boot`
 
 ```bash
+cd /workspace/conference-2022-devoxx/labs/lab5_spring_data
 mvn spring-boot:run
 ```
 
@@ -4173,7 +4187,7 @@ mvn test -Dtest=com.datastax.workshop.E03_QuarkusObjectMapping
 
 #### `✅.144` - Démarrer l'application `Quarkus`
 
-- Utiliser le plugin pour démarrer l'application en mode `dev`. Attention cette dernière utilise aussi le port `8080` donc assurez-vous de ne pas avoir laisser l'application Spring démarrée.
+- Utiliser le plugin pour démarrer l'application en mode `dev`.
 
 ```bash
 cd /workspace/conference-2022-devoxx/labs/lab6_quarkus
@@ -4205,7 +4219,7 @@ Press [r] to resume testing, [o] Toggle test output, [h] for more options
 - L'application démarre et devrait apparaître le tableau de bord de dev.
 
 ```bash
-gp preview "$(gp url 8080)/q/dev"
+gp preview "$(gp url 8081)/q/dev"
 ```
 
 _Dashboard_
@@ -4214,7 +4228,7 @@ _Dashboard_
 - Plusieurs plugins sont disponibles directement et notamment `swagger-ui` pour tester l'Api dans un navigateur.
 
 ```bash
-gp preview "$(gp url 8080)/q/swagger-ui"
+gp preview "$(gp url 8081)/q/swagger-ui"
 ```
 
 ![](img/quarkus-swagger.png?raw=true)
@@ -4320,6 +4334,8 @@ cp /workspace/conference-2022-devoxx/labs/lab7_micronaut/src/main/resources/appl
 
 #### `✅.148` - Validation de la configuration
 
+> 🚨 The maven test consider the bean NULL. The command below is failin
+
 ```
 cd /workspace/conference-2022-devoxx/labs/lab7_micronaut
 mvn test -Dtest=com.datastax.workshop.E01_MicronautInit
@@ -4330,6 +4346,8 @@ mvn test -Dtest=com.datastax.workshop.E01_MicronautInit
 ![](img/micronaut_test_01.png?raw=true)
 
 #### `✅.149` - Utilisation de `CqlSession` avec `Micronaut`
+
+> 🚨 The maven test consider the bean NULL. The command below is failin
 
 ```
 cd /workspace/conference-2022-devoxx/labs/lab7_micronaut
@@ -4344,9 +4362,11 @@ mvn test -Dtest=com.datastax.workshop.E02_MicronautCql
 
 #### `✅.150` - Utilisation de l'`object mapping` avec `Micronaut`
 
+> 🚨 The maven test consider the bean NULL. The command below is failin
+
 ```bash
 cd /workspace/conference-2022-devoxx/labs/lab7_micronaut
-mvn test -Dtest=com.datastax.workshop.E04_MicronautObjectMapping
+mvn test -Dtest=com.datastax.workshop.E03_MicronautObjectMapping
 ```
 
 #### 🖥️ Logs
