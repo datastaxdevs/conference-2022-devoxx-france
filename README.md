@@ -3157,7 +3157,7 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E05_Paging
 >  );
 > ```
 
-#### `✅.123`- Executer la classe example
+#### `✅.123`- Exécuter la classe example
 
 ```bash
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E06_ListSetMapAndUdt
@@ -3207,7 +3207,7 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E06_ListSetMap
 >   .build());
 > ```
 
-#### `✅.124`- Executer la classe example
+#### `✅.124`- Exécuter la classe example
 
 ```bash
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E07_Json
@@ -3265,7 +3265,7 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E07_Json
 >   .get();
 > ```
 
-#### `✅.125`- Executer la classe example
+#### `✅.125`- Exécuter la classe example
 
 ```bash
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E08_Async
@@ -3322,7 +3322,7 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E08_Async
 >  .block();
 > ```
 
-#### `✅.126`- Executer la classe example
+#### `✅.126`- Exécuter la classe example
 
 ```bash
 mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E09_Reactive
@@ -3425,7 +3425,7 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E11_Lightweigh
 
 #### 📘 Ce qu'il faut retenir:
 
-Le mapping object est une technique qui consiste à associer les tables de la base de données avec les objets d'une application. Le but est de ne pas avoir à écrire soit même les requêtes CQL. Cette approche est toutefois limitée car elle réduit les possibilités offertes.
+Le mapping objet est une technique qui consiste à associer les tables de la base de données avec les objets d'une application. Le but est de ne pas avoir à écrire soit même les requêtes CQL. Cette approche est toutefois limitée car elle réduit les possibilités offertes.
 
 Pour effectuer un mapping objet il n'est pas nécessaire de recourir à un framework externe type Spring, la fonctionnalité est proposée directement au niveau des drivers Cassandra. Pour une documentation exhaustive référez-vous à la [documentation officielle](https://docs.datastax.com/en/developer/java-driver/4.13/manual/mapper/)
 
@@ -3439,7 +3439,7 @@ Pour effectuer un mapping objet il n'est pas nécessaire de recourir à un frame
 > </dependency>
 > ```
 
-- La librairie d'object mapping va venir générer les classes nécessaires à la compilation sur la base d'annotations dans le code. (`Annotation Processor`). Pour l'activer avec le build `Maven` il est nécessaire de le déclarer dans le bloc XML `annotationProcessorPaths` au niveau du plugin `maven-compiler-plugin`.
+- La librairie d'objet mapping va venir générer les classes nécessaires à la compilation sur la base d'annotations dans le code. (`Annotation Processor`). Pour l'activer avec le build `Maven` il est nécessaire de le déclarer dans le bloc XML `annotationProcessorPaths` au niveau du plugin `maven-compiler-plugin`.
 
 > ```xml
 > <plugins>
@@ -3528,7 +3528,7 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E12_ObjectMapp
 01:51:24.116 INFO  com.datastax.samples.E12_ObjectMapping        : Video2 is cool
 ```
 
-Les drivers sont très puissants et fournissent l'ensemble des opérations permises par la base Apache Cassandra™. Ils sont au coeur des simplifications et des abstractions proposées par d'autres frameworks tels que Spring, Micronaut ou Quarkus aussi est'il important de bien les maîtriser. SI vous êtes bloqués retournés à l'objet `CqlSession`.
+Les drivers sont très puissants et fournissent l'ensemble des opérations permises par la base Apache Cassandra™. Ils sont au coeur des simplifications et des abstractions proposées par d'autres frameworks tels que Spring, Micronaut ou Quarkus aussi est-il important de bien les maîtriser. SI vous êtes bloqués retournés à l'objet `CqlSession`.
 
 <p/><br/>
 
@@ -3560,7 +3560,7 @@ _Créer le keyspace `devoxx_spring` et valider avec `SAVE`_
 
 #### 📘 Ce qu'il faut retenir:
 
-- [Spring Data](https://spring.io/projects/spring-data) est la couche d'accès aux données proposée dans le framework spring. Elle se dérive pour plusieurs bases de données à la fois SQL (JPA) et NoSQL (Cassandra, Mongo, Redis...)
+- [Spring Data](https://spring.io/projects/spring-data) est la couche d'accès aux données proposée dans le framework spring. Elle se décline pour plusieurs bases de données à la fois SQL (JPA) et NoSQL (Cassandra, Mongo, Redis...)
 
 - [Spring Data Cassandra](https://spring.io/projects/spring-data-cassandra) comporte 1 librairie [`spring-data-cassandra`](https://mvnrepository.com/artifact/org.springframework.data/spring-data-cassandra) et la dernière version est [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.datastax.oss/java-driver-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.springframework.data/spring-data-cassandra)
 
@@ -3701,7 +3701,7 @@ CREATE TABLE todos (
 )
 ```
 
-- On définit un objet `TodoEntity` et on l'annotate avec les annotations Spring Data.
+- On définit un objet `TodoEntity` et on l'annote avec les annotations Spring Data.
 
 > ```java
 > @Table(value = TodoEntity.TABLENAME)
@@ -3736,7 +3736,7 @@ CREATE TABLE todos (
 > }
 > ```
 
-- On définit une interface qui hérite de `CassandraRepository` (elle même hérite de `CRUDRepository`) en spécifiant le bean et la clé primaire.
+- On définit une interface qui hérite de `CassandraRepository` (elle-même hérite de `CRUDRepository`) en spécifiant le bean et la clé primaire.
 
 ```java
 @Repository
@@ -3960,16 +3960,16 @@ mvn test -Dtest=com.datastax.workshop.E04_SpringControllerTest
 
 #### 📘 Ce qu'il faut retenir:
 
-[Quarkus](https://quarkus.io/) est un framework pour construire des microservices sur la plateforme Java. Le parti pris est de réaliser le plus d'opérations possibles durant le build et de ne packager que ce qui est absolutement nécessaire. Les objectifs sont:
+[Quarkus](https://quarkus.io/) est un framework pour construire des microservices sur la plateforme Java. Le parti pris est de réaliser le plus d'opérations possibles durant le build et de ne packager que ce qui est absolument nécessaire. Les objectifs sont:
 
 - La production d'une image native de quelques mega-octets seulement
 - La production d'une image qui démarre en quelques millièmes de seconde.
 
 Une [extension Quarkus](https://quarkus.io/guides/writing-extensions) permet de simplifier la configuration d'une application et d'assurer une meilleure compatibilité. L'équipe `Datastax` a créé et open sourcé une extension pour Cassandra [ici](https://github.com/datastax/cassandra-quarkus). Voici ce qu'elle permet:
 
-- Le support de reactif avec `Mutiny` (couche réactive de Quarkus)
+- Le support de réactif avec `Mutiny` (couche réactive de Quarkus)
 - L'intégration avec `vertx` et le event loop de Quarkus
-- Déclarer les `Mapper` (object mapping) dans `Arc`, le système d'injection de dpendance de Quarkus.
+- Déclarer les `Mapper` (object mapping) dans `Arc`, le système d'injection de dépendances de Quarkus.
 - Fournir des hints pour la création d'une native image _aux petits oignons._
 
 La librairie à utiliser est `cassandra-quarkus-client` et la version est [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.datastax.oss.quarkus/cassandra-quarkus-client/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.datastax.oss.quarkus/cassandra-quarkus-client)
@@ -3998,7 +3998,7 @@ WITH REPLICATION = {
 }  AND DURABLE_WRITES = true;
 ```
 
-Avec Astra, la manipulation des keyspaces est désactivé, c'est lui qui fixe les facteurs de réplications pour vous (Saas). La procédure est décrite en détail dans [Awesome Astra](https://awesome-astra.github.io/docs/pages/astra/faq/#how-do-i-create-a-namespace-or-a-keyspace) mais voici quelques captures:
+Avec Astra, la manipulation des keyspaces est désactivée, c'est lui qui fixe les facteurs de réplications pour vous (Saas). La procédure est décrite en détail dans [Awesome Astra](https://awesome-astra.github.io/docs/pages/astra/faq/#how-do-i-create-a-namespace-or-a-keyspace) mais voici quelques captures:
 
 _Repérer le bouton `ADD KEYSPACE`_
 ![](https://awesome-astra.github.io/docs/img/faq/create-keyspace-button.png)
@@ -4111,7 +4111,7 @@ mvn test -Dtest=com.datastax.workshop.E02_QuarkusCql
 
 #### 📘 Ce qu'il faut comprendre:
 
-- Nous construisons un objet annoté avec `@RegisterForReflection` pour permettre la reflection et les mappers.
+- Nous construisons un objet annoté avec `@RegisterForReflection` pour permettre la réflexion et les mappers.
 
 ```java
 @RegisterForReflection
@@ -4123,7 +4123,7 @@ public class Todo {
 }
 ```
 
-- Nous définissions une classe de service `TodoServicesCassandraOM` avec l'annotation `@ApplicationScoped` pour l'introduire dans le context de l'application.
+- Nous définissions une classe de service `TodoServicesCassandraOM` avec l'annotation `@ApplicationScoped` pour l'introduire dans le contexte de l'application.
 
 - Dans le constructeur nous utilisons le `Mapper` pour instancier un `DAO` créé directement avec le driver.
 
@@ -4167,9 +4167,9 @@ mvn test -Dtest=com.datastax.workshop.E03_QuarkusObjectMapping
 
 ## 6.4 - Application Quarkus
 
-#### `✅.143` - Démarrer l'application `Quarkus`
+#### `✅.144` - Démarrer l'application `Quarkus`
 
-- Uitiliser le plugin pour démarrer l'application en mode `dev`. Attention cette dernière utilise aussi le port `8080` donc assurez-vous de ne pas avoir laisser l'application Spring démarrée.
+- Utiliser le plugin pour démarrer l'application en mode `dev`. Attention cette dernière utilise aussi le port `8080` donc assurez-vous de ne pas avoir laisser l'application Spring démarrée.
 
 ```bash
 cd /workspace/conference-2022-devoxx/labs/lab6_quarkus
@@ -4198,7 +4198,7 @@ Tests paused
 Press [r] to resume testing, [o] Toggle test output, [h] for more options
 ```
 
-- L'application démarre et devrait vous router sur le tableau de bord de dev.
+- L'application démarre et devrait apparaître le tableau de bord de dev.
 
 ```bash
 gp preview "$(gp url 8080)/q/dev"
@@ -4215,7 +4215,7 @@ gp preview "$(gp url 8080)/q/swagger-ui"
 
 ![](img/quarkus-swagger.png?raw=true)
 
-#### `✅.144` - Test d'intégration avec `Quarkus`
+#### `✅.145` - Test d'intégration avec `Quarkus`
 
 Arrêter l'application en utilisant la touche `q`. Nous pouvons terminer par un test d'intégration
 
@@ -4255,15 +4255,15 @@ mvn test -Dtest=com.datastax.workshop.E04_QuarkusController
 
 #### 📘 Ce qu'il faut retenir:
 
-- [Micronaut](https://micronaut.io/) est un framework de la JVM pour construire des microservices. Comme Quarkus il vise à construire des applications avec une empreinte mémoire faible et des démarrages ultra rapide. L'idée est de permettre du _serverless_ ou des déploiements dans Kubernetes et le cloud.
+- [Micronaut](https://micronaut.io/) est un framework de la JVM pour construire des microservices. Comme Quarkus il vise à construire des applications avec une empreinte mémoire faible et des démarrages ultra rapides. L'idée est de permettre le _serverless_ ainsi que des déploiements dans Kubernetes et le cloud.
 
-- L'approche est différente. Il privilégie l'Aspect Oriented Programming dès la compilation au travers d'`Annotation Processor` (oui comme les mappers). Ainsi de nombreux éléments sont constuits à la compilation.
+- L'approche est différente. Il privilégie l'Aspect Oriented Programming dès la compilation au travers d'`Annotation Processor` (oui comme les mappers). Ainsi de nombreux éléments sont construits à la compilation.
 
 - Pour démarrer avec Micronaut il est utile d'installer [la ligne de commande](https://docs.micronaut.io/latest/guide/index.html#buildCLI) avec `sdkman`.
 
 ## 7.2 - Connexion et configuration
 
-#### `✅.145`- Création du keyspace `devoxx_micronaut`
+#### `✅.146`- Création du keyspace `devoxx_micronaut`
 
 _Dans Docker:_
 
@@ -4275,7 +4275,7 @@ WITH REPLICATION = {
 }  AND DURABLE_WRITES = true;
 ```
 
-Avec Astra, la manipulation des keyspaces est désactivé, c'est lui qui fixe les facteurs de réplications pour vous (Saas). La procédure est décrite en détail dans [Awesome Astra](https://awesome-astra.github.io/docs/pages/astra/faq/#how-do-i-create-a-namespace-or-a-keyspace) mais voici quelques captures:
+Avec Astra, la manipulation des keyspaces est désactivée, c'est lui qui fixe les facteurs de réplications pour vous (Saas). La procédure est décrite en détail dans [Awesome Astra](https://awesome-astra.github.io/docs/pages/astra/faq/#how-do-i-create-a-namespace-or-a-keyspace) mais voici quelques captures:
 
 _Repérer le bouton `ADD KEYSPACE`_
 ![](https://awesome-astra.github.io/docs/img/faq/create-keyspace-button.png)
@@ -4283,7 +4283,7 @@ _Repérer le bouton `ADD KEYSPACE`_
 _Créer le keyspace `devoxx_micronaut` et valider avec `SAVE`_
 ![](https://awesome-astra.github.io/docs/img/faq/create-keyspace.png)
 
-#### `✅.146`- Configuration de l'application `Micronaut`
+#### `✅.147`- Configuration de l'application `Micronaut`
 
 - Placer vous dans le répertoire `lab7_micronaut` et compiler le projet
 
@@ -4314,7 +4314,7 @@ cp /workspace/conference-2022-devoxx/labs/lab7_micronaut/src/main/resources/appl
 
 - Dans le cas de Astra changer la clef `cassandra.default.advanced.auth-provider.password` pour correspondre à votre base. On remarquera que Micronaut on fait le choix d'utiliser les mêmes clefs que le fichier de configuration du drivers et de ne pas réinventer la roue (merci à eux).
 
-#### `✅.147` - Validation de la configuration
+#### `✅.148` - Validation de la configuration
 
 ```
 cd /workspace/conference-2022-devoxx/labs/lab7_micronaut
@@ -4325,7 +4325,7 @@ mvn test -Dtest=com.datastax.workshop.E01_MicronautInit
 
 ![](img/micronaut_test_01.png?raw=true)
 
-#### `✅.148` - Utilisation de `CqlSession` avec `Micronaut`
+#### `✅.149` - Utilisation de `CqlSession` avec `Micronaut`
 
 ```
 cd /workspace/conference-2022-devoxx/labs/lab7_micronaut
@@ -4338,7 +4338,7 @@ mvn test -Dtest=com.datastax.workshop.E02_MicronautCql
 
 ## 7.3 - Object Mapping
 
-#### `✅.149` - Utilisation de l'`object mapping` avec `Micronaut`
+#### `✅.150` - Utilisation de l'`object mapping` avec `Micronaut`
 
 ```bash
 cd /workspace/conference-2022-devoxx/labs/lab7_micronaut
@@ -4351,7 +4351,7 @@ mvn test -Dtest=com.datastax.workshop.E04_MicronautObjectMapping
 
 ## 7.4 - Application Micronaut
 
-#### `✅.150`- Démarrer l'application `micronaut`
+#### `✅.151`- Démarrer l'application `micronaut`
 
 ```bash
 cd /workspace/conference-2022-devoxx/labs/lab7_micronaut
@@ -4395,7 +4395,7 @@ mvn test -Dtest=com.datastax.workshop.E04_MicronautController
 
 ---
 
-Vous êtes à la fin de la session félicitations !!
+Vous êtes à la fin de la session. Félicitations !!
 
 ![](img/end.gif?raw=true)
 
