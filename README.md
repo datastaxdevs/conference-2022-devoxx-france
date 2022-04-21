@@ -130,7 +130,7 @@ DataStax propose <a href="https://www.datastax.com/dev/certifications">3 certifi
 
 Que vous soyez dans la salle avec nous pour Devoxx ou que vous regardiez la session maintenant sur Youtube voici toutes les supports nécessaires :
 
-- [Les slides](slides.pdf)
+- [Les slides](./labs/slides.pdf)
 - [Les labs](/hands-on)
 - [Une invitation sur notre serveur Discord](https://bit.ly/cassandra-workshop) pour échanger et rejoindre la communauté.
 - [Notre forum, community.datastax.com](https://community.datastax.com/) afin de poser vos questions.
