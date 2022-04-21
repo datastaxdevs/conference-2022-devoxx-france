@@ -4390,7 +4390,7 @@ cp /workspace/conference-2022-devoxx/labs/lab7_micronaut/src/main/resources/appl
 
 ```
 cd /workspace/conference-2022-devoxx/labs/lab7_micronaut
-mvn test -Dtest=com.datastax.workshop.E01_MicronautInit
+mvn test -Dtest=com.datastaxdev.E01_MicronautInit
 ```
 
 #### 🖥️ Logs
@@ -4403,7 +4403,7 @@ mvn test -Dtest=com.datastax.workshop.E01_MicronautInit
 
 ```
 cd /workspace/conference-2022-devoxx/labs/lab7_micronaut
-mvn test -Dtest=com.datastax.workshop.E02_MicronautCql
+mvn test -Dtest=com.datastaxdev.E02_MicronautCql
 ```
 
 #### 🖥️ Logs
@@ -4418,7 +4418,7 @@ mvn test -Dtest=com.datastax.workshop.E02_MicronautCql
 
 ```bash
 cd /workspace/conference-2022-devoxx/labs/lab7_micronaut
-mvn test -Dtest=com.datastax.workshop.E03_MicronautObjectMapping
+mvn test -Dtest=com.datastaxdev.E03_MicronautObjectMapping
 ```
 
 #### 🖥️ Logs
@@ -4462,7 +4462,7 @@ Arrêter l'application en utilisant la touche `CTRL+C`. Nous pouvons terminer pa
 
 ```bash
 cd /workspace/conference-2022-devoxx/labs/lab7_micronaut
-mvn test -Dtest=com.datastax.workshop.E04_MicronautController
+mvn test -Dtest=com.datastaxdev.E04_MicronautController
 ```
 
 #### 🖥️ Logs

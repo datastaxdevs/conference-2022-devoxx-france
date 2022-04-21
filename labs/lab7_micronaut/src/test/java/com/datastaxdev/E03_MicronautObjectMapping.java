@@ -1,11 +1,10 @@
-package com.datastax.workshop;
+package com.datastaxdev;
 
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.datastax.oss.driver.api.core.CqlSession;
-import com.datastaxdev.TodoDto;
 import com.datastaxdev.todo.cassandra.TodoServicesCassandraOM;
 
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;

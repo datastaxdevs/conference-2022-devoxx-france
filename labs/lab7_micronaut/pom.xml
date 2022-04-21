@@ -175,7 +175,7 @@
 						</path>
 					</annotationProcessorPaths>
 					<compilerArgs>
-						<arg>-Amicronaut.processing.group=com.datastax.workshop</arg>
+						<arg>-Amicronaut.processing.group=com.datastaxdev</arg>
 						<arg>-Amicronaut.processing.module=lab7-micronaut</arg>
 					</compilerArgs>
 				</configuration>

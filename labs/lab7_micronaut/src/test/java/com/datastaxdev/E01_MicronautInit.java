@@ -1,4 +1,4 @@
-package com.datastax.workshop;
+package com.datastaxdev;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,7 @@ import io.micronaut.context.annotation.Property;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 
-@MicronautTest(packages="com.datastax.workshop")
+@MicronautTest
 public class E01_MicronautInit {
 
     /** Logger for the class. */
