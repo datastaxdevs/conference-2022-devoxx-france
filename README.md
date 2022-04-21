@@ -716,9 +716,12 @@ select * from city_by_country;
 <p/>
 <details>
 <summary>Cliquer pour afficher la solution</summary>
-<pre>select * from city_by_country 
-WHERE country='FR';</pre>
-</p>
+
+```sql
+select * from city_by_country 
+WHERE country='FR';
+```
+
 </details>
 <p/>
 
@@ -727,10 +730,13 @@ WHERE country='FR';</pre>
 <p/>
 <details>
 <summary>Cliquer pour afficher la solution</summary>
-<pre>select * from city_by_country 
+
+```sql
+select * from city_by_country 
 WHERE country='FR' 
-AND city='Brest';</pre>
-</p>
+AND city='Brest';
+```
+
 </details>
 <p/>
 
@@ -739,17 +745,22 @@ AND city='Brest';</pre>
 <p/>
 <details>
 <summary>Cliquer pour afficher la solution</summary>
-<p>Avec Update
-<pre>update city_by_country 
+
+*Update*
+
+```sql
+update city_by_country 
 SET population=142000 
 WHERE country='FR' 
-AND city='Brest';</pre>
+AND city='Brest';
+```
 
-ou Avec Insert (tout insert est un upset)
+*ou *Avec Insert (tout insert est un upset)*
+```sql
+INSERT INTO city_by_country(country, city, population) 
+VALUES('FR','Brest',  142000);
+```
 
-<pre>INSERT INTO city_by_country(country, city, population) 
-VALUES('FR','Brest',  142000);</pre>
-</p>
 </details>
 <p/>
 
@@ -758,13 +769,19 @@ VALUES('FR','Brest',  142000);</pre>
 <p/>
 <details>
 <summary>Cliquer pour afficher la solution</summary>
-<pre>
+
+```sql
 DELETE FROM city_by_country 
 WHERE country='JP'
 AND city='Tokyo';
-</pre>
-Vérification:<pre>select * from city_by_country 
-WHERE country='JP';</pre>
+```
+
+*Vérification:*
+```sql
+select * from city_by_country 
+WHERE country='JP';
+```
+
 </details>
 <p/>
 
@@ -775,10 +792,18 @@ WHERE country='JP';</pre>
 <p/>
 <details>
 <summary>Cliquer pour afficher la solution</summary>
-<pre>
-DELETE FROM city_by_country WHERE country='CA';
-</pre>
-Vérification:<pre>select * from city_by_country WHERE country='CA';</pre>
+
+```sql
+DELETE FROM city_by_country 
+WHERE country='CA';
+```
+
+*Vérification:*
+```sql
+select * from city_by_country 
+WHERE country='CA';
+```
+
 </details>
 <p/>
 
@@ -787,14 +812,20 @@ Vérification:<pre>select * from city_by_country WHERE country='CA';</pre>
 <p/>
 <details>
 <summary>Cliquer pour afficher la solution</summary>
-<pre>
+
+```sql
 DELETE population 
 FROM city_by_country 
 WHERE country='AU' 
 AND city='Sydney';
-</pre>
-Vérification:<pre>SELECT * from city_by_country 
-WHERE country='AU';</pre>
+```
+
+*Vérification:*
+```sql
+SELECT * from city_by_country 
+WHERE country='AU';
+```
+
 </details>
 <p/>
 
@@ -841,7 +872,7 @@ La clause `ALLOW FILTERING` permet d'autoriser le _full scan_ du cluster et de n
 
 #### `✅.037`- Requêter la clé de partition avec une égalité `=`
 
-Afficher la liste des villes pour le code pays `FR`.
+- Afficher la liste des villes pour le code pays `FR`.
 
 ```sql
 SELECT * FROM city_by_country
@@ -850,7 +881,7 @@ WHERE country='FR';
 
 #### `✅.038`- Requêter la clé de partition avec une clause `IN`
 
-- - Afficher la liste des villes pour le code pays `CA` ou `DE`.
+- Afficher la liste des villes pour le code pays `CA` ou `DE`.
 
 ```sql
 select * FROM city_by_country
@@ -999,7 +1030,7 @@ SELECT * FROM users;
 
 #### `✅.047`- Exercice `UUID`
 
-Créer une table `movies`, dont la partition est `id` de type `UUID` et insérer les lignes suivantes:
+- Créer une table `movies`, dont la partition est `id` de type `UUID` et insérer les lignes suivantes:
 
 | id                                   | title                        | year     | duration |
 | ------------------------------------ | ---------------------------- | -------- | -------- |
@@ -1009,7 +1040,8 @@ Créer une table `movies`, dont la partition est `id` de type `UUID` et insérer
 <p/>
 <details>
 <summary>Cliquer pour afficher la solution</summary>
-<pre>
+
+```sql
 CREATE TABLE movies (
   id UUID,
   title TEXT,
@@ -1024,9 +1056,13 @@ VALUES (5069cc15-4300-4595-ae77-381c3af5dc5e,
 
 INSERT INTO movies (id, title, year, duration)
 VALUES (uuid(), 'Alice', 1951, 75);
+```
 
-</pre>
-Vérification:<pre>SELECT * FROM movies;</pre>
+*Vérification:*
+```sql
+SELECT * FROM movies;
+```
+
 </details>
 <p/>
 
@@ -1487,7 +1523,7 @@ VALUES(uuid(), 'clu@sample.com', 'video2', toTimeStamp(now()), 'http://google.fr
 select videoid, email, title from videos;
 ```
 
-#### `✅.071`- Insertions dans la table `videos` avec `JSON
+#### `✅.071`- Insertions dans la table `videos` avec `JSON`
 
 ```sql
 INSERT INTO videos JSON '{
@@ -1605,7 +1641,7 @@ WHERE cart_id = b7255608-4a42-4829-9b84-a355e0e5100d;
 
 #### `✅.076`- Exercice
 
-- Mettre à jour le caddie en ajoutant un autre item et en mettant à jour le total. On notera que total est une colonne `static`, mettre á jour la valeur met à jour la valeur pour tous les enregistrements.
+- Mettre à jour le caddie en ajoutant un autre item et en mettant à jour le total. On notera que total est une colonne `static`, mettre à jour la valeur d'un record, met à jour la valeur pour tous les enregistrements.
 
 <p/>
 <details>
@@ -1755,7 +1791,7 @@ FROM city_by_country
 WHERE city='Paris';
 ```
 
-`--- oups ---`
+`--- oups: L'erreur était attendue. ---`
 
 #### `✅.083`- Création d'un index secondaire
 
@@ -1903,9 +1939,9 @@ DELETE ... FROM ... WHERE ...
 IF EXISTS | IF predicate [ AND ... ];
 ```
 
-Avec Cassandra, afin de rendre les requêtes les plus rapides possibles on veut éviter de faire des _lectures_ avant des _écritures_.
+Avec Cassandra, afin de rendre les requêtes les plus rapides possibles, on veut éviter de faire des _lectures_ avant _écritures_.
 
-Ici on ne peut s'y soustraire, la condition `IF` précède l'écriture. Cette transaction s'appuie sur l'algorithme de consensus distribué nommé `Paxos` et nécessite une pseudo-synchronisation des noeuds. En conséquence, il faut s'attendre à un temps de réponse de l'ordre de 4 fois supérieur.
+Ici on ne peut s'y soustraire, la condition `IF` précède l'écriture. Cette transaction s'appuie sur l'algorithme de consensus distribué nommé `Paxos` et nécessite une pseudo-synchronisation des noeuds. Il faut s'attendre à un temps de réponse de l'ordre de 4 fois plus lents en raison des aller-retours en le coordinateur et les réplicas.
 
 #### `✅.088`- Création d'une table pour illustrer les LWT
 
@@ -2003,9 +2039,12 @@ CREATE TABLE orders_by_user (
 
 INSERT INTO orders_by_user (username, order_id, status)
 VALUES ('devoxx_developer', f1fa2590-2d78-4b77-9710-95bdb45b7fa1, 'awaiting payment');
+
 INSERT INTO orders_by_user (username, order_id, status)
 VALUES ('devoxx_developer', c420d3a3-cecc-4c25-a7f8-ef28eb532969, 'awaiting shipment');
-SELECT * FROM orders_by_user WHERE username = 'devoxx_developer';
+
+SELECT * FROM orders_by_user 
+WHERE username = 'devoxx_developer';
 ```
 
 #### `✅.094`- Déclencher les envois
@@ -2013,7 +2052,8 @@ SELECT * FROM orders_by_user WHERE username = 'devoxx_developer';
 - Mettre à jour le statut à `shipped` si les conditions sont réunies (KO)
 
 ```sql
-UPDATE orders_by_user SET status = 'shipped'
+UPDATE orders_by_user 
+SET status = 'shipped'
 WHERE username = 'devoxx_developer'
   AND order_id = f1fa2590-2d78-4b77-9710-95bdb45b7fa1
 IF status = 'awaiting shipment';
@@ -2022,12 +2062,14 @@ IF status = 'awaiting shipment';
 - Mettre à jour le statut à `shipped` si les conditions sont réunies (OK)
 
 ```sql
-UPDATE orders_by_user SET status = 'shipped'
+UPDATE orders_by_user 
+SET status = 'shipped'
 WHERE username = 'devoxx_developer'
   AND order_id = c420d3a3-cecc-4c25-a7f8-ef28eb532969
 IF status = 'awaiting shipment';
 
-SELECT * FROM orders_by_user WHERE username = 'devoxx_developer';
+SELECT * FROM orders_by_user 
+WHERE username = 'devoxx_developer';
 ```
 
 #### `✅.095`- Tenter d'annuler les commandes
@@ -2072,7 +2114,7 @@ CREATE TABLE auction_items (
 );
 ```
 
-- Mise à prix de ma Wii 50 euros.
+- Mise à prix de ma Wii à 50 euros.
 
 ```sql
 INSERT INTO auction_items (item_id, starting_bid, highest_bid)
@@ -2091,7 +2133,8 @@ SET highest_bid = 50.00, highest_bidder = 'Emmanuel'
 WHERE item_id = 'Wii_a_cedrick'
 IF starting_bid <= 50.00 AND highest_bid < 10.00;
 
-SELECT * FROM auction_items WHERE item_id = 'Wii_a_cedrick';
+SELECT * FROM auction_items 
+WHERE item_id = 'Wii_a_cedrick';
 ```
 
 #### `✅.098`- Un client place une enchère
@@ -2104,7 +2147,8 @@ SET highest_bid = 50.00, highest_bidder = 'Marine'
 WHERE item_id = 'Wii_a_cedrick'
 IF starting_bid <= 50.00 AND highest_bid < 50.00;
 
-SELECT * FROM auction_items WHERE item_id = 'Wii_a_cedrick';
+SELECT * FROM auction_items 
+WHERE item_id = 'Wii_a_cedrick';
 ```
 
 #### `✅.099`- Le deuxième client place une second enchère plus important
@@ -2114,7 +2158,9 @@ UPDATE auction_items
 SET highest_bid = 51.00, highest_bidder = 'Marine'
 WHERE item_id = 'Wii_a_cedrick'
 IF starting_bid <= 51.00 AND highest_bid < 51.00;
-SELECT * FROM auction_items WHERE item_id = 'Wii_a_cedrick';
+
+SELECT * FROM auction_items 
+WHERE item_id = 'Wii_a_cedrick';
 ```
 
 ### 2.8.6 - `EXEMPLE LWT 4:` - Historique des enchères
@@ -2144,7 +2190,8 @@ CREATE TABLE bids_by_item (
 INSERT INTO bids_by_item (item_id, bid_id, starting_bid, highest_bid)
 VALUES ('Wii_a_cedrick', NOW(), 50.00, 0.00);
 
-SELECT * FROM bids_by_item WHERE item_id = 'Wii_a_cedrick';
+SELECT * FROM bids_by_item 
+WHERE item_id = 'Wii_a_cedrick';
 ```
 
 #### `✅.101`- Première enchère
@@ -2164,7 +2211,8 @@ SET highest_bid = 50.00, highest_bidder = 'Emmanuel'
 WHERE item_id = 'Wii_a_cedrick'
 IF starting_bid <= 50.00 AND highest_bid < 50.00;
 
-SELECT * FROM bids_by_item WHERE item_id = 'Wii_a_cedrick';
+SELECT * FROM bids_by_item 
+WHERE item_id = 'Wii_a_cedrick';
 ```
 
 #### `✅.102`- Deuxième enchère
@@ -2183,7 +2231,9 @@ UPDATE bids_by_item
 SET highest_bid = 50.00, highest_bidder = 'Marine'
 WHERE item_id = 'Wii_a_cedrick'
 IF starting_bid <= 50.00 AND highest_bid < 50.00;
-SELECT * FROM bids_by_item WHERE item_id = 'Wii_a_cedrick';
+
+SELECT * FROM bids_by_item 
+WHERE item_id = 'Wii_a_cedrick';
 ```
 
 #### `✅.103`- Troisième enchère
@@ -2198,7 +2248,9 @@ UPDATE bids_by_item
 SET highest_bid =  51.00, highest_bidder = 'Marine'
 WHERE item_id = 'Wii_a_cedrick'
 IF starting_bid <=  51.00 AND highest_bid <  51.00;
-SELECT * FROM bids_by_item WHERE item_id = 'Wii_a_cedrick';
+
+SELECT * FROM bids_by_item 
+WHERE item_id = 'Wii_a_cedrick';
 ```
 
 Ce type de modèle de données est appelé ledger. Il conserve à la fois le dernier état du système mais tous les états précédents.
@@ -2255,7 +2307,7 @@ Dans notre exemple:
 
 **Définition:** : Le modèle logique de données reprend les patterns d'accès à la donnée (`Q1..Q4`) que l'on enrichit avec les différents attributs provenant du diagramme entité relation. En utilisant les critères de recherche on définit les clés primaires des tables en utilisant la notation de `Chebotko`:
 
-- `K` : partition KEY. C'est le plus important. Elle peut porter sur une **ou plusieurs ** colonne. C'est la clé de découpage, l'élément indispensable dans la clause where. On enregistre ensemble ce que l'on souhaite retrouver ensemble plus tard. C'est comme si on faisait la jointure à l'écriture et non à la lecture.
+- `K` : partition KEY. C'est le plus important. Elle peut porter sur une **ou plusieurs** colonnes. C'est la clé de découpage, l'élément indispensable dans la clause where. On enregistre ensemble ce que l'on souhaite retrouver ensemble plus tard. C'est comme si on faisait **la jointure à l'écriture et non à la lecture.**
 
 - `C` : Clustering Column with order `ASC` (`↑`) or `DESC` (`↓`). Elles sont utilisées comme critère de filtre secondaire (attention l'ordre est important) et pour assurer l'unicité d'un enregistrement.
 
@@ -2267,7 +2319,7 @@ Dans notre exemple:
 
 **Définition:** : Le modèle physique de données est obtenu par extension du modèle logique en ajoutant les types propres à Cassandra et en cherchant les optimisations possibles (TIMEUUID, Index secondaires..).
 
-Il faut être vigilant à la taille des partitions les limites recommandées sont `100.000` enregistrements maximum et `100` Mo maximum. Les autres optimisations peuvent concerner des agrégations ou de l'indexation.
+Il faut être vigilant à la taille des partitions les limites recommandées sont `100.000` enregistrements maximum et `100 Mo.` maximum. Les autres optimisations peuvent concerner des agrégations ou de l'indexation.
 
 Voici le modèle physique dans notre cas et les modifications apportées (en vert)
 
@@ -2313,18 +2365,6 @@ CREATE TABLE networks (
   PRIMARY KEY ((bucket),name)
 );
 
-CREATE TABLE temperatures_by_network (
-  network TEXT,
-  week DATE,
-  date_hour TIMESTAMP,
-  sensor TEXT,
-  avg_temperature FLOAT,
-  latitude DECIMAL,
-  longitude DECIMAL,
-  PRIMARY KEY ((network,week),date_hour,sensor)
-) WITH CLUSTERING ORDER BY (date_hour DESC, sensor ASC);
-
-
 CREATE TABLE sensors_by_network (
   network TEXT,
   sensor TEXT,
@@ -2341,6 +2381,18 @@ CREATE TABLE temperatures_by_sensor (
   value FLOAT,
   PRIMARY KEY ((sensor,date),timestamp)
 ) WITH CLUSTERING ORDER BY (timestamp DESC);
+
+CREATE TABLE temperatures_by_network (
+  network TEXT,
+  week DATE,
+  date_hour TIMESTAMP,
+  sensor TEXT,
+  avg_temperature FLOAT,
+  latitude DECIMAL,
+  longitude DECIMAL,
+  PRIMARY KEY ((network,week),date_hour,sensor)
+) WITH CLUSTERING ORDER BY (date_hour DESC, sensor ASC);
+
 ```
 
 #### `✅.106`- Chargement des données avec la commande `SOURCE`
@@ -2477,7 +2529,7 @@ Avec Astra, la manipulation des keyspaces est désactivée, c'est lui qui fixe l
 _Repérer le bouton `ADD KEYSPACE`_
 ![](https://awesome-astra.github.io/docs/img/faq/create-keyspace-button.png)
 
-_Créer le keyspace `devoxx_dm_petclinic` et valider avec `SAVE`_
+_Créer le keyspace `spring_petclinic` et valider avec `SAVE`_
 ![](https://awesome-astra.github.io/docs/img/faq/create-keyspace.png)
 
 #### `✅.113`- Création du schéma
@@ -2638,7 +2690,7 @@ Cette configuration est possible au driver du `CqlSessionBuilder` comme présent
 ```TypeScript
 datastax-java-driver {
   basic {
-    session-keyspace = devoxx
+    session-keyspace = devoxx_drivers
     request {
        timeout     = 8 seconds
        consistency = LOCAL_QUORUM
@@ -2700,12 +2752,12 @@ gp open /workspace/conference-2022-devoxx/labs/lab4_cassandra_drivers/src/main/j
 - Vérifier les informations de connexion. Si vous utilisez `Astra`, mettez à jour votre token.
 
 ```java
-public static final String LOCAL_DATACENTER   = "dc1";
-public static final String CONTACT_POINT      = "localhost";
-public static final int    CONTACT_POINT_PORT = 9042;
-public static final String ASTRA_USERNAME     = "token";
-public static final String ASTRA_PASSWORD     = "AstraCS:<votre jeton>";
-public static final String ASTRA_BUNDLE       = "/home/gitpod/.cassandra/bootstrap.zip";
+final String LOCAL_DATACENTER   = "dc1";
+final String CONTACT_POINT      = "localhost";
+final int    CONTACT_POINT_PORT = 9042;
+final String ASTRA_USERNAME     = "token";
+final String ASTRA_PASSWORD     = "<votre_jeton_AstraCS>";
+final String ASTRA_BUNDLE       = "/home/gitpod/.cassandra/bootstrap.zip";
 ```
 
 - Décommenter la connexion qui vous correspond. La ligne 40 (`connectToLocalCassandra()`) permet d'utilise le cluster local alors que la ligne `41` tentera de se connecter au cluster sur Astra. (`connectoToAstra()`)
@@ -2722,7 +2774,7 @@ protected static synchronized CqlSession getCqlSession() {
 
 #### `✅.117`- Vérifier votre connexion à Cassandra
 
-- Repéré le terminal `test-java` avec le texte en bleu
+- Repéré le terminal `lab4_cassandra_drivers` avec le texte en bleu.
 
 ```
 ------------------------------------------------------------
@@ -2799,7 +2851,7 @@ CREATE TABLE devoxx_drivers.videos_views (
 
 #### 📘 Ce qu'il faut retenir:
 
-- Pour exécuter une requête on travaille avec l'objet `CqlSession` et la méthode `execute()`.
+- Pour exécuter une requête on travaille avec l'objet `CqlSession` (`autocloseable` + doit être un singleton) et la méthode `execute()`.
 
 - Les requêtes sont construites en utilisant un builder `SchemaBuilder`.
 
@@ -3256,7 +3308,7 @@ mvn clean compile exec:java -Dexec.mainClass=com.datastax.samples.E07_Json
 
 ![](img/query-async.png?raw=true)
 
-- On utilise les Api dites fluent pour travailler sur les réponses
+- On utilise les Api dites `fluent` pour travailler avec les réponses.
 
 > ```java
 > // Exécution
@@ -3616,7 +3668,7 @@ gp open /workspace/conference-2022-devoxx/labs/lab5_spring_data/pom.xml
 
 #### `✅.132`- Configuration de l'application Spring-Data
 
-- Placer vous dans le répertoire `lab5_spring_data` et compiler le projet
+- Repérer le terminal `lab5_spring_data` et compiler le projet
 
 ```bash
 cd /workspace/conference-2022-devoxx/labs/lab5_spring_data

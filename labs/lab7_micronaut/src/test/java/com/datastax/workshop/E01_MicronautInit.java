@@ -12,7 +12,7 @@ import io.micronaut.context.annotation.Property;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 
-@MicronautTest
+@MicronautTest(packages="com.datastax.workshop")
 public class E01_MicronautInit {
 
     /** Logger for the class. */
