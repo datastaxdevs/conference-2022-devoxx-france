@@ -501,7 +501,7 @@ ls -l /home/gitpod/.cassandra/bootstrap.zip
 Le script `astra-cqlsh` réutilise les différentes variables d'environnement ainsi que le `secureConnectBundle` (SCB) pour initialiser la connexion.
 
 ```bash
-/workspace/conference-2022-devoxx/scripts/astra-cqlsh
+/workspace/conference-2022-devoxx/labs/lab1_initialisation_environnements/astra-cqlsh
 ```
 
 > 🖥️ **Résultat:**
